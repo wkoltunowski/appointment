@@ -48,16 +48,15 @@ public class FindFreeSlotsService {
 
     remove(oldFreeSlot);
 
-    ScheduleId scheduleId = oldFreeSlot.getScheduleId();
     LocalDateTime freeSlotStart = oldFreeSlot.getStart();
     if (visitStart.isAfter(freeSlotStart)) {
-      add(FreeSlot.of(scheduleId, freeSlotStart, visitStart));
+      add(oldFreeSlot.withNewEnd(visitStart));
     }
 
     LocalDateTime visitEnd = visitStart.plus(duration);
     LocalDateTime freeSlotEnd = oldFreeSlot.getEnd();
     if (visitEnd.isBefore(freeSlotEnd)) {
-      add(FreeSlot.of(scheduleId, visitEnd, freeSlotEnd));
+      add(oldFreeSlot.withNewStart(visitEnd));
     }
   }
 
@@ -85,16 +84,16 @@ public class FindFreeSlotsService {
     slots.add(of);
   }
 
-  private void generateFreeSlots(Schedule schedule) {
+  private void generateFreeSlots(Schedule schedule, Duration duration) {
     LocalDate date = now();
     LocalDate reservationMaxDay = date.plus(Period.ofDays(schedule.maxReservationInAdvance()));
     while (date.isBefore(reservationMaxDay) && schedule.validFor(date)) {
-      add(FreeSlot.of(schedule.getScheduleId(), date.atTime(schedule.getStart()), date.atTime(schedule.getEnd())));
+      add(FreeSlot.of(schedule.getScheduleId(), date.atTime(schedule.getStart()), date.atTime(schedule.getEnd()), duration));
       date = date.plusDays(1);
     }
   }
 
-  public Visits findFirstFree(LocalDateTime visitDate, Duration duration) {
+  public Visits findFirstFree(LocalDateTime visitDate) {
     List<Visit> visits = new ArrayList<>();
     Optional<LocalDate> foundDay = Optional.empty();
     LocalDate day = visitDate.toLocalDate();
@@ -107,13 +106,13 @@ public class FindFreeSlotsService {
           LocalDateTime scheduleEnd = fs.getEnd();
           LocalDateTime visitStart = fs.getStart();
           while (visitStart.isBefore(scheduleEnd)) {
-            LocalDateTime visitEnd = visitStart.plus(duration);
+            LocalDateTime visitEnd = visitStart.plus(fs.duration());
             if (!visitStart.isBefore(visitDate) && !visitEnd.isAfter(scheduleEnd)) {
               if (visits.size() >= maxFreeVisitsCount || foundDay.isPresent() && visitStart.toLocalDate().isAfter(foundDay.get())) {
                 return Visits.of(visits);
               }
               foundDay = Optional.of(visitStart.toLocalDate());
-              visits.add(visitFor(visitStart, duration, fs.getScheduleId()));
+              visits.add(visitFor(visitStart, visitEnd, fs.getScheduleId()));
             }
             visitStart = visitEnd;
           }
@@ -125,15 +124,15 @@ public class FindFreeSlotsService {
     return Visits.of(visits);
   }
 
-  public ScheduleId givenSchedule(LocalTime from, LocalTime to) {
+  public ScheduleId givenSchedule(LocalTime from, LocalTime to, Duration duration) {
     ScheduleId scheduleId = ScheduleId.newId();
-    generateFreeSlots(new Schedule(from, to, scheduleId));
+    generateFreeSlots(new Schedule(from, to, scheduleId), duration);
     return scheduleId;
   }
 
-  public ScheduleId givenSchedule(LocalTime startTime, LocalTime endTime, Validity validity) {
+  public ScheduleId givenSchedule(LocalTime startTime, LocalTime endTime, Validity validity, Duration duration) {
     ScheduleId scheduleId = ScheduleId.newId();
-    generateFreeSlots(new Schedule(startTime, endTime, validity, scheduleId));
+    generateFreeSlots(new Schedule(startTime, endTime, validity, scheduleId), duration);
     return scheduleId;
   }
 }

@@ -7,21 +7,18 @@ public class FreeSlot implements Comparable<FreeSlot> {
 
   private final LocalDateTime start;
   private final LocalDateTime end;
-  private ScheduleId scheduleId;
+  private final ScheduleId scheduleId;
+  private final Duration duration;
 
-  public FreeSlot(ScheduleId scheduleId, LocalDateTime start, LocalDateTime end) {
+  public FreeSlot(ScheduleId scheduleId, LocalDateTime start, LocalDateTime end, Duration duration) {
     this.start = start;
     this.end = end;
     this.scheduleId = scheduleId;
-  }
-
-  public static FreeSlot of(ScheduleId scheduleId, LocalDateTime start, LocalDateTime end) {
-    return new FreeSlot(scheduleId, start, end);
+    this.duration = duration;
   }
 
   @Override
   public int compareTo(FreeSlot o) {
-
     int dateCompare = start.compareTo(o.start);
     return dateCompare != 0 ? dateCompare : ((Integer) this.hashCode()).compareTo(o.hashCode());
   }
@@ -40,5 +37,21 @@ public class FreeSlot implements Comparable<FreeSlot> {
 
   public ScheduleId getScheduleId() {
     return scheduleId;
+  }
+
+  public Duration duration() {
+    return this.duration;
+  }
+
+  public FreeSlot withNewEnd(LocalDateTime newEnd) {
+    return of(scheduleId, start, newEnd, duration);
+  }
+
+  public FreeSlot withNewStart(LocalDateTime newStart) {
+    return of(scheduleId, newStart, end, duration);
+  }
+
+  public static FreeSlot of(ScheduleId scheduleId, LocalDateTime start, LocalDateTime end, Duration duration) {
+    return new FreeSlot(scheduleId, start, end, duration);
   }
 }

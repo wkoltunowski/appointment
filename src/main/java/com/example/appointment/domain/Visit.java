@@ -48,6 +48,10 @@ public class Visit {
     return new Visit(dateTime, duration, scheduleId);
   }
 
+  public static Visit visitFor(LocalDateTime start, LocalDateTime end, ScheduleId scheduleId) {
+    return new Visit(start, Duration.between(start, end), scheduleId);
+  }
+
   public Duration getDuration() {
     return duration;
   }
