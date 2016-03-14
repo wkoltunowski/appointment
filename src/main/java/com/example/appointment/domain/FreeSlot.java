@@ -2,6 +2,7 @@ package com.example.appointment.domain;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 
 public class FreeSlot implements Comparable<FreeSlot> {
 
@@ -19,12 +20,47 @@ public class FreeSlot implements Comparable<FreeSlot> {
 
   @Override
   public int compareTo(FreeSlot o) {
-    int dateCompare = start.compareTo(o.start);
-    return dateCompare != 0 ? dateCompare : ((Integer) this.hashCode()).compareTo(o.hashCode());
+
+    Comparator<FreeSlot> freeSlotComparator = Comparator.comparing(FreeSlot::getStart)
+            .thenComparing(FreeSlot::getEnd)
+            .thenComparing(FreeSlot::duration)
+            .thenComparing(fs -> fs.getScheduleId().toString());
+//
+     return freeSlotComparator.compare(this, o);
+//    int dateCompare = start.compareTo(o.start);
+//    return dateCompare != 0 ? dateCompare : this.scheduleId.toString().compareTo(o.scheduleId.toString());
   }
 
   public boolean contains(LocalDateTime dateTime, Duration duration) {
     return !this.start.isAfter(dateTime) && !this.end.isBefore(dateTime.plus(duration));
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+
+    FreeSlot freeSlot = (FreeSlot) o;
+
+    if (!start.equals(freeSlot.start))
+      return false;
+    if (!end.equals(freeSlot.end))
+      return false;
+    if (!scheduleId.equals(freeSlot.scheduleId))
+      return false;
+    return duration.equals(freeSlot.duration);
+
+  }
+
+  @Override
+  public int hashCode() {
+    int result = start.hashCode();
+    result = 31 * result + end.hashCode();
+    result = 31 * result + scheduleId.hashCode();
+    result = 31 * result + duration.hashCode();
+    return result;
   }
 
   public LocalDateTime getStart() {
@@ -44,14 +80,19 @@ public class FreeSlot implements Comparable<FreeSlot> {
   }
 
   public FreeSlot withNewEnd(LocalDateTime newEnd) {
-    return of(scheduleId, start, newEnd, duration);
+    return of(scheduleId, new FromTo(start, newEnd), duration);
   }
 
   public FreeSlot withNewStart(LocalDateTime newStart) {
-    return of(scheduleId, newStart, end, duration);
+    return of(scheduleId, new FromTo(newStart, end), duration);
   }
 
-  public static FreeSlot of(ScheduleId scheduleId, LocalDateTime start, LocalDateTime end, Duration duration) {
-    return new FreeSlot(scheduleId, start, end, duration);
+  public static FreeSlot of(ScheduleId scheduleId, FromTo fromTo, Duration duration) {
+    return new FreeSlot(scheduleId, fromTo.getStart(), fromTo.getEnd(), duration);
+  }
+
+  @Override
+  public String toString() {
+    return String.format("FreeSlot{start=%s, end=%s, duration=%s, scheduleId=%s}", start, end, duration, scheduleId);
   }
 }

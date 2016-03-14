@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 public class Visit {
 
+  private static int count = 0;
   private final LocalDateTime dateTime;
   private final Duration duration;
   private final ScheduleId scheduleId;

@@ -1,8 +1,8 @@
 package com.example.appointment;
 
-import static com.example.appointment.domain.Visit.*;
-import static java.util.Arrays.*;
-import static org.testng.AssertJUnit.*;
+import static com.example.appointment.domain.Visit.visitFor;
+import static java.util.Arrays.asList;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -43,6 +43,7 @@ public class RegisterVisitTest {
 
   @Test
   public void shouldFindVisitForSecondSlot() throws Exception {
+    findFreeSlots = new FindFreeSlotsService(1);
     ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(8, 30), Duration.ofMinutes(15));
 
     assertEquals(findFreeSlots.findFirstFree(todayAt(8, 15)),
@@ -51,6 +52,7 @@ public class RegisterVisitTest {
 
   @Test
   public void shouldFindVisitWhenInMiddleRequested() throws Exception {
+    findFreeSlots = new FindFreeSlotsService(1);
     ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(8, 30), Duration.ofMinutes(15));
 
     assertEquals(findFreeSlots.findFirstFree(todayAt(8, 10)),
@@ -59,14 +61,18 @@ public class RegisterVisitTest {
 
   @Test
   public void shouldFindVisitOverNight() throws Exception {
-    ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(18, 0), LocalTime.of(8, 0), Duration.ofMinutes(15));
+    findFreeSlots = new FindFreeSlotsService(2);
+    ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(23, 30), LocalTime.of(0, 30), Duration.ofMinutes(30));
 
-    assertEquals(findFreeSlots.findFirstFree(todayAt(18, 15)), Visits.of(visitFor(todayAt(18, 15), todayAt(18, 30), scheduleId)));
-    assertEquals(findFreeSlots.findFirstFree(todayAt(8, 0)), Visits.of(visitFor(todayAt(8, 0), todayAt(8, 15), scheduleId)));
+    assertEquals(findFreeSlots.findFirstFree(todayAt(23, 0)),
+        Visits.of(
+            visitFor(todayAt(23, 30), tommorrowAt(0, 0), scheduleId),
+            visitFor(tommorrowAt(0, 0), tommorrowAt(0, 30), scheduleId)));
   }
 
   @Test
   public void shouldFindNextDay() throws Exception {
+    findFreeSlots = new FindFreeSlotsService(1);
     ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(8, 20), Duration.ofMinutes(15));
 
     assertEquals(findFreeSlots.findFirstFree(todayAt(8, 20)),
@@ -75,6 +81,7 @@ public class RegisterVisitTest {
 
   @Test
   public void shouldFindVisitWhenFirstReserved() throws Exception {
+    findFreeSlots = new FindFreeSlotsService(1);
     ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(8, 30), Duration.ofMinutes(15));
     findFreeSlots.reserveVisit(visitFor(todayAt(8, 0), todayAt(8, 15), scheduleId));
 
@@ -108,11 +115,13 @@ public class RegisterVisitTest {
 
   @Test
   public void shouldFindVisitForManySchedules() throws Exception {
+    findFreeSlots = new FindFreeSlotsService(1);
     for (int i = 0; i < 100; i++) {
       findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(16, 0), Duration.ofMinutes(15));
     }
+    // System.out.println("additions after creating schedules: " + findFreeSlots.additions);
     System.out.println("free slots count : " + findFreeSlots.freeSlotsCount());
-
+    long start = System.currentTimeMillis();
     Visits visits = findFreeSlots.findFirstFree(todayAt(8, 0));
     int count = 0;
     int MAX_COUNT = 250000;
@@ -121,11 +130,15 @@ public class RegisterVisitTest {
       findFreeSlots.reserveFirst(visits);
     }
     System.out.println("free slots count : " + findFreeSlots.freeSlotsCount());
-    System.out.println("reservations count : " + count);
+    System.out.println("reservations count : " + count + " in " + (System.currentTimeMillis() - start) + " ms.");
+    // System.out.println("additions : " + findFreeSlots.additions);
+    // System.out.println("removals : " + findFreeSlots.removals);
+
   }
 
   @Test
   public void shouldFindOrderedVisitsForTwoSchedules() throws Exception {
+    findFreeSlots = new FindFreeSlotsService(3);
     ScheduleId schedule1 = findFreeSlots.givenSchedule(LocalTime.of(15, 40), LocalTime.of(16, 0), Duration.ofMinutes(10));
     ScheduleId schedule2 = findFreeSlots.givenSchedule(LocalTime.of(15, 45), LocalTime.of(16, 0), Duration.ofMinutes(10));
 
@@ -148,7 +161,7 @@ public class RegisterVisitTest {
 
   @BeforeMethod
   public void setUp() throws Exception {
-    findFreeSlots = new FindFreeSlotsService();
+    findFreeSlots = new FindFreeSlotsService(10);
   }
 
   private LocalDateTime tommorrowAt(int hour, int minute) {

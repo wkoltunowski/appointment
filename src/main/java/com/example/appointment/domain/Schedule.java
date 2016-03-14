@@ -49,4 +49,11 @@ public class Schedule {
   public boolean validFor(LocalDate date) {
     return validity.validFor(date);
   }
+
+  public FromTo toFromTo(LocalDate date) {
+    if (!start.isAfter(end)) {
+      return new FromTo(date.atTime(start), date.atTime(end));
+    }
+    return new FromTo(date.atTime(start), date.plusDays(1).atTime(end));
+  }
 }

@@ -1,15 +1,12 @@
 package com.example.appointment.domain;
 
-import static com.sun.deploy.util.StringUtils.*;
-import static java.util.Arrays.*;
+import static java.util.Arrays.asList;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
+import java.util.*;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class Visits {
 
@@ -42,28 +39,17 @@ public class Visits {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    if (o == null || getClass() != o.getClass())
-      return false;
-
-    Visits visits1 = (Visits) o;
-
-    return visits.equals(visits1.visits);
-
+    return EqualsBuilder.reflectionEquals(this, o);
   }
 
   @Override
   public int hashCode() {
-    return visits.hashCode();
+    return HashCodeBuilder.reflectionHashCode(this);
   }
 
   @Override
   public String toString() {
-
-    return "Visits{" +
-        "visits:\n" + join(visits.stream().map(Visit::toString).collect(Collectors.toList()), ",\n") +
-        '}';
+    return ToStringBuilder.reflectionToString(this);
   }
 
   public Visits withVisitAdded(Visit visit) {
