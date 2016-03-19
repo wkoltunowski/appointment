@@ -2,6 +2,9 @@ package com.example.appointment.domain;
 
 import java.util.UUID;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class ScheduleId {
 
   private final UUID id;
@@ -12,20 +15,13 @@ public class ScheduleId {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    if (o == null || getClass() != o.getClass())
-      return false;
-
-    ScheduleId that = (ScheduleId) o;
-
-    return id.equals(that.id);
+    return EqualsBuilder.reflectionEquals(this, o);
 
   }
 
   @Override
   public int hashCode() {
-    return id.hashCode();
+    return HashCodeBuilder.reflectionHashCode(this);
   }
 
   @Override

@@ -16,6 +16,7 @@ import org.testng.annotations.Test;
 import com.example.appointment.domain.ScheduleId;
 import com.example.appointment.domain.VisitAlreadyTakenException;
 import com.example.appointment.domain.Visits;
+import com.google.common.base.Stopwatch;
 
 public class RegisterVisitTest {
 
@@ -119,20 +120,20 @@ public class RegisterVisitTest {
     for (int i = 0; i < 100; i++) {
       findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(16, 0), Duration.ofMinutes(15));
     }
-    // System.out.println("additions after creating schedules: " + findFreeSlots.additions);
     System.out.println("free slots count : " + findFreeSlots.freeSlotsCount());
-    long start = System.currentTimeMillis();
+    Stopwatch stopwatch = new Stopwatch().start();
     Visits visits = findFreeSlots.findFirstFree(todayAt(8, 0));
     int count = 0;
-    int MAX_COUNT = 250000;
-    while (!visits.getVisits().isEmpty() && count++ < MAX_COUNT) {
-      visits = findFreeSlots.findFirstFree(todayAt(8, 0));
+    while (!visits.getVisits().isEmpty()) {
       findFreeSlots.reserveFirst(visits);
+      visits = findFreeSlots.findFirstFree(todayAt(8, 0));
+      count++;
     }
+    stopwatch.stop();
+    System.out.println("elapsed:" + stopwatch.elapsedMillis());
     System.out.println("free slots count : " + findFreeSlots.freeSlotsCount());
-    System.out.println("reservations count : " + count + " in " + (System.currentTimeMillis() - start) + " ms.");
-    // System.out.println("additions : " + findFreeSlots.additions);
-    // System.out.println("removals : " + findFreeSlots.removals);
+    System.out.println("reservations count : " + count + " in " + stopwatch.elapsedMillis() + " ms.");
+    System.out.println("res/s : " + (1000 * count / stopwatch.elapsedMillis()));
 
   }
 

@@ -1,18 +1,25 @@
 package com.example.appointment;
 
+import static java.util.Collections.emptyList;
+
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Stream;
 
 import com.example.appointment.domain.FreeSlot;
+import com.example.appointment.domain.ScheduleId;
+import com.google.common.collect.Ranges;
 
 public class DayCollectionFreeSlotStorage implements FreeSlotStorage {
 
   private Map<LocalDate, Collection<FreeSlot>> index = new HashMap<>();
+  private LocalDate maxDay = LocalDate.MIN;
+  private Map<ScheduleId, Collection<FreeSlot>> indexByScheduleId = new HashMap<>();
 
   @Override
   public void remove(FreeSlot freeSlot) {
-      index.get(freeSlot.getStart().toLocalDate()).remove(freeSlot);
+    index.get(freeSlot.getStart().toLocalDate()).remove(freeSlot);
+//    indexByScheduleId.get(freeSlot.getScheduleId()).remove(freeSlot);
   }
 
   @Override
@@ -22,54 +29,53 @@ public class DayCollectionFreeSlotStorage implements FreeSlotStorage {
 
   @Override
   public void add(FreeSlot of) {
-    Collection<FreeSlot> freeSlots = index.get(of.getStart().toLocalDate());
+    LocalDate slotStartDay = of.getStart().toLocalDate();
+    Collection<FreeSlot> freeSlots = index.get(slotStartDay);
     Collection<FreeSlot> slots = Optional.ofNullable(freeSlots).orElseGet(() -> {
       Collection<FreeSlot> treeSet = new ArrayList<FreeSlot>();
-//      TreeSet<FreeSlot> treeSet = new TreeSet<>();
-      index.put(of.getStart().toLocalDate(), treeSet);
+      index.put(slotStartDay, treeSet);
       return treeSet;
     });
     slots.add(of);
+    if (slotStartDay.isAfter(maxDay)) {
+      maxDay = slotStartDay;
+    }
+
+//    Optional.ofNullable(indexByScheduleId.get(of.getScheduleId())).orElseGet(
+//        () -> {
+//          ArrayList<FreeSlot> scheduleSlots = new ArrayList<>();
+//          indexByScheduleId.put(of.getScheduleId(), scheduleSlots);
+//          return scheduleSlots;
+//        }).add(of);
+
+  }
+
+  @Override
+  public void addAll(List<FreeSlot> freeSlots) {
+    for (FreeSlot freeSlot : freeSlots) {
+      add(freeSlot);
+    }
   }
 
   @Override
   public Iterable<FreeSlot> findAfter(LocalDate localDate) {
-    Stream<Collection<FreeSlot>> collectionStream = Stream
-        .iterate(localDate, localDate1 -> localDate1.plusDays(1))
-        .map(d -> {
-          Collection<FreeSlot> daySlots = index.get(d);
-          if (daySlots != null) {
-            return daySlots;
-          }
-          return Collections.emptyList();
-        });
-    return () -> collectionStream.flatMap(Collection::stream).iterator();
 
-    // Collection<FreeSlot> freeSlots = Optional.ofNullable(index.get(day)).orElse(Collections.emptyList());
-    // for (FreeSlot fs : freeSlots) {
-    // if (fs.getEnd().isAfter(visitDate)) {
-    // LocalDateTime scheduleEnd = fs.getEnd();
-    // LocalDateTime visitStart = fs.getStart();
-    // while (visitStart.isBefore(scheduleEnd)) {
-    // LocalDateTime visitEnd = visitStart.plus(fs.duration());
-    // if (!visitStart.isBefore(visitDate) && !visitEnd.isAfter(scheduleEnd)) {
-    // if (visits.size() >= maxFreeVisitsCount || foundDay.isPresent() && visitStart.toLocalDate().isAfter(foundDay.get())) {
-    // return Visits.of(visits);
-    // }
-    // foundDay = Optional.of(visitStart.toLocalDate());
-    // visits.add(visitFor(visitStart, visitEnd, fs.getScheduleId()));
-    // }
-    // visitStart = visitEnd;
-    // }
-    // }
-    // }
-    // day = day.plusDays(1);
-
+    if (!localDate.isAfter(maxDay)) {
+      Stream<FreeSlot> collectionStream = Ranges.closed(localDate, maxDay)
+          .asSet(DaysDomain.daysDomain())
+          .stream()
+          .map(day -> {
+            return Optional.ofNullable(index.get(day)).orElse(emptyList());
+          })
+          .flatMap(Collection::stream);
+      return collectionStream::iterator;
+    }
+    return () -> Collections.<FreeSlot> emptyList().iterator();
   }
 
   @Override
-  public Iterable<FreeSlot> allSlots() {
-    return () -> index.entrySet().stream().map(Map.Entry::getValue).flatMap(Collection::stream).iterator();
+  public Collection<FreeSlot> findByScheduleId(ScheduleId scheduleId) {
+    return Optional.ofNullable(indexByScheduleId.get(scheduleId)).orElse(emptyList());
   }
 
 }

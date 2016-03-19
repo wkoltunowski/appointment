@@ -1,12 +1,14 @@
 package com.example.appointment;
 
-import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.TreeSet;
 
 import com.example.appointment.domain.FreeSlot;
-import com.example.appointment.domain.FromTo;
 import com.example.appointment.domain.ScheduleId;
+import com.google.common.collect.Ranges;
 
 public class TreeSetFreeSlotStorage implements FreeSlotStorage {
 
@@ -28,16 +30,21 @@ public class TreeSetFreeSlotStorage implements FreeSlotStorage {
   }
 
   @Override
-  public Iterable<FreeSlot> findAfter(LocalDate localDate) {
-    FreeSlot fromElement = FreeSlot.of(ScheduleId.newId(),
-        new FromTo(localDate.atTime(0, 0), localDate.atTime(0, 1)),
-        Duration.ofHours(1));
-    FreeSlot ceiling = freeSlots.ceiling(fromElement);
-    return freeSlots.tailSet(ceiling);
+  public void addAll(List<FreeSlot> freeSlots) {
+    this.freeSlots.addAll(freeSlots);
   }
 
   @Override
-  public Iterable<FreeSlot> allSlots() {
-    return freeSlots;
+  public Iterable<FreeSlot> findAfter(LocalDate localDate) {
+    FreeSlot fromElement = FreeSlot.of(ScheduleId.newId(),
+        Ranges.closedOpen(localDate.atTime(0, 0), localDate.atTime(0, 1)));
+    FreeSlot ceiling = freeSlots.ceiling(fromElement);
+    return ceiling != null ? freeSlots.tailSet(ceiling) : Collections.emptyList();
   }
+
+  @Override
+  public Collection<FreeSlot> findByScheduleId(ScheduleId scheduleId) {
+    return null;
+  }
+
 }

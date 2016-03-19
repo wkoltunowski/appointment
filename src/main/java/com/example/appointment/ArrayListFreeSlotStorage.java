@@ -2,13 +2,11 @@ package com.example.appointment;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import com.example.appointment.domain.FreeSlot;
-import com.example.appointment.domain.FromTo;
 import com.example.appointment.domain.ScheduleId;
+import com.google.common.collect.Ranges;
 
 public class ArrayListFreeSlotStorage implements FreeSlotStorage {
 
@@ -31,11 +29,17 @@ public class ArrayListFreeSlotStorage implements FreeSlotStorage {
   }
 
   @Override
+  public void addAll(List<FreeSlot> freeSlots) {
+    for (FreeSlot freeSlot : freeSlots) {
+      add(freeSlot);
+    }
+  }
+
+  @Override
   public Iterable<FreeSlot> findAfter(LocalDate localDate) {
-    FreeSlot fromElement = FreeSlot.of(ScheduleId.newId(), new FromTo(
+    FreeSlot fromElement = FreeSlot.of(ScheduleId.newId(), Ranges.closedOpen(
         localDate.atTime(0, 0),
-        localDate.atTime(0, 1)),
-        Duration.ofHours(1));
+        localDate.atTime(0, 1)));
     int index = Collections.binarySearch(this.index, fromElement);
     if (index < 0) {
       index = -(index) - 1;
@@ -44,7 +48,8 @@ public class ArrayListFreeSlotStorage implements FreeSlotStorage {
   }
 
   @Override
-  public Iterable<FreeSlot> allSlots() {
-    return index;
+  public Collection<FreeSlot> findByScheduleId(ScheduleId scheduleId) {
+    return null;
   }
+
 }
