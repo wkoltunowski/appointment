@@ -1,4 +1,4 @@
-package com.example.appointment;
+package com.example.appointment.domain.freeslots;
 
 import java.time.LocalDate;
 import java.time.Period;

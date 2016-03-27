@@ -1,4 +1,4 @@
-package com.example.appointment;
+package com.example.appointment.domain;
 
 import static java.util.Optional.*;
 

@@ -8,8 +8,8 @@ import java.time.LocalTime;
 import java.time.Period;
 import java.util.List;
 
-import com.example.appointment.DaysDomain;
-import com.example.appointment.Validity;
+import com.example.appointment.domain.freeslots.DaysDomain;
+import com.example.appointment.domain.freeslots.FreeSlot;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
 

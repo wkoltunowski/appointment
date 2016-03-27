@@ -1,10 +1,10 @@
-package com.example.appointment;
+package com.example.appointment.infrastructure;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
 
-import com.example.appointment.domain.FreeSlot;
+import com.example.appointment.domain.freeslots.FreeSlotStorage;
+import com.example.appointment.domain.freeslots.FreeSlot;
 import com.example.appointment.domain.ScheduleId;
 import com.google.common.collect.Ranges;
 
@@ -45,11 +45,6 @@ public class ArrayListFreeSlotStorage implements FreeSlotStorage {
       index = -(index) - 1;
     }
     return this.index.subList(index, this.index.size());
-  }
-
-  @Override
-  public Collection<FreeSlot> findByScheduleId(ScheduleId scheduleId) {
-    return null;
   }
 
 }

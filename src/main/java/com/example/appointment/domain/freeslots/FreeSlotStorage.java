@@ -1,11 +1,9 @@
-package com.example.appointment;
+package com.example.appointment.domain.freeslots;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
-import com.example.appointment.domain.FreeSlot;
 import com.example.appointment.domain.ScheduleId;
 
 public interface FreeSlotStorage {
@@ -20,5 +18,5 @@ public interface FreeSlotStorage {
 
   Iterable<FreeSlot> findAfter(LocalDate localDate);
 
-  Collection<FreeSlot> findByScheduleId(ScheduleId scheduleId);
+
 }

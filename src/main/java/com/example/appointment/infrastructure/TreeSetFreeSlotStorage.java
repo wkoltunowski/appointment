@@ -1,4 +1,4 @@
-package com.example.appointment;
+package com.example.appointment.infrastructure;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -6,7 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
-import com.example.appointment.domain.FreeSlot;
+import com.example.appointment.domain.freeslots.FreeSlotStorage;
+import com.example.appointment.domain.freeslots.FreeSlot;
 import com.example.appointment.domain.ScheduleId;
 import com.google.common.collect.Ranges;
 
@@ -40,11 +41,6 @@ public class TreeSetFreeSlotStorage implements FreeSlotStorage {
         Ranges.closedOpen(localDate.atTime(0, 0), localDate.atTime(0, 1)));
     FreeSlot ceiling = freeSlots.ceiling(fromElement);
     return ceiling != null ? freeSlots.tailSet(ceiling) : Collections.emptyList();
-  }
-
-  @Override
-  public Collection<FreeSlot> findByScheduleId(ScheduleId scheduleId) {
-    return null;
   }
 
 }

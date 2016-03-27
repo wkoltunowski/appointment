@@ -1,4 +1,4 @@
-package com.example.appointment;
+package com.example.appointment.infrastructure;
 
 import static java.util.Collections.emptyList;
 
@@ -6,7 +6,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Stream;
 
-import com.example.appointment.domain.FreeSlot;
+import com.example.appointment.domain.freeslots.DaysDomain;
+import com.example.appointment.domain.freeslots.FreeSlotStorage;
+import com.example.appointment.domain.freeslots.FreeSlot;
 import com.example.appointment.domain.ScheduleId;
 import com.google.common.collect.Ranges;
 
@@ -73,9 +75,5 @@ public class DayCollectionFreeSlotStorage implements FreeSlotStorage {
     return () -> Collections.<FreeSlot> emptyList().iterator();
   }
 
-  @Override
-  public Collection<FreeSlot> findByScheduleId(ScheduleId scheduleId) {
-    return Optional.ofNullable(indexByScheduleId.get(scheduleId)).orElse(emptyList());
-  }
 
 }

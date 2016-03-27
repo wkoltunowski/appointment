@@ -1,10 +1,12 @@
-package com.example.appointment.domain;
+package com.example.appointment.domain.freeslots;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Iterator;
 
+import com.example.appointment.domain.ScheduleId;
+import com.example.appointment.domain.Visit;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

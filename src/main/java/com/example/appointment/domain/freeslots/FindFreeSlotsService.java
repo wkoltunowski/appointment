@@ -1,4 +1,4 @@
-package com.example.appointment;
+package com.example.appointment.domain.freeslots;
 
 import static java.time.LocalDate.now;
 import static java.util.stream.Collectors.toList;
@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.example.appointment.domain.*;
+import com.example.appointment.infrastructure.DayCollectionFreeSlotStorage;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
 
@@ -70,10 +71,6 @@ public class FindFreeSlotsService {
     return storage.size();
   }
 
-  private void generateFreeSlots(Schedule schedule) {
-    this.storage.addAll(schedule.buildFreeSlots(now()));
-  }
-
   public Visits findFirstFree(LocalDateTime visitDate) {
 
     List<Visit> visits = StreamSupport
@@ -111,10 +108,19 @@ public class FindFreeSlotsService {
   }
 
   public ScheduleId givenSchedule(LocalTime startTime, LocalTime endTime, Validity validity, Duration duration) {
-    ScheduleId scheduleId = ScheduleId.newId();
+    ScheduleId scheduleId = ginveSchedule(startTime, endTime, validity);
     scheduleDurations.defineDuration(scheduleId,duration);
+    return scheduleId;
+  }
+
+  public ScheduleId ginveSchedule(LocalTime startTime, LocalTime endTime, Validity validity) {
+    ScheduleId scheduleId = ScheduleId.newId();
     generateFreeSlots(new Schedule(startTime, endTime, validity, scheduleId));
     return scheduleId;
+  }
+
+  private void generateFreeSlots(Schedule schedule) {
+    this.storage.addAll(schedule.buildFreeSlots(now()));
   }
 
 }
