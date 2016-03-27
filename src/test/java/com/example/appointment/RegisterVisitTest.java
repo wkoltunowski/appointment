@@ -5,7 +5,6 @@ import com.example.appointment.domain.freeslots.FindFreeSlotsService;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
-import org.apache.commons.lang3.Validate;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
