@@ -2,15 +2,16 @@ package com.example.appointment.infrastructure;
 
 import com.example.appointment.domain.ScheduleId;
 import com.example.appointment.domain.freeslots.FreeSlot;
-import com.example.appointment.domain.freeslots.FreeSlotStorage;
+import com.example.appointment.domain.freeslots.FreeSlotsStorage;
 import com.google.common.collect.Ranges;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ArrayListFreeSlotStorage implements FreeSlotStorage {
+public class ArrayListFreeSlotsStorage implements FreeSlotsStorage {
 
     private List<FreeSlot> index = new ArrayList<>();
 
@@ -31,7 +32,7 @@ public class ArrayListFreeSlotStorage implements FreeSlotStorage {
     }
 
     @Override
-    public void addAll(List<FreeSlot> freeSlots) {
+    public void addAll(Collection<FreeSlot> freeSlots) {
         for (FreeSlot freeSlot : freeSlots) {
             add(freeSlot);
         }

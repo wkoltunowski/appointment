@@ -3,7 +3,7 @@ package com.example.appointment.infrastructure;
 import com.example.appointment.domain.ScheduleId;
 import com.example.appointment.domain.freeslots.DaysDomain;
 import com.example.appointment.domain.freeslots.FreeSlot;
-import com.example.appointment.domain.freeslots.FreeSlotStorage;
+import com.example.appointment.domain.freeslots.FreeSlotsStorage;
 import com.google.common.collect.Ranges;
 
 import java.time.LocalDate;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 
-public class DayCollectionFreeSlotStorage implements FreeSlotStorage {
+public class DayCollectionFreeSlotsStorage implements FreeSlotsStorage {
 
     private Map<LocalDate, Collection<FreeSlot>> index = new HashMap<>();
     private LocalDate maxDay = LocalDate.MIN;
@@ -20,7 +20,7 @@ public class DayCollectionFreeSlotStorage implements FreeSlotStorage {
 
     @Override
     public void remove(FreeSlot freeSlot) {
-        index.get(freeSlot.getStart().toLocalDate()).remove(freeSlot);
+        index.get(freeSlot.start().toLocalDate()).remove(freeSlot);
 //    indexByScheduleId.get(freeSlot.getScheduleId()).remove(freeSlot);
     }
 
@@ -31,7 +31,7 @@ public class DayCollectionFreeSlotStorage implements FreeSlotStorage {
 
     @Override
     public void add(FreeSlot of) {
-        LocalDate slotStartDay = of.getStart().toLocalDate();
+        LocalDate slotStartDay = of.start().toLocalDate();
         Collection<FreeSlot> freeSlots = index.get(slotStartDay);
         Collection<FreeSlot> slots = Optional.ofNullable(freeSlots).orElseGet(() -> {
             Collection<FreeSlot> treeSet = new ArrayList<FreeSlot>();
@@ -45,7 +45,7 @@ public class DayCollectionFreeSlotStorage implements FreeSlotStorage {
     }
 
     @Override
-    public void addAll(List<FreeSlot> freeSlots) {
+    public void addAll(Collection<FreeSlot> freeSlots) {
         for (FreeSlot freeSlot : freeSlots) {
             add(freeSlot);
         }

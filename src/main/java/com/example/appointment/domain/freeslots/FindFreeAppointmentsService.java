@@ -1,7 +1,7 @@
 package com.example.appointment.domain.freeslots;
 
 import com.example.appointment.domain.*;
-import com.example.appointment.infrastructure.DayCollectionFreeSlotStorage;
+import com.example.appointment.infrastructure.DayCollectionFreeSlotsStorage;
 import com.google.common.collect.Range;
 import com.google.common.collect.Ranges;
 
@@ -9,25 +9,28 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.time.LocalDate.now;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
-public class FindFreeSlotsService {
+public class FindFreeAppointmentsService {
 
     private final int firstFreeCount;
-    private final FreeSlotStorage storage = new DayCollectionFreeSlotStorage();
     private ScheduleDurations scheduleDurations = new ScheduleDurations();
-    // private final FreeSlotStorage storage = new ArrayListFreeSlotStorage();
-    // private final FreeSlotStorage storage = new TreeSetFreeSlotStorage();
+    private final FreeSlotsStorage storage = new DayCollectionFreeSlotsStorage();
+//     private final FreeSlotsStorage storage = new ArrayListFreeSlotsStorage();
+//     private final FreeSlotsStorage storage = new TreeSetFreeSlotsStorage();
 
-    public FindFreeSlotsService(int firstFreeCount) {
+    public FindFreeAppointmentsService(int firstFreeCount) {
         this.firstFreeCount = firstFreeCount;
     }
 
@@ -35,16 +38,20 @@ public class FindFreeSlotsService {
         FreeSlot oldFreeSlot = findFirstFreeSlot(appointment);
 
         this.storage.remove(oldFreeSlot);
+        addNotEmpty(split(appointment, oldFreeSlot));
+    }
 
-        Range<LocalDateTime> beforeAppointment = Ranges.closedOpen(oldFreeSlot.getStart(), appointment.range().lowerEndpoint());
-        addNotEmpty(oldFreeSlot.withRange(beforeAppointment));
+    private List<FreeSlot> split(Appointment appointment, FreeSlot oldFreeSlot) {
+        Range<LocalDateTime> beforeAppointment = Ranges.closedOpen(oldFreeSlot.start(), appointment.range().lowerEndpoint());
+        FreeSlot beforeSlot = oldFreeSlot.withRange(beforeAppointment);
 
-        Range<LocalDateTime> afterAppointment = Ranges.closedOpen(appointment.range().upperEndpoint(), oldFreeSlot.getEnd());
-        addNotEmpty(oldFreeSlot.withRange(afterAppointment));
+        Range<LocalDateTime> afterAppointment = Ranges.closedOpen(appointment.range().upperEndpoint(), oldFreeSlot.end());
+        FreeSlot slotAfter = oldFreeSlot.withRange(afterAppointment);
+        return asList(beforeSlot, slotAfter);
     }
 
     private FreeSlot findFirstFreeSlot(Appointment appointment) {
-        LocalDate day = appointment.getDateTime().toLocalDate();
+        LocalDate day = appointment.start().toLocalDate();
         Iterable<FreeSlot> freeSlotsAfter = findFreeSlotsAfter(day);
 
         Optional<FreeSlot> freeSlotOptional = StreamSupport
@@ -55,10 +62,8 @@ public class FindFreeSlotsService {
         return freeSlotOptional.orElseThrow(AppointmentTakenException::new);
     }
 
-    private void addNotEmpty(FreeSlot newSLot) {
-        if (!newSLot.isEmpty()) {
-            this.storage.add(newSLot);
-        }
+    private void addNotEmpty(Collection<FreeSlot> newSLot) {
+        this.storage.addAll(newSLot.stream().filter(fs -> !fs.isEmpty()).collect(Collectors.toList()));
     }
 
     public void reserveFirst(FreeAppointments freeAppointments) {
@@ -86,16 +91,17 @@ public class FindFreeSlotsService {
     }
 
     private Function<FreeSlot, Stream<Appointment>> appointmentsStream(LocalDateTime requestedDate) {
-        return fs -> StreamSupport.stream(fs.appointmentsFor(fs, defaultDuration(fs)).spliterator(), false)
+        return fs -> StreamSupport
+                .stream(fs.appointmentsFor(fs, durationFor(fs)).spliterator(), false)
                 .filter(isAfterOrEqual(requestedDate));
     }
 
-    private Duration defaultDuration(FreeSlot fs) {
+    private Duration durationFor(FreeSlot fs) {
         return this.scheduleDurations.durationFor(fs.getScheduleId());
     }
 
     private Predicate<Appointment> isAfterOrEqual(LocalDateTime requestedDate) {
-        return appointment -> !appointment.getDateTime().isBefore(requestedDate);
+        return appointment -> !appointment.start().isBefore(requestedDate);
     }
 
     public ScheduleId givenSchedule(LocalTime from, LocalTime to, Duration duration) {

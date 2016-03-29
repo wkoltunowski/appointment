@@ -19,7 +19,7 @@ public class Appointment {
         this.period = period;
     }
 
-    public LocalDateTime getDateTime() {
+    public LocalDateTime start() {
         return period.lowerEndpoint();
     }
 

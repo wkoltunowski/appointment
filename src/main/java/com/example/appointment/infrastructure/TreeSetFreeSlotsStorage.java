@@ -2,15 +2,15 @@ package com.example.appointment.infrastructure;
 
 import com.example.appointment.domain.ScheduleId;
 import com.example.appointment.domain.freeslots.FreeSlot;
-import com.example.appointment.domain.freeslots.FreeSlotStorage;
+import com.example.appointment.domain.freeslots.FreeSlotsStorage;
 import com.google.common.collect.Ranges;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.TreeSet;
 
-public class TreeSetFreeSlotStorage implements FreeSlotStorage {
+public class TreeSetFreeSlotsStorage implements FreeSlotsStorage {
 
     private final TreeSet<FreeSlot> freeSlots = new TreeSet<>();
 
@@ -30,7 +30,7 @@ public class TreeSetFreeSlotStorage implements FreeSlotStorage {
     }
 
     @Override
-    public void addAll(List<FreeSlot> freeSlots) {
+    public void addAll(Collection<FreeSlot> freeSlots) {
         this.freeSlots.addAll(freeSlots);
     }
 

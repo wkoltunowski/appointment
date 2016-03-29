@@ -1,0 +1,38 @@
+package com.example.appointment;
+
+import com.google.common.collect.Range;
+import com.google.common.collect.Ranges;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+public class DateTestUtils {
+    public static Range<LocalDateTime> today(String timeRangeStr) {
+        return toRange(LocalDate.now(), timeRangeStr);
+    }
+
+    public static Range<LocalDateTime> tommorrow(String rangeStr) {
+        return toRange(LocalDate.now().plusDays(1), rangeStr);
+    }
+
+    public static Range<LocalDateTime> toRange(LocalDate date, String rangeStr) {
+        String[] split = rangeStr.split("-");
+        LocalTime startTime = parseTime(split[0]);
+        LocalTime endTime = parseTime(split[1]);
+        int daysToAdd = startTime.isAfter(endTime) ? 1 : 0;
+        return Ranges.closedOpen(date.atTime(startTime), date.plusDays(daysToAdd).atTime(endTime));
+    }
+
+    public static LocalTime parseTime(String from) {
+        return LocalTime.parse(from);
+    }
+
+    public static LocalDateTime tommorrowAt(int hour, int minute) {
+        return today(hour, minute).plusDays(1);
+    }
+
+    public static LocalDateTime today(int hour, int minute) {
+        return LocalDate.now().atTime(LocalTime.of(hour, minute));
+    }
+}

@@ -1,9 +1,10 @@
 package com.example.appointment.domain.freeslots;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
-public interface FreeSlotStorage {
+public interface FreeSlotsStorage {
 
     void remove(FreeSlot freeSlot);
 
@@ -11,7 +12,7 @@ public interface FreeSlotStorage {
 
     void add(FreeSlot slot);
 
-    void addAll(List<FreeSlot> freeSlots);
+    void addAll(Collection<FreeSlot> freeSlots);
 
     Iterable<FreeSlot> findAfter(LocalDate localDate);
 

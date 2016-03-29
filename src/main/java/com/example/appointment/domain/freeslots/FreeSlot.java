@@ -24,8 +24,8 @@ public class FreeSlot implements Comparable<FreeSlot> {
     @Override
     public int compareTo(FreeSlot o) {
         Comparator<FreeSlot> freeSlotComparator = Comparator
-                .comparing(FreeSlot::getStart)
-                .thenComparing(FreeSlot::getEnd)
+                .comparing(FreeSlot::start)
+                .thenComparing(FreeSlot::end)
                 .thenComparing(fs -> fs.getScheduleId().toString());
         return freeSlotComparator.compare(this, o);
     }
@@ -48,11 +48,11 @@ public class FreeSlot implements Comparable<FreeSlot> {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
-    public LocalDateTime getStart() {
+    public LocalDateTime start() {
         return range.lowerEndpoint();
     }
 
-    public LocalDateTime getEnd() {
+    public LocalDateTime end() {
         return range.upperEndpoint();
     }
 
@@ -86,12 +86,12 @@ public class FreeSlot implements Comparable<FreeSlot> {
         public AppointmentsIterator(FreeSlot fs, Duration duration) {
             this.fs = fs;
             this.duration = duration;
-            this.date = fs.getStart();
+            this.date = fs.start();
         }
 
         @Override
         public boolean hasNext() {
-            return !date.plus(duration).isAfter(fs.getEnd());
+            return !date.plus(duration).isAfter(fs.end());
         }
 
         @Override

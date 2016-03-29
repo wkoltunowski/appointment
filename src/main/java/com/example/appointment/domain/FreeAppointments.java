@@ -18,10 +18,11 @@ public class FreeAppointments {
     }
 
     public FreeAppointments(Collection<Appointment> appointments) {
-        Comparator<Appointment> dateScheduleIdComparator = Comparator.comparing(Appointment::getDateTime)
-                .thenComparing(Comparator.comparing(v -> v.scheduleId().toString()));
+        Comparator<Appointment> scheduleIdComparator = Comparator.comparing(v -> v.scheduleId().toString());
+        Comparator<Appointment> startComparator = Comparator.comparing(Appointment::start);
+        Comparator<Appointment> startThenScheduleIdComparator = startComparator.thenComparing(scheduleIdComparator);
 
-        this.appointments = new TreeSet<>(dateScheduleIdComparator);
+        this.appointments = new TreeSet<>(startThenScheduleIdComparator);
         this.appointments.addAll(appointments);
     }
 
