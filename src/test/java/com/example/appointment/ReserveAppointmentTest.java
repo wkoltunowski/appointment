@@ -1,7 +1,7 @@
 package com.example.appointment;
 
 import com.example.appointment.domain.*;
-import com.example.appointment.domain.freeslots.FindFreeAppointmentsService;
+import com.example.appointment.domain.FindFreeAppointmentsService;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

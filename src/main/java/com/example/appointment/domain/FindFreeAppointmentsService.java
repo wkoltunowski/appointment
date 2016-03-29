@@ -1,6 +1,5 @@
-package com.example.appointment.domain.freeslots;
+package com.example.appointment.domain;
 
-import com.example.appointment.domain.*;
 import com.example.appointment.infrastructure.DayCollectionFreeSlotsStorage;
 
 import java.time.Duration;
@@ -19,7 +18,7 @@ import static java.util.stream.Collectors.toList;
 public class FindFreeAppointmentsService {
 
     private final int firstFreeCount;
-    private ScheduleDurations scheduleDurations = new ScheduleDurations();
+    private final ScheduleDurations scheduleDurations = new ScheduleDurations();
     private final FreeSlotsStorage storage = new DayCollectionFreeSlotsStorage();
 //     private final FreeSlotsStorage storage = new ArrayListFreeSlotsStorage();
 //     private final FreeSlotsStorage storage = new TreeSetFreeSlotsStorage();

@@ -1,7 +1,5 @@
-package com.example.appointment.domain.freeslots;
+package com.example.appointment.domain;
 
-import com.example.appointment.domain.Appointment;
-import com.example.appointment.domain.ScheduleId;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;

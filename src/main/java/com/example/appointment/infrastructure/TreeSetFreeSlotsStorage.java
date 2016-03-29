@@ -1,8 +1,8 @@
 package com.example.appointment.infrastructure;
 
 import com.example.appointment.domain.ScheduleId;
-import com.example.appointment.domain.freeslots.FreeSlot;
-import com.example.appointment.domain.freeslots.FreeSlotsStorage;
+import com.example.appointment.domain.FreeSlot;
+import com.example.appointment.domain.FreeSlotsStorage;
 import com.google.common.collect.Range;
 
 import java.time.LocalDate;

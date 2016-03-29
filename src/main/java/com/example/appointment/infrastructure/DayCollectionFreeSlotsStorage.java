@@ -1,9 +1,9 @@
 package com.example.appointment.infrastructure;
 
 import com.example.appointment.domain.ScheduleId;
-import com.example.appointment.domain.freeslots.DaysDomain;
-import com.example.appointment.domain.freeslots.FreeSlot;
-import com.example.appointment.domain.freeslots.FreeSlotsStorage;
+import com.example.appointment.domain.DaysDomain;
+import com.example.appointment.domain.FreeSlot;
+import com.example.appointment.domain.FreeSlotsStorage;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.Range;
 

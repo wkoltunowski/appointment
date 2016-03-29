@@ -12,15 +12,19 @@ import static com.google.common.collect.Range.closedOpen;
 public class Appointment {
 
     private final ScheduleId scheduleId;
-    private final Range<LocalDateTime> period;
+    private final Range<LocalDateTime> range;
 
-    public Appointment(ScheduleId scheduleId, Range<LocalDateTime> period) {
+    public Appointment(ScheduleId scheduleId, Range<LocalDateTime> range) {
         this.scheduleId = scheduleId;
-        this.period = period;
+        this.range = range;
     }
 
     public LocalDateTime start() {
-        return period.lowerEndpoint();
+        return range.lowerEndpoint();
+    }
+
+    public LocalDateTime end() {
+        return range.upperEndpoint();
     }
 
     public ScheduleId scheduleId() {
@@ -28,16 +32,12 @@ public class Appointment {
     }
 
     public Range<LocalDateTime> range() {
-        return period;
-    }
-
-    public LocalDateTime end() {
-        return period.upperEndpoint();
+        return range;
     }
 
     @Override
     public String toString() {
-        return String.format("Appointment{range=%s, scheduleId=%s}", period, scheduleId);
+        return String.format("Appointment{range=%s, scheduleId=%s}", range, scheduleId);
     }
 
     @Override

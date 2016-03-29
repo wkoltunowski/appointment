@@ -1,7 +1,5 @@
 package com.example.appointment.domain;
 
-import com.example.appointment.domain.freeslots.DaysDomain;
-import com.example.appointment.domain.freeslots.FreeSlot;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.Range;
 

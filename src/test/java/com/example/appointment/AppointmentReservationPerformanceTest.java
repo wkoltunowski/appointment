@@ -1,7 +1,7 @@
 package com.example.appointment;
 
 import com.example.appointment.domain.FreeAppointments;
-import com.example.appointment.domain.freeslots.FindFreeAppointmentsService;
+import com.example.appointment.domain.FindFreeAppointmentsService;
 import com.google.common.base.Stopwatch;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

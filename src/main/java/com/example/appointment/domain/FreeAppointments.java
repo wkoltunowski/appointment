@@ -4,25 +4,27 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
 
 public class FreeAppointments {
 
-    private static final FreeAppointments EMPTY = new FreeAppointments(Collections.emptyList());
     private final TreeSet<Appointment> appointments;
+    public static final Comparator<Appointment> START_THEN_SCHEDULE_ID_COMPARATOR =
+            Comparator.comparing(Appointment::start)
+                    .thenComparing(Comparator.comparing(v -> v.scheduleId().toString()));
 
     public TreeSet<Appointment> getAppointments() {
         return appointments;
     }
 
     public FreeAppointments(Collection<Appointment> appointments) {
-        Comparator<Appointment> scheduleIdComparator = Comparator.comparing(v -> v.scheduleId().toString());
-        Comparator<Appointment> startComparator = Comparator.comparing(Appointment::start);
-        Comparator<Appointment> startThenScheduleIdComparator = startComparator.thenComparing(scheduleIdComparator);
 
-        this.appointments = new TreeSet<>(startThenScheduleIdComparator);
+        this.appointments = new TreeSet<>(START_THEN_SCHEDULE_ID_COMPARATOR);
         this.appointments.addAll(appointments);
     }
 
@@ -34,9 +36,6 @@ public class FreeAppointments {
         return new FreeAppointments(asList(appointments));
     }
 
-    public static FreeAppointments empty() {
-        return EMPTY;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -53,9 +52,5 @@ public class FreeAppointments {
         return ToStringBuilder.reflectionToString(this);
     }
 
-    public FreeAppointments add(Appointment appointment) {
-        ArrayList<Appointment> newAppointments = new ArrayList<>(this.appointments);
-        newAppointments.add(appointment);
-        return new FreeAppointments(newAppointments);
-    }
+
 }
