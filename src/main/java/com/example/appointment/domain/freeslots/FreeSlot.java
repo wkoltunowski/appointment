@@ -1,7 +1,7 @@
 package com.example.appointment.domain.freeslots;
 
 import com.example.appointment.domain.ScheduleId;
-import com.example.appointment.domain.Visit;
+import com.example.appointment.domain.Appointment;
 import com.google.common.collect.Range;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -34,8 +34,8 @@ public class FreeSlot implements Comparable<FreeSlot> {
         return range.encloses(closed);
     }
 
-    public Iterable<Visit> visits(FreeSlot fs, Duration duration) {
-        return () -> new VisitsIterator(fs, duration);
+    public Iterable<Appointment> appointmentsFor(FreeSlot fs, Duration duration) {
+        return () -> new AppointmentsIterator(fs, duration);
     }
 
     @Override
@@ -77,13 +77,13 @@ public class FreeSlot implements Comparable<FreeSlot> {
         return String.format("FreeSlot{range=%s, scheduleId=%s}", range, scheduleId);
     }
 
-    private class VisitsIterator implements Iterator<Visit> {
+    private class AppointmentsIterator implements Iterator<Appointment> {
 
         private final FreeSlot fs;
         private final Duration duration;
         private LocalDateTime date;
 
-        public VisitsIterator(FreeSlot fs, Duration duration) {
+        public AppointmentsIterator(FreeSlot fs, Duration duration) {
             this.fs = fs;
             this.duration = duration;
             this.date = fs.getStart();
@@ -95,10 +95,10 @@ public class FreeSlot implements Comparable<FreeSlot> {
         }
 
         @Override
-        public Visit next() {
+        public Appointment next() {
             LocalDateTime oldDate = this.date;
             this.date = this.date.plus(duration);
-            return Visit.visitFor(oldDate, duration, fs.getScheduleId());
+            return Appointment.appointmentFor(oldDate, duration, fs.getScheduleId());
         }
     }
 }

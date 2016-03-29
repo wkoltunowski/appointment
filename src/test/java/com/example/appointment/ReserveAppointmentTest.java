@@ -13,57 +13,57 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import static com.example.appointment.domain.Visit.visitFor;
+import static com.example.appointment.domain.Appointment.appointmentFor;
 import static java.util.Arrays.asList;
 import static org.testng.AssertJUnit.assertEquals;
 
-public class RegisterVisitTest {
+public class ReserveAppointmentTest {
 
     private FindFreeSlotsService findFreeSlots;
 
     @Test
-    public void shouldFindFirst10Visits() throws Exception {
+    public void shouldFindFirst10Appointments() throws Exception {
         Duration fifteenMinutes = Duration.ofMinutes(15);
         ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(16, 0), fifteenMinutes);
-        assertFoundVisits(today(8, 0),
-                visitFor(today("08:00-08:15"), scheduleId),
-                visitFor(today("08:15-08:30"), scheduleId),
-                visitFor(today("08:30-08:45"), scheduleId),
-                visitFor(today("08:45-09:00"), scheduleId),
-                visitFor(today("09:00-09:15"), scheduleId),
-                visitFor(today("09:15-09:30"), scheduleId),
-                visitFor(today("09:30-09:45"), scheduleId),
-                visitFor(today("09:45-10:00"), scheduleId),
-                visitFor(today("10:00-10:15"), scheduleId),
-                visitFor(today("10:15-10:30"), scheduleId)
+        assertFoundAppointments(today(8, 0),
+                appointmentFor(today("08:00-08:15"), scheduleId),
+                appointmentFor(today("08:15-08:30"), scheduleId),
+                appointmentFor(today("08:30-08:45"), scheduleId),
+                appointmentFor(today("08:45-09:00"), scheduleId),
+                appointmentFor(today("09:00-09:15"), scheduleId),
+                appointmentFor(today("09:15-09:30"), scheduleId),
+                appointmentFor(today("09:30-09:45"), scheduleId),
+                appointmentFor(today("09:45-10:00"), scheduleId),
+                appointmentFor(today("10:00-10:15"), scheduleId),
+                appointmentFor(today("10:15-10:30"), scheduleId)
         );
     }
 
     @Test
-    public void shouldFindVisitForSecondSlot() throws Exception {
+    public void shouldFindAppointmentForSecondSlot() throws Exception {
         findFreeSlots = new FindFreeSlotsService(1);
         ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(8, 30), Duration.ofMinutes(15));
 
-        assertFoundVisits(today(8, 1), visitFor(today("08:15-08:30"), scheduleId));
-        assertFoundVisits(today(8, 10), visitFor(today("08:15-08:30"), scheduleId));
-        assertFoundVisits(today(8, 15), visitFor(today("08:15-08:30"), scheduleId));
+        assertFoundAppointments(today(8, 1), appointmentFor(today("08:15-08:30"), scheduleId));
+        assertFoundAppointments(today(8, 10), appointmentFor(today("08:15-08:30"), scheduleId));
+        assertFoundAppointments(today(8, 15), appointmentFor(today("08:15-08:30"), scheduleId));
     }
 
     @Test
-    public void shouldFindVisitWhenInMiddleRequested() throws Exception {
+    public void shouldFindAppointmentWhenInMiddleRequested() throws Exception {
         findFreeSlots = new FindFreeSlotsService(1);
         ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(8, 30), Duration.ofMinutes(15));
-        assertFoundVisits(today(8, 10), visitFor(today("08:15-08:30"), scheduleId));
+        assertFoundAppointments(today(8, 10), appointmentFor(today("08:15-08:30"), scheduleId));
     }
 
     @Test
-    public void shouldFindVisitOverNight() throws Exception {
+    public void shouldFindAppointmentOverNight() throws Exception {
         findFreeSlots = new FindFreeSlotsService(2);
         ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(23, 30), LocalTime.of(0, 30), Duration.ofMinutes(30));
 
-        assertFoundVisits(today(23, 0),
-                visitFor(today("23:30-00:00"), scheduleId),
-                visitFor(tommorrow("00:00-00:30"), scheduleId));
+        assertFoundAppointments(today(23, 0),
+                appointmentFor(today("23:30-00:00"), scheduleId),
+                appointmentFor(tommorrow("00:00-00:30"), scheduleId));
     }
 
     @Test
@@ -71,16 +71,16 @@ public class RegisterVisitTest {
         findFreeSlots = new FindFreeSlotsService(1);
         ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(8, 20), Duration.ofMinutes(15));
 
-        assertFoundVisits(today(8, 20), visitFor(tommorrow("08:00-08:15"), scheduleId));
+        assertFoundAppointments(today(8, 20), appointmentFor(tommorrow("08:00-08:15"), scheduleId));
     }
 
     @Test
-    public void shouldFindVisitWhenFirstReserved() throws Exception {
+    public void shouldFindAppointmentWhenFirstReserved() throws Exception {
         findFreeSlots = new FindFreeSlotsService(1);
         ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(8, 30), Duration.ofMinutes(15));
-        findFreeSlots.reserveVisit(visitFor(today("08:00-08:15"), scheduleId));
+        findFreeSlots.reserve(appointmentFor(today("08:00-08:15"), scheduleId));
 
-        assertFoundVisits(today(8, 0), visitFor(today("08:15-08:30"), scheduleId));
+        assertFoundAppointments(today(8, 0), appointmentFor(today("08:15-08:30"), scheduleId));
     }
 
     @Test
@@ -90,49 +90,49 @@ public class RegisterVisitTest {
                 Validity.fromTo(LocalDate.now(), LocalDate.now()),
                 Duration.ofMinutes(15));
 
-        findFreeSlots.reserveVisit(visitFor(today(8, 0), today(8, 15), scheduleId));
-        findFreeSlots.reserveVisit(visitFor(today(8, 15), today(8, 30), scheduleId));
+        findFreeSlots.reserve(appointmentFor(today(8, 0), today(8, 15), scheduleId));
+        findFreeSlots.reserve(appointmentFor(today(8, 15), today(8, 30), scheduleId));
 
-        assertFoundVisits(today(8, 0));
+        assertFoundAppointments(today(8, 0));
     }
 
     @Test
     public void shouldFindEmptyForNoSchedules() throws Exception {
-        assertFoundVisits(today(8, 0));
+        assertFoundAppointments(today(8, 0));
     }
 
-    @Test(expectedExceptions = VisitAlreadyTakenException.class)
-    public void shouldNotReserveSameVisitTwice() throws Exception {
+    @Test(expectedExceptions = AppointmentTakenException.class)
+    public void shouldNotReserveSameAppointmentTwice() throws Exception {
         ScheduleId scheduleId = findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(8, 30), Duration.ofMinutes(15));
-        findFreeSlots.reserveVisit(visitFor(today(8, 0), today(8, 15), scheduleId));
-        findFreeSlots.reserveVisit(visitFor(today(8, 0), today(8, 15), scheduleId));
+        findFreeSlots.reserve(appointmentFor(today(8, 0), today(8, 15), scheduleId));
+        findFreeSlots.reserve(appointmentFor(today(8, 0), today(8, 15), scheduleId));
     }
 
     @Test
-    public void shouldFindOrderedVisitsForTwoSchedules() throws Exception {
+    public void shouldFindOrderedAppointmentsForTwoSchedules() throws Exception {
         findFreeSlots = new FindFreeSlotsService(3);
         ScheduleId schedule1 = findFreeSlots.givenSchedule(LocalTime.of(15, 0), LocalTime.of(16, 0), Duration.ofMinutes(10));
         ScheduleId schedule2 = findFreeSlots.givenSchedule(LocalTime.of(15, 5), LocalTime.of(16, 0), Duration.ofMinutes(10));
 
-        assertFoundVisits(today(15, 40),
-                visitFor(today("15:40-15:50"), schedule1),
-                visitFor(today("15:45-15:55"), schedule2),
-                visitFor(today("15:50-16:00"), schedule1));
+        assertFoundAppointments(today(15, 40),
+                appointmentFor(today("15:40-15:50"), schedule1),
+                appointmentFor(today("15:45-15:55"), schedule2),
+                appointmentFor(today("15:50-16:00"), schedule1));
     }
 
     @Test
-    public void shouldFindVisitForManySchedules() throws Exception {
+    public void shouldFindAppointmentForManySchedules() throws Exception {
         findFreeSlots = new FindFreeSlotsService(1);
         for (int i = 0; i < 100; i++) {
             findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(16, 0), Duration.ofMinutes(15));
         }
         System.out.println("free slots count : " + findFreeSlots.freeSlotsCount());
         Stopwatch stopwatch = new Stopwatch().start();
-        Visits visits = findFreeSlots.findFirstFree(today(8, 0));
+        FreeAppointments freeAppointments = findFreeSlots.findFirstFree(today(8, 0));
         int count = 0;
-        while (!visits.getVisits().isEmpty()) {
-            findFreeSlots.reserveFirst(visits);
-            visits = findFreeSlots.findFirstFree(today(8, 0));
+        while (!freeAppointments.getAppointments().isEmpty()) {
+            findFreeSlots.reserveFirst(freeAppointments);
+            freeAppointments = findFreeSlots.findFirstFree(today(8, 0));
             count++;
         }
         stopwatch.stop();
@@ -148,8 +148,8 @@ public class RegisterVisitTest {
         findFreeSlots = new FindFreeSlotsService(10);
     }
 
-    private void assertFoundVisits(LocalDateTime searchDate, Visit... expectedVisits) {
-        assertEquals(Visits.of(asList(expectedVisits)), findFreeSlots.findFirstFree(searchDate));
+    private void assertFoundAppointments(LocalDateTime searchDate, Appointment... expectedAppointments) {
+        assertEquals(FreeAppointments.of(asList(expectedAppointments)), findFreeSlots.findFirstFree(searchDate));
     }
 
     private Range<LocalDateTime> today(String timeRangeStr) {

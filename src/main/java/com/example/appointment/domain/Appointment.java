@@ -9,19 +9,18 @@ import java.time.LocalDateTime;
 
 import static com.google.common.collect.Ranges.closedOpen;
 
-public class Visit {
+public class Appointment {
 
     private final ScheduleId scheduleId;
-    private final Range<LocalDateTime> visitRange;
+    private final Range<LocalDateTime> period;
 
-    public Visit(ScheduleId scheduleId, Range<LocalDateTime> visitRange) {
-
+    public Appointment(ScheduleId scheduleId, Range<LocalDateTime> period) {
         this.scheduleId = scheduleId;
-        this.visitRange = visitRange;
+        this.period = period;
     }
 
     public LocalDateTime getDateTime() {
-        return visitRange.lowerEndpoint();
+        return period.lowerEndpoint();
     }
 
     public ScheduleId scheduleId() {
@@ -29,12 +28,12 @@ public class Visit {
     }
 
     public Range<LocalDateTime> range() {
-        return visitRange;
+        return period;
     }
 
     @Override
     public String toString() {
-        return String.format("Visit{visitRange=%s, scheduleId=%s}", visitRange, scheduleId);
+        return String.format("Appointment{range=%s, scheduleId=%s}", period, scheduleId);
     }
 
     @Override
@@ -47,15 +46,15 @@ public class Visit {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
-    public static Visit visitFor(LocalDateTime dateTime, Duration duration, ScheduleId scheduleId) {
-        return new Visit(scheduleId, closedOpen(dateTime, dateTime.plus(duration)));
+    public static Appointment appointmentFor(LocalDateTime dateTime, Duration duration, ScheduleId scheduleId) {
+        return new Appointment(scheduleId, closedOpen(dateTime, dateTime.plus(duration)));
     }
 
-    public static Visit visitFor(LocalDateTime start, LocalDateTime end, ScheduleId scheduleId) {
-        return new Visit(scheduleId, closedOpen(start, end));
+    public static Appointment appointmentFor(LocalDateTime start, LocalDateTime end, ScheduleId scheduleId) {
+        return appointmentFor(closedOpen(start, end), scheduleId);
     }
 
-    public static Visit visitFor(Range<LocalDateTime> range, ScheduleId scheduleId) {
-        return new Visit(scheduleId, range);
+    public static Appointment appointmentFor(Range<LocalDateTime> range, ScheduleId scheduleId) {
+        return new Appointment(scheduleId, range);
     }
 }
