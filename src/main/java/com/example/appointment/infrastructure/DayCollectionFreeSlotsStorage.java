@@ -1,9 +1,9 @@
 package com.example.appointment.infrastructure;
 
-import com.example.appointment.domain.ScheduleId;
 import com.example.appointment.domain.DaysDomain;
 import com.example.appointment.domain.FreeSlot;
 import com.example.appointment.domain.FreeSlotsStorage;
+import com.example.appointment.domain.ScheduleId;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.Range;
 
@@ -31,7 +31,13 @@ public class DayCollectionFreeSlotsStorage implements FreeSlotsStorage {
     }
 
     @Override
-    public void add(FreeSlot of) {
+    public void addAll(Collection<FreeSlot> freeSlots) {
+        for (FreeSlot freeSlot : freeSlots) {
+            add(freeSlot);
+        }
+    }
+
+    private void add(FreeSlot of) {
         LocalDate slotStartDay = of.start().toLocalDate();
         Collection<FreeSlot> freeSlots = index.get(slotStartDay);
         Collection<FreeSlot> slots = Optional.ofNullable(freeSlots).orElseGet(() -> {
@@ -42,13 +48,6 @@ public class DayCollectionFreeSlotsStorage implements FreeSlotsStorage {
         slots.add(of);
         if (slotStartDay.isAfter(maxDay)) {
             maxDay = slotStartDay;
-        }
-    }
-
-    @Override
-    public void addAll(Collection<FreeSlot> freeSlots) {
-        for (FreeSlot freeSlot : freeSlots) {
-            add(freeSlot);
         }
     }
 

@@ -5,8 +5,6 @@ import java.util.Collection;
 
 public interface FreeSlotsStorage {
 
-    void add(FreeSlot slot);
-
     void addAll(Collection<FreeSlot> freeSlots);
 
     void remove(FreeSlot freeSlot);

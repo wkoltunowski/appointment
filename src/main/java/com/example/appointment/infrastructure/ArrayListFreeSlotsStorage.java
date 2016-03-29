@@ -1,8 +1,8 @@
 package com.example.appointment.infrastructure;
 
-import com.example.appointment.domain.ScheduleId;
 import com.example.appointment.domain.FreeSlot;
 import com.example.appointment.domain.FreeSlotsStorage;
+import com.example.appointment.domain.ScheduleId;
 import com.google.common.collect.Range;
 
 import java.time.LocalDate;
@@ -26,16 +26,15 @@ public class ArrayListFreeSlotsStorage implements FreeSlotsStorage {
     }
 
     @Override
-    public void add(FreeSlot slot) {
-        int newIndex = Collections.binarySearch(index, slot);
-        index.add(-(newIndex) - 1, slot);
-    }
-
-    @Override
     public void addAll(Collection<FreeSlot> freeSlots) {
         for (FreeSlot freeSlot : freeSlots) {
             add(freeSlot);
         }
+    }
+
+    private void add(FreeSlot slot) {
+        int newIndex = Collections.binarySearch(index, slot);
+        index.add(-(newIndex) - 1, slot);
     }
 
     @Override
