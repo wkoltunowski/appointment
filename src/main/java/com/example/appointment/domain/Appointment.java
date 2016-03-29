@@ -7,7 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static com.google.common.collect.Ranges.closedOpen;
+import static com.google.common.collect.Range.closedOpen;
 
 public class Appointment {
 
@@ -29,6 +29,10 @@ public class Appointment {
 
     public Range<LocalDateTime> range() {
         return period;
+    }
+
+    public LocalDateTime end() {
+        return period.upperEndpoint();
     }
 
     @Override

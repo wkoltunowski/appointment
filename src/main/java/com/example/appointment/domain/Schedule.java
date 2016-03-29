@@ -2,8 +2,8 @@ package com.example.appointment.domain;
 
 import com.example.appointment.domain.freeslots.DaysDomain;
 import com.example.appointment.domain.freeslots.FreeSlot;
+import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.Range;
-import com.google.common.collect.Ranges;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,17 +26,11 @@ public class Schedule {
         this.end = endTime;
         this.validity = validity;
         this.scheduleId = scheduleId;
-
-        maxReservationsInAdvance = Period.ofDays(90);
+        this.maxReservationsInAdvance = Period.ofDays(90);
     }
 
     public Schedule(LocalTime from, LocalTime to, ScheduleId scheduleId) {
-        this.start = from;
-        this.end = to;
-        this.scheduleId = scheduleId;
-        this.validity = Validity.infinite();
-        maxReservationsInAdvance = Period.ofDays(90);
-
+        this(from, to, Validity.infinite(), scheduleId);
     }
 
     public boolean validFor(LocalDate date) {
@@ -45,9 +39,9 @@ public class Schedule {
 
     private Range<LocalDateTime> createRange(LocalDate date) {
         if (!start.isAfter(end)) {
-            return Ranges.closedOpen(date.atTime(start), date.atTime(end));
+            return Range.closedOpen(date.atTime(start), date.atTime(end));
         }
-        return Ranges.closedOpen(date.atTime(start), date.plusDays(1).atTime(end));
+        return Range.closedOpen(date.atTime(start), date.plusDays(1).atTime(end));
     }
 
     public FreeSlot buildFreeSlot(LocalDate date) {
@@ -55,13 +49,14 @@ public class Schedule {
     }
 
     public List<FreeSlot> buildFreeSlots(LocalDate startingFrom) {
-        Range<LocalDate> range = Ranges.closed(startingFrom, startingFrom.plus(maxReservationsInAdvance));
-        List<FreeSlot> freeSlots = range
-                .asSet(DaysDomain.daysDomain())
+        return buildSlots(Range.closed(startingFrom, startingFrom.plus(maxReservationsInAdvance)));
+    }
+
+    private List<FreeSlot> buildSlots(Range<LocalDate> range) {
+        return ContiguousSet.create(range, DaysDomain.daysDomain())
                 .stream()
                 .filter(this::validFor)
                 .map(this::buildFreeSlot)
                 .collect(toList());
-        return freeSlots;
     }
 }

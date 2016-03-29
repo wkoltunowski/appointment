@@ -4,7 +4,8 @@ import com.example.appointment.domain.ScheduleId;
 import com.example.appointment.domain.freeslots.DaysDomain;
 import com.example.appointment.domain.freeslots.FreeSlot;
 import com.example.appointment.domain.freeslots.FreeSlotsStorage;
-import com.google.common.collect.Ranges;
+import com.google.common.collect.ContiguousSet;
+import com.google.common.collect.Range;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -55,11 +56,11 @@ public class DayCollectionFreeSlotsStorage implements FreeSlotsStorage {
     public Iterable<FreeSlot> findAfter(LocalDate localDate) {
 
         if (!localDate.isAfter(maxDay)) {
-            Stream<FreeSlot> collectionStream = Ranges.closed(localDate, maxDay)
-                    .asSet(DaysDomain.daysDomain())
-                    .stream()
-                    .map(day -> dayFreeSlots(day))
-                    .flatMap(Collection::stream);
+            Stream<FreeSlot> collectionStream =
+                    ContiguousSet.create(Range.closed(localDate, maxDay), DaysDomain.daysDomain())
+                            .stream()
+                            .map(day -> dayFreeSlots(day))
+                            .flatMap(Collection::stream);
             return collectionStream::iterator;
         }
         return () -> Collections.<FreeSlot>emptyList().iterator();

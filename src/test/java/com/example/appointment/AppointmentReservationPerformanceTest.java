@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.concurrent.TimeUnit;
 
 import static com.example.appointment.DateTestUtils.today;
 
@@ -26,7 +27,7 @@ public class AppointmentReservationPerformanceTest {
             findFreeSlots.givenSchedule(LocalTime.of(8, 0), LocalTime.of(16, 0), Duration.ofMinutes(15));
         }
         System.out.println("free slots count : " + findFreeSlots.freeSlotsCount());
-        Stopwatch stopwatch = new Stopwatch().start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         FreeAppointments freeAppointments = findFreeSlots.findFirstFree(today(8, 0));
         int count = 0;
         while (!freeAppointments.getAppointments().isEmpty()) {
@@ -35,10 +36,11 @@ public class AppointmentReservationPerformanceTest {
             count++;
         }
         stopwatch.stop();
-        System.out.println("elapsed:" + stopwatch.elapsedMillis());
+        long elapsedMs = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+        System.out.println("elapsed:" + elapsedMs);
         System.out.println("free slots count : " + findFreeSlots.freeSlotsCount());
-        System.out.println("reservations count : " + count + " in " + stopwatch.elapsedMillis() + " ms.");
-        System.out.println("res/s : " + (1000 * count / stopwatch.elapsedMillis()));
+        System.out.println("reservations count : " + count + " in " + elapsedMs + " ms.");
+        System.out.println("res/s : " + (1000 * count / elapsedMs));
 
     }
 }

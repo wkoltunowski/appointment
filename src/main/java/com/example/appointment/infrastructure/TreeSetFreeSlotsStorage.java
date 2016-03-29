@@ -3,7 +3,7 @@ package com.example.appointment.infrastructure;
 import com.example.appointment.domain.ScheduleId;
 import com.example.appointment.domain.freeslots.FreeSlot;
 import com.example.appointment.domain.freeslots.FreeSlotsStorage;
-import com.google.common.collect.Ranges;
+import com.google.common.collect.Range;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -37,7 +37,7 @@ public class TreeSetFreeSlotsStorage implements FreeSlotsStorage {
     @Override
     public Iterable<FreeSlot> findAfter(LocalDate localDate) {
         FreeSlot fromElement = FreeSlot.of(ScheduleId.newId(),
-                Ranges.closedOpen(localDate.atTime(0, 0), localDate.atTime(0, 1)));
+                Range.closedOpen(localDate.atTime(0, 0), localDate.atTime(0, 1)));
         FreeSlot ceiling = freeSlots.ceiling(fromElement);
         return ceiling != null ? freeSlots.tailSet(ceiling) : Collections.emptyList();
     }

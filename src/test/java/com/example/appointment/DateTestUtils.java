@@ -1,7 +1,6 @@
 package com.example.appointment;
 
 import com.google.common.collect.Range;
-import com.google.common.collect.Ranges;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,7 +20,7 @@ public class DateTestUtils {
         LocalTime startTime = parseTime(split[0]);
         LocalTime endTime = parseTime(split[1]);
         int daysToAdd = startTime.isAfter(endTime) ? 1 : 0;
-        return Ranges.closedOpen(date.atTime(startTime), date.plusDays(daysToAdd).atTime(endTime));
+        return Range.closedOpen(date.atTime(startTime), date.plusDays(daysToAdd).atTime(endTime));
     }
 
     public static LocalTime parseTime(String from) {
