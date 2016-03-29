@@ -1,30 +1,26 @@
 package com.example.appointment.domain;
 
-import java.time.LocalDate;
-import java.util.Optional;
+import com.google.common.collect.Range;
 
-import static java.util.Optional.empty;
+import java.time.LocalDate;
 
 public class Validity {
 
-    private final Optional<LocalDate> validFrom;
-    private final Optional<LocalDate> validTo;
+    private final Range<LocalDate> range;
 
-    public Validity(Optional<LocalDate> validFrom, Optional<LocalDate> validTo) {
-        this.validFrom = validFrom;
-        this.validTo = validTo;
+    Validity(Range<LocalDate> range) {
+        this.range = range;
     }
 
     public static Validity infinite() {
-        return new Validity(empty(), empty());
+        return new Validity(Range.all());
     }
 
-    public static Validity fromTo(LocalDate now, LocalDate now1) {
-        return new Validity(Optional.of(now), Optional.of(now1));
+    public static Validity fromTo(LocalDate from, LocalDate to) {
+        return new Validity(Range.closed(from, to));
     }
-
 
     public boolean validFor(LocalDate date) {
-        return !validFrom.orElse(LocalDate.MIN).isAfter(date) && !validTo.orElse(LocalDate.MAX).isBefore(date);
+        return range.contains(date);
     }
 }
