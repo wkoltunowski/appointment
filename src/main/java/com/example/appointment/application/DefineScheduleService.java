@@ -17,22 +17,22 @@ public class DefineScheduleService {
         this.storage = storage;
     }
 
-    public ScheduleId givenSchedule(LocalTime from, LocalTime to, Duration duration) {
+    public ScheduleId addSchedule(ScheduleHours scheduleHours, Duration duration) {
         ScheduleId scheduleId = ScheduleId.newId();
         scheduleDurations.defineDuration(scheduleId, duration);
-        generateFreeSlots(new Schedule(from, to, scheduleId));
+        generateFreeSlots(new Schedule(scheduleId, scheduleHours));
         return scheduleId;
     }
 
-    public ScheduleId givenSchedule(LocalTime startTime, LocalTime endTime, Validity validity, Duration duration) {
-        ScheduleId scheduleId = givenSchedule(startTime, endTime, validity);
+    public ScheduleId addSchedule(LocalTime startTime, LocalTime endTime, Validity validity, Duration duration) {
+        ScheduleId scheduleId = addSchedule(startTime, endTime, validity);
         scheduleDurations.defineDuration(scheduleId, duration);
         return scheduleId;
     }
 
-    public ScheduleId givenSchedule(LocalTime startTime, LocalTime endTime, Validity validity) {
+    public ScheduleId addSchedule(LocalTime startTime, LocalTime endTime, Validity validity) {
         ScheduleId scheduleId = ScheduleId.newId();
-        generateFreeSlots(new Schedule(startTime, endTime, validity, scheduleId));
+        generateFreeSlots(new Schedule(new ScheduleHours(startTime, endTime), validity, scheduleId));
         return scheduleId;
     }
 

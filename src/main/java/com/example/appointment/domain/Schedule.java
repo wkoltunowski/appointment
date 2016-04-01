@@ -19,16 +19,16 @@ public class Schedule {
     private final Validity validity;
     private final Period maxReservationsInAdvance;
 
-    public Schedule(LocalTime startTime, LocalTime endTime, Validity validity, ScheduleId scheduleId) {
-        this.start = startTime;
-        this.end = endTime;
+    public Schedule(ScheduleHours scheduleHours, Validity validity, ScheduleId scheduleId) {
+        this.start = scheduleHours.getStartTime();
+        this.end = scheduleHours.getEndTime();
         this.validity = validity;
         this.scheduleId = scheduleId;
         this.maxReservationsInAdvance = Period.ofDays(90);
     }
 
-    public Schedule(LocalTime from, LocalTime to, ScheduleId scheduleId) {
-        this(from, to, Validity.infinite(), scheduleId);
+    public Schedule(ScheduleId scheduleId, ScheduleHours scheduleHours) {
+        this(scheduleHours, Validity.infinite(), scheduleId);
     }
 
     public boolean validFor(LocalDate date) {

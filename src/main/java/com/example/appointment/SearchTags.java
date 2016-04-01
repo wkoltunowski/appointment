@@ -42,4 +42,12 @@ public class SearchTags {
     private String get(String key) {
         return Optional.ofNullable(map.get(key)).orElse("");
     }
+
+    public SearchTags forDoctor(String doctor) {
+        return addTag(":DOCTOR", doctor);
+    }
+
+    public String getDoctor() {
+        return get(":DOCTOR");
+    }
 }

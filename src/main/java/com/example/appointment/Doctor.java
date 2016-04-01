@@ -3,21 +3,19 @@ package com.example.appointment;
 import java.util.Optional;
 
 public class Doctor {
-    private final String fullName;
     private final SearchTags tags;
 
-    public Doctor(String fullName, SearchTags tags) {
-        this.fullName = fullName;
+    public Doctor(SearchTags tags) {
         this.tags = tags;
 
     }
 
     public String fullName() {
-        return fullName;
+        return tags.getDoctor();
     }
 
-    public static Doctor of(String doctor, SearchTags tags) {
-        return new Doctor(doctor, tags);
+    public static Doctor of(SearchTags tags) {
+        return new Doctor(tags);
     }
 
     public String service() {
@@ -28,7 +26,7 @@ public class Doctor {
         return
                 tags.getService().equals(requestedService.orElse(tags.getService()))
                         && tags.getLocation().equals(requestedLocation.orElse(tags.getLocation()))
-                        && fullName.equals(requestedDoc.orElse(fullName))
+                        && tags.getDoctor().equals(requestedDoc.orElse(tags.getDoctor()))
                 ;
     }
 }

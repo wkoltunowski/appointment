@@ -1,11 +1,11 @@
 package com.example.appointment;
 
 import com.example.appointment.application.DefineScheduleService;
+import com.example.appointment.domain.ScheduleHours;
 import com.example.appointment.domain.ScheduleId;
 import com.google.common.collect.Sets;
 
 import java.time.Duration;
-import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -21,10 +21,9 @@ public class DoctorScheduleDefinitionService {
         this.defineScheduleService = defineScheduleService;
     }
 
-    public void addDoctorSchedule(String doctor, SearchTags tags, LocalTime from, LocalTime to, Duration duration) {
-        ScheduleId scheduleId = defineScheduleService.givenSchedule(from, to, duration);
-
-        doctors.put(scheduleId, Doctor.of(doctor, tags));
+    public void addDoctorSchedule(Duration duration, SearchTags tags, ScheduleHours scheduleHours) {
+        ScheduleId scheduleId = defineScheduleService.addSchedule(scheduleHours, duration);
+        doctors.put(scheduleId, Doctor.of(tags));
     }
 
 
