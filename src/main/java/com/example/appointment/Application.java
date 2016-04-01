@@ -1,21 +1,18 @@
 package com.example.appointment;
 
+import com.example.appointment.application.DefineScheduleService;
 import com.example.appointment.domain.Factory;
 
 public class Application {
-    private final DoctorScheduleDefinitionService doctorScheduleDefinitionService;
     private final Factory factory = new Factory();
 
-    public Application() {
-        doctorScheduleDefinitionService = new DoctorScheduleDefinitionService(factory.scheduleDefinitionService());
-    }
 
-    public DoctorScheduleDefinitionService defineDoctorSchedule() {
-        return doctorScheduleDefinitionService;
+    public DefineScheduleService defineDoctorSchedule() {
+        return factory.scheduleDefinitionService();
 
     }
 
     public FindFreeSlotsService findFreeSlots(int maxResultCount) {
-        return new FindFreeSlotsService(defineDoctorSchedule(), factory.findFreeService(maxResultCount));
+        return new FindFreeSlotsService(factory.scheduleRepository(), factory.findFreeService(maxResultCount));
     }
 }

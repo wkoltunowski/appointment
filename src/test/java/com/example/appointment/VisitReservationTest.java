@@ -1,6 +1,8 @@
 package com.example.appointment;
 
-import com.example.appointment.domain.ScheduleHours;
+import com.example.appointment.application.Slot;
+import com.example.appointment.domain.schedule.ScheduleHours;
+import com.example.appointment.domain.schedule.SearchTags;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -10,8 +12,8 @@ import java.util.List;
 
 import static com.example.appointment.DateTestUtils.tommorrow;
 import static com.example.appointment.DateTestUtils.tommorrowAt;
-import static com.example.appointment.Slot.slotFor;
-import static com.example.appointment.domain.ScheduleHours.ofHours;
+import static com.example.appointment.application.Slot.slotFor;
+import static com.example.appointment.domain.schedule.ScheduleHours.ofHours;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
@@ -80,11 +82,11 @@ public class VisitReservationTest {
     }
 
     private void addDoctorScheduleForService(String doctor, ScheduleHours scheduleHours, String surgery) {
-        addSchedule(scheduleDescription().forService(surgery).forDoctor(doctor), scheduleHours);
+        addSchedule(scheduleHours, scheduleDescription().forService(surgery).forDoctor(doctor));
     }
 
     private void defineScheduleForServiceLocation(String doctor, String service, String location, ScheduleHours scheduleHours) {
-        addSchedule(scheduleDescription().forService(service).forLocation(location).forDoctor(doctor), scheduleHours);
+        addSchedule(scheduleHours, scheduleDescription().forService(service).forLocation(location).forDoctor(doctor));
     }
 
     private SearchTags scheduleDescription() {
@@ -97,7 +99,7 @@ public class VisitReservationTest {
     }
 
 
-    private void addSchedule(SearchTags searchTags, ScheduleHours scheduleHours) {
-        app.defineDoctorSchedule().addDoctorSchedule(Duration.ofMinutes(15), searchTags, scheduleHours);
+    private void addSchedule(ScheduleHours scheduleHours, SearchTags searchTags) {
+        app.defineDoctorSchedule().addSchedule(scheduleHours, Duration.ofMinutes(15), searchTags);
     }
 }

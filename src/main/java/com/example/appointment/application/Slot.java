@@ -1,4 +1,4 @@
-package com.example.appointment;
+package com.example.appointment.application;
 
 import com.google.common.collect.Range;
 import org.apache.commons.lang3.builder.EqualsBuilder;

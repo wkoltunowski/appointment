@@ -1,4 +1,4 @@
-package com.example.appointment.domain;
+package com.example.appointment.domain.appointment;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

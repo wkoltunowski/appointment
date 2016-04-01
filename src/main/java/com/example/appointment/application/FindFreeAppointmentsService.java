@@ -1,10 +1,14 @@
 package com.example.appointment.application;
 
-import com.example.appointment.domain.*;
+import com.example.appointment.domain.appointment.Appointment;
+import com.example.appointment.domain.appointment.FreeAppointments;
+import com.example.appointment.domain.freeslot.FreeSlot;
+import com.example.appointment.domain.freeslot.FreeSlotsStorage;
+import com.example.appointment.domain.schedule.ScheduleDurations;
+import com.example.appointment.domain.schedule.SearchTags;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -25,16 +29,17 @@ public class FindFreeAppointmentsService {
     }
 
     public FreeAppointments findFirstFree(LocalDateTime startingFrom) {
+        return findFirstFree(startingFrom, SearchTags.empty());
+    }
+
+    public FreeAppointments findFirstFree(LocalDateTime startingFrom, SearchTags searchTags) {
         List<Appointment> appointments = StreamSupport
                 .stream(findFreeSlotsAfter(startingFrom.toLocalDate()).spliterator(), false)
+                .filter(fs -> fs.matches(searchTags))
                 .flatMap(appointmentsStream(startingFrom))
                 .limit(firstFreeCount)
                 .collect(toList());
         return FreeAppointments.of(appointments);
-    }
-
-    private Iterable<FreeSlot> findFreeSlotsAfter(LocalDate startingDay) {
-        return this.storage.findAfter(startingDay);
     }
 
     private Function<FreeSlot, Stream<Appointment>> appointmentsStream(LocalDateTime startingDate) {
@@ -42,13 +47,8 @@ public class FindFreeAppointmentsService {
                 .stream(fs.appointmentsFor(startingDate, this.scheduleDurations.durationFor(fs.scheduleId())).spliterator(), false);
     }
 
-    public FreeAppointments findFirstFree(LocalDateTime startingFrom, Collection<ScheduleId> scheduleIds) {
-        List<Appointment> appointments = StreamSupport
-                .stream(findFreeSlotsAfter(startingFrom.toLocalDate()).spliterator(), false)
-                .filter(fs -> scheduleIds.isEmpty() || scheduleIds.contains(fs.scheduleId()))
-                .flatMap(appointmentsStream(startingFrom))
-                .limit(firstFreeCount)
-                .collect(toList());
-        return FreeAppointments.of(appointments);
+
+    private Iterable<FreeSlot> findFreeSlotsAfter(LocalDate startingDay) {
+        return this.storage.findAfter(startingDay);
     }
 }

@@ -4,6 +4,12 @@ import com.example.appointment.application.DefineScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.ReserveAppointmentService;
 import com.example.appointment.domain.*;
+import com.example.appointment.domain.appointment.Appointment;
+import com.example.appointment.domain.appointment.AppointmentTakenException;
+import com.example.appointment.domain.appointment.FreeAppointments;
+import com.example.appointment.domain.schedule.ScheduleHours;
+import com.example.appointment.domain.schedule.ScheduleId;
+import com.example.appointment.domain.schedule.Validity;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -13,7 +19,7 @@ import java.time.LocalDateTime;
 
 import static com.example.appointment.DateTestUtils.today;
 import static com.example.appointment.DateTestUtils.tommorrow;
-import static com.example.appointment.domain.Appointment.appointmentFor;
+import static com.example.appointment.domain.appointment.Appointment.appointmentFor;
 import static java.util.Arrays.asList;
 import static org.testng.AssertJUnit.assertEquals;
 

@@ -1,5 +1,8 @@
-package com.example.appointment.domain;
+package com.example.appointment.domain.freeslot;
 
+import com.example.appointment.domain.appointment.Appointment;
+import com.example.appointment.domain.schedule.SearchTags;
+import com.example.appointment.domain.schedule.ScheduleId;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
@@ -18,10 +21,12 @@ public class FreeSlot implements Comparable<FreeSlot> {
 
     private final ScheduleId scheduleId;
     private final Range<LocalDateTime> range;
+    private final SearchTags searchTags;
 
-    public FreeSlot(ScheduleId scheduleId, Range<LocalDateTime> range) {
+    public FreeSlot(ScheduleId scheduleId, Range<LocalDateTime> range, SearchTags searchTags) {
         this.range = range;
         this.scheduleId = scheduleId;
+        this.searchTags = searchTags;
     }
 
     public Collection<FreeSlot> splitFor(Range<LocalDateTime> range) {
@@ -69,15 +74,19 @@ public class FreeSlot implements Comparable<FreeSlot> {
     }
 
     public FreeSlot withRange(Range<LocalDateTime> newRange) {
-        return of(scheduleId, newRange);
+        return of(scheduleId, newRange, searchTags);
     }
 
-    public static FreeSlot of(ScheduleId scheduleId, Range<LocalDateTime> range) {
-        return new FreeSlot(scheduleId, range);
+    public static FreeSlot of(ScheduleId scheduleId, Range<LocalDateTime> range, SearchTags searchTags) {
+        return new FreeSlot(scheduleId, range, searchTags);
     }
 
     public boolean validForAppointment(Appointment appointment) {
         return this.scheduleId().equals(appointment.scheduleId()) && this.contains(appointment.range());
+    }
+
+    public boolean matches(SearchTags searchTags) {
+        return this.searchTags.matches(searchTags);
     }
 
     private class AppointmentsIterator implements Iterator<Appointment> {

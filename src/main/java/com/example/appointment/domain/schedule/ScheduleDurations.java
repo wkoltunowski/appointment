@@ -1,4 +1,6 @@
-package com.example.appointment.domain;
+package com.example.appointment.domain.schedule;
+
+import com.example.appointment.domain.schedule.ScheduleId;
 
 import java.time.Duration;
 import java.util.HashMap;

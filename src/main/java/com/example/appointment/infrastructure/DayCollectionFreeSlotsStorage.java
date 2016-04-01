@@ -1,9 +1,9 @@
 package com.example.appointment.infrastructure;
 
 import com.example.appointment.domain.DaysDomain;
-import com.example.appointment.domain.FreeSlot;
-import com.example.appointment.domain.FreeSlotsStorage;
-import com.example.appointment.domain.ScheduleId;
+import com.example.appointment.domain.freeslot.FreeSlot;
+import com.example.appointment.domain.freeslot.FreeSlotsStorage;
+import com.example.appointment.domain.schedule.ScheduleId;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.Range;
 
@@ -11,18 +11,29 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 
 public class DayCollectionFreeSlotsStorage implements FreeSlotsStorage {
 
-    private Map<LocalDate, Collection<FreeSlot>> index = new HashMap<>();
+    private final Map<LocalDate, Collection<FreeSlot>> index = new HashMap<>();
     private LocalDate maxDay = LocalDate.MIN;
-    private Map<ScheduleId, Collection<FreeSlot>> indexByScheduleId = new HashMap<>();
+    private final Map<ScheduleId, List<FreeSlot>> slotByScheduleId = new HashMap<>();
 
     @Override
     public void remove(FreeSlot freeSlot) {
-        index.get(freeSlot.start().toLocalDate()).remove(freeSlot);
-//    indexByScheduleId.get(freeSlot.getScheduleId()).remove(freeSlot);
+        LocalDate day = freeSlot.start().toLocalDate();
+        Collection<FreeSlot> freeSlots = index.get(day);
+        freeSlots.remove(freeSlot);
+        if (freeSlots.isEmpty()) {
+            index.remove(day);
+        }
+        ScheduleId scheduleId = freeSlot.scheduleId();
+        List<FreeSlot> scheduleSlots = slotByScheduleId.get(scheduleId);
+        scheduleSlots.remove(freeSlot);
+        if (scheduleSlots.isEmpty()) {
+            slotByScheduleId.remove(scheduleId);
+        }
     }
 
     @Override
@@ -49,20 +60,31 @@ public class DayCollectionFreeSlotsStorage implements FreeSlotsStorage {
         if (slotStartDay.isAfter(maxDay)) {
             maxDay = slotStartDay;
         }
+
+        List<FreeSlot> scheduleSlots = Optional.ofNullable(slotByScheduleId.get(of.scheduleId())).orElseGet(() -> {
+            List<FreeSlot> newList = newArrayList();
+            slotByScheduleId.put(of.scheduleId(), newList);
+            return newList;
+        });
+        scheduleSlots.add(of);
     }
 
     @Override
     public Iterable<FreeSlot> findAfter(LocalDate localDate) {
-
         if (!localDate.isAfter(maxDay)) {
-            Stream<FreeSlot> collectionStream =
-                    ContiguousSet.create(Range.closed(localDate, maxDay), DaysDomain.daysDomain())
-                            .stream()
-                            .map(day -> dayFreeSlots(day))
-                            .flatMap(Collection::stream);
+            Stream<FreeSlot> collectionStream = ContiguousSet
+                    .create(Range.closed(localDate, maxDay), DaysDomain.daysDomain())
+                    .stream()
+                    .map(this::dayFreeSlots)
+                    .flatMap(Collection::stream);
             return collectionStream::iterator;
         }
         return () -> Collections.<FreeSlot>emptyList().iterator();
+    }
+
+    @Override
+    public List<FreeSlot> findByScheduleId(ScheduleId scheduleId) {
+        return slotByScheduleId.get(scheduleId);
     }
 
     private Collection<FreeSlot> dayFreeSlots(LocalDate day) {

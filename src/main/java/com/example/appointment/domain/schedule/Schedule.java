@@ -1,5 +1,7 @@
-package com.example.appointment.domain;
+package com.example.appointment.domain.schedule;
 
+import com.example.appointment.domain.*;
+import com.example.appointment.domain.freeslot.FreeSlot;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.Range;
 
@@ -16,16 +18,18 @@ public class Schedule {
     private final ScheduleHours scheduleHours;
     private final Validity validity;
     private final Period maxReservationsInAdvance;
+    private final SearchTags searchTags;
 
-    public Schedule(ScheduleHours scheduleHours, Validity validity, ScheduleId scheduleId) {
+    public Schedule(ScheduleId scheduleId, ScheduleHours scheduleHours, Validity validity, SearchTags searchTags) {
         this.scheduleHours = scheduleHours;
         this.validity = validity;
         this.scheduleId = scheduleId;
         this.maxReservationsInAdvance = Period.ofDays(90);
+        this.searchTags = searchTags;
     }
 
     public Schedule(ScheduleId scheduleId, ScheduleHours scheduleHours) {
-        this(scheduleHours, Validity.infinite(), scheduleId);
+        this(scheduleId, scheduleHours, Validity.infinite(), SearchTags.empty());
     }
 
 
@@ -34,8 +38,8 @@ public class Schedule {
 
     }
 
-    public FreeSlot buildFreeSlot(LocalDate date) {
-        return FreeSlot.of(scheduleId, createRange(date));
+    public FreeSlot buildFreeSlot(LocalDate date, SearchTags searchTags) {
+        return FreeSlot.of(scheduleId, createRange(date), searchTags);
     }
 
     public List<FreeSlot> buildFreeSlots(LocalDate startingFrom) {
@@ -46,7 +50,15 @@ public class Schedule {
         Range<LocalDate> rangeValidityIntersection = validity.range().intersection(range);
         return ContiguousSet.create(rangeValidityIntersection, DaysDomain.daysDomain())
                 .stream()
-                .map(this::buildFreeSlot)
+                .map(day -> buildFreeSlot(day, searchTags))
                 .collect(toList());
+    }
+
+    public SearchTags searchTags() {
+        return searchTags;
+    }
+
+    public ScheduleId id() {
+        return scheduleId;
     }
 }

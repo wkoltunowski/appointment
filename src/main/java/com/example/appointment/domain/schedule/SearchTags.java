@@ -1,4 +1,4 @@
-package com.example.appointment;
+package com.example.appointment.domain.schedule;
 
 import java.util.Collections;
 import java.util.Map;
@@ -39,15 +39,30 @@ public class SearchTags {
         return get(":LOCATION");
     }
 
-    private String get(String key) {
-        return Optional.ofNullable(map.get(key)).orElse("");
-    }
-
     public SearchTags forDoctor(String doctor) {
         return addTag(":DOCTOR", doctor);
     }
 
     public String getDoctor() {
         return get(":DOCTOR");
+    }
+
+    private String get(String key) {
+        return Optional.ofNullable(map.get(key)).orElse("");
+    }
+
+    public boolean matches(SearchTags other) {
+        boolean result = true;
+        for (String otherKey : other.map.keySet()) {
+            String otherValue = Optional.ofNullable(other.map.get(otherKey)).orElse("");
+            String thisValue = Optional.ofNullable(map.get(otherKey)).orElse("");
+            result = result && otherValue.equals(thisValue);
+        }
+
+        return result;
+    }
+
+    public static SearchTags empty() {
+        return new SearchTags();
     }
 }

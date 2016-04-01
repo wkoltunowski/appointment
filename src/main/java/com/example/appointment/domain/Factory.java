@@ -1,13 +1,17 @@
 package com.example.appointment.domain;
 
+import com.example.appointment.application.DefineScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.ReserveAppointmentService;
-import com.example.appointment.application.DefineScheduleService;
+import com.example.appointment.domain.freeslot.FreeSlotsStorage;
+import com.example.appointment.domain.schedule.ScheduleDurations;
+import com.example.appointment.domain.schedule.ScheduleRepository;
 import com.example.appointment.infrastructure.DayCollectionFreeSlotsStorage;
 
 public class Factory {
     private DayCollectionFreeSlotsStorage storage;
     private ScheduleDurations scheduleDurations;
+    private ScheduleRepository scheduleRepository;
 
     public FindFreeAppointmentsService findFreeService(int maxResultCount) {
         return new FindFreeAppointmentsService(maxResultCount, scheduleDurations(), storage());
@@ -28,10 +32,17 @@ public class Factory {
     }
 
     public DefineScheduleService scheduleDefinitionService() {
-        return new DefineScheduleService(scheduleDurations(), storage());
+        return new DefineScheduleService(scheduleDurations(), storage(), scheduleRepository());
     }
 
     public ReserveAppointmentService reservationService() {
         return new ReserveAppointmentService(storage());
+    }
+
+    public ScheduleRepository scheduleRepository() {
+        if (scheduleRepository == null) {
+            scheduleRepository = new ScheduleRepository();
+        }
+        return scheduleRepository;
     }
 }

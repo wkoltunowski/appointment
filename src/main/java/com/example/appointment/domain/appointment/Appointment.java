@@ -1,5 +1,6 @@
-package com.example.appointment.domain;
+package com.example.appointment.domain.appointment;
 
+import com.example.appointment.domain.schedule.ScheduleId;
 import com.google.common.collect.Range;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
