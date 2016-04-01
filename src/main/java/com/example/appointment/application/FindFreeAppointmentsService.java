@@ -4,6 +4,7 @@ import com.example.appointment.domain.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -39,5 +40,15 @@ public class FindFreeAppointmentsService {
     private Function<FreeSlot, Stream<Appointment>> appointmentsStream(LocalDateTime startingDate) {
         return fs -> StreamSupport
                 .stream(fs.appointmentsFor(startingDate, this.scheduleDurations.durationFor(fs.scheduleId())).spliterator(), false);
+    }
+
+    public FreeAppointments findFirstFree(LocalDateTime startingFrom, Collection<ScheduleId> scheduleIds) {
+        List<Appointment> appointments = StreamSupport
+                .stream(findFreeSlotsAfter(startingFrom.toLocalDate()).spliterator(), false)
+                .filter(fs -> scheduleIds.isEmpty() || scheduleIds.contains(fs.scheduleId()))
+                .flatMap(appointmentsStream(startingFrom))
+                .limit(firstFreeCount)
+                .collect(toList());
+        return FreeAppointments.of(appointments);
     }
 }
