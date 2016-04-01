@@ -5,7 +5,6 @@ import com.google.common.collect.Range;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.Period;
 import java.util.List;
 
@@ -14,14 +13,12 @@ import static java.util.stream.Collectors.toList;
 public class Schedule {
 
     private final ScheduleId scheduleId;
-    private final LocalTime start;
-    private final LocalTime end;
+    private final ScheduleHours scheduleHours;
     private final Validity validity;
     private final Period maxReservationsInAdvance;
 
     public Schedule(ScheduleHours scheduleHours, Validity validity, ScheduleId scheduleId) {
-        this.start = scheduleHours.getStartTime();
-        this.end = scheduleHours.getEndTime();
+        this.scheduleHours = scheduleHours;
         this.validity = validity;
         this.scheduleId = scheduleId;
         this.maxReservationsInAdvance = Period.ofDays(90);
@@ -31,15 +28,10 @@ public class Schedule {
         this(scheduleHours, Validity.infinite(), scheduleId);
     }
 
-    public boolean validFor(LocalDate date) {
-        return validity.validFor(date);
-    }
 
     private Range<LocalDateTime> createRange(LocalDate date) {
-        if (!start.isAfter(end)) {
-            return Range.closedOpen(date.atTime(start), date.atTime(end));
-        }
-        return Range.closedOpen(date.atTime(start), date.plusDays(1).atTime(end));
+        return scheduleHours.toRange(date);
+
     }
 
     public FreeSlot buildFreeSlot(LocalDate date) {
@@ -51,9 +43,9 @@ public class Schedule {
     }
 
     private List<FreeSlot> buildSlots(Range<LocalDate> range) {
-        return ContiguousSet.create(range, DaysDomain.daysDomain())
+        Range<LocalDate> rangeValidityIntersection = validity.range().intersection(range);
+        return ContiguousSet.create(rangeValidityIntersection, DaysDomain.daysDomain())
                 .stream()
-                .filter(this::validFor)
                 .map(this::buildFreeSlot)
                 .collect(toList());
     }

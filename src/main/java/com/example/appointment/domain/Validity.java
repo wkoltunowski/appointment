@@ -20,7 +20,7 @@ public class Validity {
         return new Validity(Range.closed(from, to));
     }
 
-    public boolean validFor(LocalDate date) {
-        return range.contains(date);
+    public Range<LocalDate> range() {
+        return range;
     }
 }

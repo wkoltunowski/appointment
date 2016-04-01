@@ -1,5 +1,9 @@
 package com.example.appointment.domain;
 
+import com.google.common.collect.Range;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class ScheduleHours {
@@ -11,12 +15,12 @@ public class ScheduleHours {
         this.endTime = endTime;
     }
 
-    public LocalTime getStartTime() {
-        return startTime;
-    }
 
-    public LocalTime getEndTime() {
-        return endTime;
+    public Range<LocalDateTime> toRange(LocalDate date) {
+        if (!startTime.isAfter(endTime)) {
+            return Range.closedOpen(date.atTime(startTime), date.atTime(endTime));
+        }
+        return Range.closedOpen(date.atTime(startTime), date.plusDays(1).atTime(endTime));
     }
 
     public static ScheduleHours ofHours(LocalTime from, LocalTime to) {

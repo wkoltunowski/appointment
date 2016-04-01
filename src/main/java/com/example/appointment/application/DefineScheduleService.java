@@ -3,7 +3,6 @@ package com.example.appointment.application;
 import com.example.appointment.domain.*;
 
 import java.time.Duration;
-import java.time.LocalTime;
 
 import static java.time.LocalDate.now;
 
@@ -24,15 +23,15 @@ public class DefineScheduleService {
         return scheduleId;
     }
 
-    public ScheduleId addSchedule(LocalTime startTime, LocalTime endTime, Validity validity, Duration duration) {
-        ScheduleId scheduleId = addSchedule(startTime, endTime, validity);
+    public ScheduleId addSchedule(Validity validity, Duration duration, ScheduleHours scheduleHours) {
+        ScheduleId scheduleId = addSchedule(validity, scheduleHours);
         scheduleDurations.defineDuration(scheduleId, duration);
         return scheduleId;
     }
 
-    public ScheduleId addSchedule(LocalTime startTime, LocalTime endTime, Validity validity) {
+    public ScheduleId addSchedule(Validity validity, ScheduleHours scheduleHours) {
         ScheduleId scheduleId = ScheduleId.newId();
-        generateFreeSlots(new Schedule(new ScheduleHours(startTime, endTime), validity, scheduleId));
+        generateFreeSlots(new Schedule(scheduleHours, validity, scheduleId));
         return scheduleId;
     }
 

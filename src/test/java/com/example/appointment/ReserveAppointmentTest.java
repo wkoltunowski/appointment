@@ -10,7 +10,6 @@ import org.testng.annotations.Test;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import static com.example.appointment.DateTestUtils.today;
 import static com.example.appointment.DateTestUtils.tommorrow;
@@ -90,9 +89,8 @@ public class ReserveAppointmentTest {
     @Test
     public void shouldFindEmptyForFullSchedule() throws Exception {
         ScheduleId scheduleId = defineScheduleService.addSchedule(
-                LocalTime.of(8, 0), LocalTime.of(8, 30),
                 Validity.fromTo(LocalDate.now(), LocalDate.now()),
-                Duration.ofMinutes(15));
+                Duration.ofMinutes(15), ScheduleHours.ofHours("08:00-08:30"));
 
         reserveAppointmentService.reserve(appointmentFor(today(8, 0), today(8, 15), scheduleId));
         reserveAppointmentService.reserve(appointmentFor(today(8, 15), today(8, 30), scheduleId));
