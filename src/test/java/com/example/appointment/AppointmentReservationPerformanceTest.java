@@ -32,7 +32,7 @@ public class AppointmentReservationPerformanceTest {
         findFreeSlots = factory.findFreeService(50);
         defineScheduleService = factory.scheduleDefinitionService();
         reserveAppointmentService = factory.reservationService();
-        storage = factory.storage();
+        storage = factory.freeSlotRepository();
     }
 
     @Test

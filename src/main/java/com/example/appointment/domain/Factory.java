@@ -10,12 +10,12 @@ import com.example.appointment.infrastructure.DayCollectionFreeSlotRepository;
 import com.example.appointment.infrastructure.InMemoryScheduleRepository;
 
 public class Factory {
-    private DayCollectionFreeSlotRepository storage;
+    private DayCollectionFreeSlotRepository freeSlotRepository;
     private ScheduleDurations scheduleDurations;
     private ScheduleRepository scheduleRepository;
 
     public FindFreeAppointmentsService findFreeService(int maxResultCount) {
-        return new FindFreeAppointmentsService(maxResultCount, scheduleDurations(), storage());
+        return new FindFreeAppointmentsService(maxResultCount, scheduleDurations(), freeSlotRepository());
     }
 
     public ScheduleDurations scheduleDurations() {
@@ -25,19 +25,19 @@ public class Factory {
         return scheduleDurations;
     }
 
-    public FreeSlotRepository storage() {
-        if (storage == null) {
-            storage = new DayCollectionFreeSlotRepository();
+    public FreeSlotRepository freeSlotRepository() {
+        if (freeSlotRepository == null) {
+            freeSlotRepository = new DayCollectionFreeSlotRepository();
         }
-        return storage;
+        return freeSlotRepository;
     }
 
     public DefineScheduleService scheduleDefinitionService() {
-        return new DefineScheduleService(scheduleDurations(), storage(), scheduleRepository());
+        return new DefineScheduleService(scheduleDurations(), freeSlotRepository(), scheduleRepository());
     }
 
     public ReserveAppointmentService reservationService() {
-        return new ReserveAppointmentService(storage());
+        return new ReserveAppointmentService(freeSlotRepository());
     }
 
     public ScheduleRepository scheduleRepository() {

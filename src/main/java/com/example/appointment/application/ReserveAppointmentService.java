@@ -9,20 +9,20 @@ import com.example.appointment.domain.schedule.ScheduleId;
 import java.util.List;
 
 public class ReserveAppointmentService {
-    private final FreeSlotRepository storage;
+    private final FreeSlotRepository freeSlotRepository;
 
-    public ReserveAppointmentService(FreeSlotRepository storage) {
-        this.storage = storage;
+    public ReserveAppointmentService(FreeSlotRepository freeSlotRepository) {
+        this.freeSlotRepository = freeSlotRepository;
     }
 
     public void reserve(Appointment appointment) {
         ScheduleId scheduleId = appointment.scheduleId();
-        List<FreeSlot> scheduleSlots = this.storage.findByScheduleId(scheduleId);
+        List<FreeSlot> scheduleSlots = this.freeSlotRepository.findByScheduleId(scheduleId);
         FreeSlot freeSlot = scheduleSlots.stream().filter(fs -> fs.contains(appointment.range()))
                 .findFirst()
                 .orElseThrow(AppointmentTakenException::new);
-        this.storage.remove(freeSlot);
-        this.storage.addAll(freeSlot.splitFor(appointment.range()));
+        this.freeSlotRepository.remove(freeSlot);
+        this.freeSlotRepository.addAll(freeSlot.splitFor(appointment.range()));
     }
 
 
