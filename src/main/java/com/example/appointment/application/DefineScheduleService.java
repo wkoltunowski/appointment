@@ -1,6 +1,6 @@
 package com.example.appointment.application;
 
-import com.example.appointment.domain.freeslot.FreeSlotsStorage;
+import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.SearchTags;
 import com.example.appointment.domain.schedule.*;
 
@@ -11,10 +11,10 @@ import static java.time.LocalDate.now;
 public class DefineScheduleService {
 
     private final ScheduleDurations scheduleDurations;
-    private final FreeSlotsStorage storage;
+    private final FreeSlotRepository storage;
     private final ScheduleRepository scheduleRepository;
 
-    public DefineScheduleService(ScheduleDurations scheduleDurations, FreeSlotsStorage storage, ScheduleRepository scheduleRepository) {
+    public DefineScheduleService(ScheduleDurations scheduleDurations, FreeSlotRepository storage, ScheduleRepository scheduleRepository) {
         this.scheduleDurations = scheduleDurations;
         this.storage = storage;
         this.scheduleRepository = scheduleRepository;

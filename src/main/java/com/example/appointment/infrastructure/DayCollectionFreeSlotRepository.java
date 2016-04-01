@@ -2,7 +2,7 @@ package com.example.appointment.infrastructure;
 
 import com.example.appointment.domain.DaysDomain;
 import com.example.appointment.domain.freeslot.FreeSlot;
-import com.example.appointment.domain.freeslot.FreeSlotsStorage;
+import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.ScheduleId;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.Range;
@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 
-public class DayCollectionFreeSlotsStorage implements FreeSlotsStorage {
+public class DayCollectionFreeSlotRepository implements FreeSlotRepository {
 
     private final Map<LocalDate, Collection<FreeSlot>> index = new HashMap<>();
     private LocalDate maxDay = LocalDate.MIN;

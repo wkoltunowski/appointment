@@ -3,7 +3,7 @@ package com.example.appointment.application;
 import com.example.appointment.domain.appointment.Appointment;
 import com.example.appointment.domain.appointment.FreeAppointments;
 import com.example.appointment.domain.freeslot.FreeSlot;
-import com.example.appointment.domain.freeslot.FreeSlotsStorage;
+import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.ScheduleDurations;
 import com.example.appointment.domain.schedule.SearchTags;
 
@@ -20,9 +20,9 @@ public class FindFreeAppointmentsService {
 
     private final int firstFreeCount;
     private final ScheduleDurations scheduleDurations;
-    private final FreeSlotsStorage storage;
+    private final FreeSlotRepository storage;
 
-    public FindFreeAppointmentsService(int firstFreeCount, ScheduleDurations scheduleDurations, FreeSlotsStorage storage) {
+    public FindFreeAppointmentsService(int firstFreeCount, ScheduleDurations scheduleDurations, FreeSlotRepository storage) {
         this.firstFreeCount = firstFreeCount;
         this.scheduleDurations = scheduleDurations;
         this.storage = storage;

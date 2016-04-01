@@ -5,7 +5,7 @@ import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.ReserveAppointmentService;
 import com.example.appointment.domain.Factory;
 import com.example.appointment.domain.appointment.FreeAppointments;
-import com.example.appointment.domain.freeslot.FreeSlotsStorage;
+import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.ScheduleHours;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
@@ -24,7 +24,7 @@ public class AppointmentReservationPerformanceTest {
     private FindFreeAppointmentsService findFreeSlots;
     private DefineScheduleService defineScheduleService;
     private ReserveAppointmentService reserveAppointmentService;
-    private FreeSlotsStorage storage;
+    private FreeSlotRepository storage;
 
     @BeforeMethod
     public void setUp() throws Exception {

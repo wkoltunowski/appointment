@@ -3,13 +3,14 @@ package com.example.appointment.domain;
 import com.example.appointment.application.DefineScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.ReserveAppointmentService;
-import com.example.appointment.domain.freeslot.FreeSlotsStorage;
+import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.ScheduleDurations;
 import com.example.appointment.domain.schedule.ScheduleRepository;
-import com.example.appointment.infrastructure.DayCollectionFreeSlotsStorage;
+import com.example.appointment.infrastructure.DayCollectionFreeSlotRepository;
+import com.example.appointment.infrastructure.InMemoryScheduleRepository;
 
 public class Factory {
-    private DayCollectionFreeSlotsStorage storage;
+    private DayCollectionFreeSlotRepository storage;
     private ScheduleDurations scheduleDurations;
     private ScheduleRepository scheduleRepository;
 
@@ -24,9 +25,9 @@ public class Factory {
         return scheduleDurations;
     }
 
-    public FreeSlotsStorage storage() {
+    public FreeSlotRepository storage() {
         if (storage == null) {
-            storage = new DayCollectionFreeSlotsStorage();
+            storage = new DayCollectionFreeSlotRepository();
         }
         return storage;
     }
@@ -41,7 +42,7 @@ public class Factory {
 
     public ScheduleRepository scheduleRepository() {
         if (scheduleRepository == null) {
-            scheduleRepository = new ScheduleRepository();
+            scheduleRepository = new InMemoryScheduleRepository();
         }
         return scheduleRepository;
     }
