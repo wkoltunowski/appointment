@@ -1,4 +1,4 @@
-package com.example.appointment.domain.appointment;
+package com.example.appointment.domain.freeslot;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -11,7 +11,7 @@ import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
 
-public class FreeAppointments {
+public class Appointments {
 
     private final TreeSet<Appointment> appointments;
     public static final Comparator<Appointment> START_THEN_SCHEDULE_ID_COMPARATOR =
@@ -22,18 +22,17 @@ public class FreeAppointments {
         return appointments;
     }
 
-    public FreeAppointments(Collection<Appointment> appointments) {
-
+    public Appointments(Collection<Appointment> appointments) {
         this.appointments = new TreeSet<>(START_THEN_SCHEDULE_ID_COMPARATOR);
         this.appointments.addAll(appointments);
     }
 
-    public static FreeAppointments of(List<Appointment> appointments) {
-        return new FreeAppointments(appointments);
+    public static Appointments of(List<Appointment> appointments) {
+        return new Appointments(appointments);
     }
 
-    public static FreeAppointments of(Appointment... appointments) {
-        return new FreeAppointments(asList(appointments));
+    public static Appointments of(Appointment... appointments) {
+        return of(asList(appointments));
     }
 
 

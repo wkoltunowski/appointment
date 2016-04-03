@@ -1,8 +1,7 @@
 package com.example.appointment.domain.freeslot;
 
-import com.example.appointment.domain.appointment.Appointment;
-import com.example.appointment.domain.schedule.SearchTags;
 import com.example.appointment.domain.schedule.ScheduleId;
+import com.example.appointment.domain.schedule.SearchTags;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
@@ -81,9 +80,6 @@ public class FreeSlot implements Comparable<FreeSlot> {
         return new FreeSlot(scheduleId, range, searchTags);
     }
 
-    public boolean validForAppointment(Appointment appointment) {
-        return this.scheduleId().equals(appointment.scheduleId()) && this.contains(appointment.range());
-    }
 
     public boolean matches(SearchTags searchTags) {
         return this.searchTags.matches(searchTags);

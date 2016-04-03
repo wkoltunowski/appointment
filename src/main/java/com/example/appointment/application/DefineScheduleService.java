@@ -1,7 +1,6 @@
 package com.example.appointment.application;
 
 import com.example.appointment.domain.freeslot.FreeSlotRepository;
-import com.example.appointment.domain.schedule.SearchTags;
 import com.example.appointment.domain.schedule.*;
 
 import java.time.Duration;
@@ -47,11 +46,7 @@ public class DefineScheduleService {
     }
 
     private void generateFreeSlots(Schedule schedule) {
-        scheduleRepository.save(schedule);
+        this.scheduleRepository.save(schedule);
         this.storage.addAll(schedule.buildFreeSlots(now()));
-    }
-
-    public Schedule findScheduleById(ScheduleId scheduleId) {
-        return scheduleRepository.findById(scheduleId);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.appointment.infrastructure;
 
 import com.example.appointment.domain.DaysDomain;
+import com.example.appointment.domain.freeslot.Appointment;
 import com.example.appointment.domain.freeslot.FreeSlot;
 import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.ScheduleId;
@@ -83,8 +84,11 @@ public class DayCollectionFreeSlotRepository implements FreeSlotRepository {
     }
 
     @Override
-    public List<FreeSlot> findByScheduleId(ScheduleId scheduleId) {
-        return slotByScheduleId.get(scheduleId);
+    public Optional<FreeSlot> findByAppointment(Appointment appointment) {
+        return Optional.ofNullable(slotByScheduleId.get(appointment.scheduleId())).orElse(emptyList())
+                .stream()
+                .filter(fs -> fs.contains(appointment.range()))
+                .findFirst();
     }
 
     private Collection<FreeSlot> dayFreeSlots(LocalDate day) {

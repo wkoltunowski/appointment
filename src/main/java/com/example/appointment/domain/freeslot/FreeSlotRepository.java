@@ -1,10 +1,13 @@
 package com.example.appointment.domain.freeslot;
 
 import com.example.appointment.domain.schedule.ScheduleId;
+import com.google.common.collect.Range;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface FreeSlotRepository {
 
@@ -16,5 +19,5 @@ public interface FreeSlotRepository {
 
     Iterable<FreeSlot> findAfter(LocalDate localDate);
 
-    List<FreeSlot> findByScheduleId(ScheduleId scheduleId);
+    Optional<FreeSlot> findByAppointment(Appointment appointment);
 }

@@ -1,4 +1,4 @@
-package com.example.appointment.domain;
+package com.example.appointment;
 
 import com.example.appointment.application.DefineScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;

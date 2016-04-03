@@ -1,4 +1,4 @@
-package com.example.appointment.domain.appointment;
+package com.example.appointment.domain.freeslot;
 
 import com.example.appointment.domain.schedule.ScheduleId;
 import com.google.common.collect.Range;
