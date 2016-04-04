@@ -95,22 +95,20 @@ public class FreeSlot implements Comparable<FreeSlot> {
         public AppointmentsIterator(FreeSlot fs, LocalDateTime startingDate, Duration duration) {
             this.fs = fs;
             this.duration = duration;
-            this.date = calcStartingDate(fs.start(), startingDate, duration);
+            this.date = calcStartingDate(startingDate);
         }
 
-        private LocalDateTime calcStartingDate(LocalDateTime fsStart, LocalDateTime appointmentDate, Duration duration) {
-
-            long appointmentsFromSlotStart = calculateAppointmentNo(fsStart, appointmentDate, duration);
-            return fsStart.plus(duration.multipliedBy(appointmentsFromSlotStart));
+        private LocalDateTime calcStartingDate(LocalDateTime appointmentDate) {
+            long appointmentsFromSlotStart = calculateAppointmentNo(appointmentDate);
+            return fs.start().plus(this.duration.multipliedBy(appointmentsFromSlotStart));
         }
 
-        private long calculateAppointmentNo(LocalDateTime fsStart, LocalDateTime startingDate, Duration appointmentDuration) {
-            LocalDateTime max = ObjectUtils.max(startingDate, fsStart);
-            long betweenSeconds = Duration.between(fsStart, max).getSeconds();
-            long durationSeconds = appointmentDuration.getSeconds();
-
-            long appointmentFromStart = betweenSeconds / durationSeconds;
-            int mod = (betweenSeconds % durationSeconds) > 0 ? 1 : 0;
+        private long calculateAppointmentNo(LocalDateTime startingDate) {
+            LocalDateTime max = ObjectUtils.max(startingDate, fs.start());
+            long secondsBetweenStartMax = Duration.between(fs.start(), max).getSeconds();
+            long durationInSeconds = this.duration.getSeconds();
+            long appointmentFromStart = secondsBetweenStartMax / durationInSeconds;
+            int mod = (secondsBetweenStartMax % durationInSeconds) > 0 ? 1 : 0;
             return appointmentFromStart + mod;
         }
 

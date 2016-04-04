@@ -5,7 +5,7 @@ import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.ReserveAppointmentService;
 import com.example.appointment.domain.freeslot.Appointments;
 import com.example.appointment.domain.freeslot.FreeSlotRepository;
-import com.example.appointment.domain.schedule.ScheduleHours;
+import com.example.appointment.domain.schedule.WorkingHours;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import org.testng.annotations.BeforeMethod;
@@ -65,7 +65,7 @@ public class AppointmentReservationPerformanceTest {
     private void generateNSchedules(int n) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         for (int i = 0; i < n; i++) {
-            defineScheduleService.addSchedule(ScheduleHours.ofHours("08:00-16:00"), Duration.ofMinutes(15));
+            defineScheduleService.addSchedule(WorkingHours.ofHours("08:00-16:00"), Duration.ofMinutes(15));
         }
         System.out.println("free slots count\t\t\t : " + storage.size());
         stopwatch.stop();

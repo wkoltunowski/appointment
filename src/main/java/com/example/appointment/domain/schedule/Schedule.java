@@ -1,13 +1,12 @@
 package com.example.appointment.domain.schedule;
 
-import com.example.appointment.domain.*;
+import com.example.appointment.domain.DaysDomain;
 import com.example.appointment.domain.freeslot.FreeSlot;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.Range;
 
+import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -15,50 +14,41 @@ import static java.util.stream.Collectors.toList;
 public class Schedule {
 
     private final ScheduleId scheduleId;
-    private final ScheduleHours scheduleHours;
+    private final WorkingHours workingHours;
+    private final Duration appointmentDuration;
     private final Validity validity;
-    private final Period maxReservationsInAdvance;
     private final SearchTags searchTags;
 
-    public Schedule(ScheduleId scheduleId, ScheduleHours scheduleHours, Validity validity, SearchTags searchTags) {
-        this.scheduleHours = scheduleHours;
+    public Schedule(ScheduleId scheduleId, WorkingHours workingHours, Validity validity, SearchTags searchTags, Duration duration) {
+        this.workingHours = workingHours;
         this.validity = validity;
         this.scheduleId = scheduleId;
-        this.maxReservationsInAdvance = Period.ofDays(90);
         this.searchTags = searchTags;
-    }
-
-    public Schedule(ScheduleId scheduleId, ScheduleHours scheduleHours) {
-        this(scheduleId, scheduleHours, Validity.infinite(), SearchTags.empty());
+        this.appointmentDuration = duration;
     }
 
 
-    private Range<LocalDateTime> createRange(LocalDate date) {
-        return scheduleHours.toRange(date);
-
-    }
-
-    public FreeSlot buildFreeSlot(LocalDate date, SearchTags searchTags) {
-        return FreeSlot.of(scheduleId, createRange(date), searchTags);
-    }
-
-    public List<FreeSlot> buildFreeSlots(LocalDate startingFrom) {
-        return buildSlots(Range.closed(startingFrom, startingFrom.plus(maxReservationsInAdvance)));
-    }
-
-    private List<FreeSlot> buildSlots(Range<LocalDate> range) {
-        Range<LocalDate> rangeValidityIntersection = validity.range().intersection(range);
-        return ContiguousSet.create(rangeValidityIntersection, DaysDomain.daysDomain())
+    public List<FreeSlot> buildFreeSlots(Range<LocalDate> range) {
+        Range<LocalDate> rangeValidityIntersection = validity
+                .range()
+                .intersection(range);
+        return ContiguousSet
+                .create(rangeValidityIntersection, DaysDomain.daysDomain())
                 .stream()
-                .map(day -> buildFreeSlot(day, searchTags))
+                .map(this::buildFreeSlot)
                 .collect(toList());
     }
 
-    public SearchTags searchTags() {
-        return searchTags;
+    private FreeSlot buildFreeSlot(LocalDate date) {
+        return FreeSlot.of(scheduleId, workingHours.toRange(date), this.searchTags);
     }
 
-    public ScheduleId id() {
+
+    public ScheduleId scheduleId() {
         return scheduleId;
+    }
+
+    public Duration duration() {
+        return appointmentDuration;
     }
 }

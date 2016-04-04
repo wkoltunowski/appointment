@@ -5,7 +5,7 @@ import com.example.appointment.application.FindFreeSlotsService;
 import com.example.appointment.domain.SearchFreeSlotsCriteria;
 import com.example.appointment.domain.freeslot.Appointment;
 import com.example.appointment.domain.freeslot.Appointments;
-import com.example.appointment.domain.schedule.ScheduleHours;
+import com.example.appointment.domain.schedule.WorkingHours;
 import com.example.appointment.domain.schedule.ScheduleId;
 import com.example.appointment.domain.schedule.SearchTags;
 import org.testng.annotations.BeforeMethod;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 import static com.example.appointment.DateTestUtils.tommorrow;
 import static com.example.appointment.DateTestUtils.tommorrowAt;
-import static com.example.appointment.domain.schedule.ScheduleHours.ofHours;
+import static com.example.appointment.domain.schedule.WorkingHours.ofHours;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -79,7 +79,7 @@ public class SearchFreeAppointmentTest {
     }
 
 
-    private ScheduleId addSchedule(ScheduleHours scheduleHours, SearchTags searchTags) {
-        return defineScheduleService.addSchedule(scheduleHours, Duration.ofMinutes(15), searchTags);
+    private ScheduleId addSchedule(WorkingHours workingHours, SearchTags searchTags) {
+        return defineScheduleService.addSchedule(workingHours, Duration.ofMinutes(15), searchTags);
     }
 }

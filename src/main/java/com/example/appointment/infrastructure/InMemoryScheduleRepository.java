@@ -18,6 +18,6 @@ public class InMemoryScheduleRepository implements ScheduleRepository {
 
     @Override
     public void save(Schedule schedule) {
-        this.schedules.put(schedule.id(), schedule);
+        this.schedules.put(schedule.scheduleId(), schedule);
     }
 }

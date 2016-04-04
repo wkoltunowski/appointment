@@ -7,6 +7,7 @@ import java.util.Optional;
 import static com.google.common.collect.Maps.newHashMap;
 
 public class SearchTags {
+    private static final SearchTags EMPTY = new SearchTags();
     private Map<String, String> map;
 
     public SearchTags() {
@@ -27,25 +28,14 @@ public class SearchTags {
         return addTag(":SERVICE", service);
     }
 
-    public String getService() {
-        return get(":SERVICE");
-    }
-
     public SearchTags forLocation(String location) {
         return addTag(":LOCATION", location);
-    }
-
-    public String getLocation() {
-        return get(":LOCATION");
     }
 
     public SearchTags forDoctor(String doctor) {
         return addTag(":DOCTOR", doctor);
     }
 
-    public String getDoctor() {
-        return get(":DOCTOR");
-    }
 
     private String get(String key) {
         return Optional.ofNullable(map.get(key)).orElse("");
@@ -54,8 +44,8 @@ public class SearchTags {
     public boolean matches(SearchTags other) {
         boolean result = true;
         for (String otherKey : other.map.keySet()) {
-            String otherValue = Optional.ofNullable(other.map.get(otherKey)).orElse("");
-            String thisValue = Optional.ofNullable(map.get(otherKey)).orElse("");
+            String otherValue = other.get(otherKey);
+            String thisValue = get(otherKey);
             result = result && otherValue.equals(thisValue);
         }
 
@@ -63,6 +53,6 @@ public class SearchTags {
     }
 
     public static SearchTags empty() {
-        return new SearchTags();
+        return EMPTY;
     }
 }

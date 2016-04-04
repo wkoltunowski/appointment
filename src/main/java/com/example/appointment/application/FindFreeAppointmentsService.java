@@ -35,8 +35,9 @@ public class FindFreeAppointmentsService {
     }
 
     public Appointments findFirstFree(LocalDateTime startingFrom, SearchTags searchTags) {
+        LocalDate startingDay = startingFrom.toLocalDate();
         List<Appointment> appointments = StreamSupport
-                .stream(findFreeSlotsAfter(startingFrom.toLocalDate()).spliterator(), false)
+                .stream(this.storage.findAfter(startingDay).spliterator(), false)
                 .filter(fs -> fs.matches(searchTags))
                 .flatMap(appointmentsStream(startingFrom))
                 .limit(firstFreeCount)
@@ -53,7 +54,4 @@ public class FindFreeAppointmentsService {
     }
 
 
-    private Iterable<FreeSlot> findFreeSlotsAfter(LocalDate startingDay) {
-        return this.storage.findAfter(startingDay);
-    }
 }

@@ -6,11 +6,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class ScheduleHours {
+public class WorkingHours {
     private final LocalTime startTime;
     private final LocalTime endTime;
 
-    public ScheduleHours(LocalTime startTime, LocalTime endTime) {
+    public WorkingHours(LocalTime startTime, LocalTime endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -23,15 +23,15 @@ public class ScheduleHours {
         return Range.closedOpen(date.atTime(startTime), date.plusDays(1).atTime(endTime));
     }
 
-    public static ScheduleHours ofHours(LocalTime from, LocalTime to) {
-        return new ScheduleHours(from, to);
+    public static WorkingHours ofHours(LocalTime from, LocalTime to) {
+        return new WorkingHours(from, to);
     }
 
-    public static ScheduleHours ofHours(String hours) {
+    public static WorkingHours ofHours(String hours) {
         String[] split = hours.split("-");
         LocalTime from = LocalTime.parse(split[0]);
         LocalTime to = LocalTime.parse(split[1]);
 
-        return new ScheduleHours(from, to);
+        return new WorkingHours(from, to);
     }
 }
