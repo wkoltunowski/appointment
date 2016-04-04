@@ -80,9 +80,16 @@ public class FreeSlot implements Comparable<FreeSlot> {
         return new FreeSlot(scheduleId, range, searchTags);
     }
 
+    public SearchTags searchTags() {
+        return searchTags;
+    }
 
     public boolean matches(SearchTags searchTags) {
         return this.searchTags.matches(searchTags);
+    }
+
+    public FreeSlot withSearchTags(SearchTags searchTags) {
+        return of(scheduleId, range, searchTags);
     }
 
     private class AppointmentsIterator implements Iterator<Appointment> {

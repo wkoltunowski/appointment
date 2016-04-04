@@ -5,9 +5,8 @@ import com.example.appointment.application.FindFreeSlotsService;
 import com.example.appointment.domain.SearchFreeSlotsCriteria;
 import com.example.appointment.domain.freeslot.Appointment;
 import com.example.appointment.domain.freeslot.Appointments;
-import com.example.appointment.domain.schedule.WorkingHours;
 import com.example.appointment.domain.schedule.ScheduleId;
-import com.example.appointment.domain.schedule.SearchTags;
+import com.example.appointment.domain.schedule.WorkingHours;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -35,51 +34,102 @@ public class SearchFreeAppointmentTest {
 
     @Test
     public void shouldFindAnySlot() throws Exception {
-        ScheduleId smithSchedule = addSchedule(ofHours("08:00-15:00"), schedule().forService("consultation").forDoctor("dr. Smith, John"));
+        ScheduleId smithSchedule = addSchedule(ofHours("08:00-15:00"), drSmithJohn());
+        addService(smithSchedule, consultation());
+
         assertThat(
                 freeSlots.findFreeSlots(startingFrom(tommorrowAt(8, 0))),
                 is(Appointments.of(Appointment.appointmentFor(tommorrow("08:00-08:15"), smithSchedule))
                 ));
     }
 
-
     @Test
     public void shouldFindSlotByDoctor() throws Exception {
-        ScheduleId howardSchedule = addSchedule(ofHours("08:00-15:00"), schedule().forService("consultation").forDoctor("dr. Howard, Michael"));
-        ScheduleId smithSchedule = addSchedule(ofHours("08:00-15:00"), schedule().forService("consultation").forDoctor("dr. Smith, John"));
+        DoctorId howardMichael = drHowardMichael();
+        ScheduleId howardSchedule = addSchedule(ofHours("08:00-15:00"), howardMichael);
+        addService(howardSchedule, consultation());
+
+        ScheduleId smithSchedule = addSchedule(ofHours("08:00-15:00"), drSmithJohn());
+        addService(smithSchedule, consultation());
         assertThat(
-                freeSlots.findFreeSlots(startingFrom(tommorrowAt(8, 0)).forDoctor("dr. Howard, Michael")),
+                freeSlots.findFreeSlots(startingFrom(tommorrowAt(8, 0)).forDoctor(howardMichael)),
                 is(Appointments.of(Appointment.appointmentFor(tommorrow("08:00-08:15"), howardSchedule))));
     }
 
     @Test
     public void shouldFindSlotByService() throws Exception {
-        ScheduleId smithSchedule = addSchedule(ofHours("08:00-15:00"), schedule().forService("surgery").forDoctor("dr. Smith, John"));
-        ScheduleId howardSchedule = addSchedule(ofHours("08:00-15:00"), schedule().forService("consultation").forDoctor("dr. Howard, Michael"));
 
-        assertThat(freeSlots.findFreeSlots(startingFrom(tommorrowAt(8, 0)).forService("consultation")),
+        ScheduleId smithSchedule = addSchedule(ofHours("08:00-15:00"), drSmithJohn());
+        addService(smithSchedule, surgery());
+
+        ScheduleId howardSchedule = addSchedule(ofHours("08:00-15:00"), drHowardMichael());
+        ServiceId consultation = consultation();
+        addService(howardSchedule, consultation);
+
+        assertThat(freeSlots.findFreeSlots(startingFrom(tommorrowAt(8, 0)).forService(consultation)),
                 is(Appointments.of(Appointment.appointmentFor(tommorrow("08:00-08:15"), howardSchedule))));
+    }
+
+    private DoctorId drSmithJohn() {
+        return addDoctor("dr. Smith, John");
     }
 
     @Test
     public void shouldFindSlotByLocation() throws Exception {
-        ScheduleId smithSchedule = addSchedule(ofHours("08:00-15:00"), schedule().forService("consultation").forLocation("Warsaw").forDoctor("dr. Smith, John"));
-        ScheduleId howardSchedule = addSchedule(ofHours("08:00-15:00"), schedule().forService("consultation").forLocation("Lublin").forDoctor("dr. Howard, Michael"));
+        ScheduleId smithSchedule = addSchedule(ofHours("08:00-15:00"), drSmithJohn());
+        LocationId warsaw = warsaw();
+        addLocation(smithSchedule, warsaw);
+
+        ScheduleId howardSchedule = addSchedule(ofHours("08:00-15:00"), drHowardMichael());
+        addLocation(howardSchedule, lublin());
+
         assertThat(
-                freeSlots.findFreeSlots(startingFrom(tommorrowAt(8, 0)).forService("consultation").forLocation("Warsaw")),
+                freeSlots.findFreeSlots(startingFrom(tommorrowAt(8, 0)).forLocation(warsaw.toString())),
                 is(Appointments.of(Appointment.appointmentFor(tommorrow("08:00-08:15"), smithSchedule))));
     }
+
+    private DoctorId drHowardMichael() {
+        return addDoctor("dr. Howard, Michael");
+    }
+
 
     private SearchFreeSlotsCriteria startingFrom(LocalDateTime startingAt) {
         return new SearchFreeSlotsCriteria(startingAt);
     }
 
-    private SearchTags schedule() {
-        return new SearchTags();
+    private LocationId lublin() {
+        return LocationId.newId();
+    }
+
+    private LocationId warsaw() {
+        return LocationId.newId();
+    }
+
+    private ServiceId consultation() {
+        return ServiceId.newId();
+    }
+
+    private ServiceId surgery() {
+        return ServiceId.newId();
+    }
+
+    private DoctorId addDoctor(String description) {
+        return DoctorId.newId();
     }
 
 
-    private ScheduleId addSchedule(WorkingHours workingHours, SearchTags searchTags) {
-        return defineScheduleService.addSchedule(workingHours, Duration.ofMinutes(15), searchTags);
+    private void addLocation(ScheduleId scheduleId, LocationId location) {
+        defineScheduleService.addLocation(scheduleId, location);
     }
+
+    private void addService(ScheduleId scheduleId, ServiceId service) {
+        defineScheduleService.addService(scheduleId, service);
+    }
+
+    private ScheduleId addSchedule(WorkingHours workingHours, DoctorId doctorId) {
+        return defineScheduleService.addSchedule(workingHours, Duration.ofMinutes(15), doctorId);
+
+    }
+
+
 }

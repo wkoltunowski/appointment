@@ -6,6 +6,7 @@ import com.example.appointment.domain.freeslot.FreeSlot;
 import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.ScheduleId;
 import com.google.common.collect.ContiguousSet;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 
 import java.time.LocalDate;
@@ -85,10 +86,19 @@ public class DayCollectionFreeSlotRepository implements FreeSlotRepository {
 
     @Override
     public Optional<FreeSlot> findByAppointment(Appointment appointment) {
-        return Optional.ofNullable(slotByScheduleId.get(appointment.scheduleId())).orElse(emptyList())
+        return slotsByScheduleId(appointment.scheduleId())
                 .stream()
                 .filter(fs -> fs.contains(appointment.range()))
                 .findFirst();
+    }
+
+    private List<FreeSlot> slotsByScheduleId(ScheduleId scheduleId) {
+        return ImmutableList.copyOf(Optional.ofNullable(slotByScheduleId.get(scheduleId)).orElse(emptyList()));
+    }
+
+    @Override
+    public List<FreeSlot> findByScheduleId(ScheduleId scheduleId) {
+        return slotsByScheduleId(scheduleId);
     }
 
     private Collection<FreeSlot> dayFreeSlots(LocalDate day) {

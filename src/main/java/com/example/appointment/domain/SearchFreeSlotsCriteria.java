@@ -1,5 +1,8 @@
 package com.example.appointment.domain;
 
+import com.example.appointment.DoctorId;
+import com.example.appointment.ServiceId;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
@@ -21,8 +24,8 @@ public class SearchFreeSlotsCriteria {
         this.map = newHashMap(map);
     }
 
-    public SearchFreeSlotsCriteria forService(String service) {
-        return addTag(":SERVICE", service);
+    public SearchFreeSlotsCriteria forService(ServiceId service) {
+        return addTag(":SERVICE", service.toString());
     }
 
     public Optional<String> getService() {
@@ -40,8 +43,8 @@ public class SearchFreeSlotsCriteria {
     }
 
 
-    public SearchFreeSlotsCriteria forDoctor(final String doctor) {
-        return addTag(":DOCTOR", doctor);
+    public SearchFreeSlotsCriteria forDoctor(final DoctorId doctor) {
+        return addTag(":DOCTOR", doctor.toString());
     }
 
     public Optional<String> getDoctor() {
