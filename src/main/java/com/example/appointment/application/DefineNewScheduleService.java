@@ -1,6 +1,6 @@
 package com.example.appointment.application;
 
-import com.example.appointment.ApplicationEventing;
+import com.example.appointment.domain.ApplicationEventing;
 import com.example.appointment.domain.schedule.*;
 
 import java.time.Duration;

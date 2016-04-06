@@ -1,8 +1,8 @@
 package com.example.appointment.domain;
 
-import com.example.appointment.DoctorId;
-import com.example.appointment.ServiceId;
 import com.example.appointment.domain.freeslot.SearchTags;
+import com.example.appointment.domain.schedule.DoctorId;
+import com.example.appointment.domain.schedule.ServiceId;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -29,7 +29,7 @@ public class SearchFreeSlotsCriteria {
         return addTag(":SERVICE", service.toString());
     }
 
-    public Optional<String> getService() {
+    private Optional<String> getService() {
         return get(":SERVICE");
     }
 
@@ -48,7 +48,7 @@ public class SearchFreeSlotsCriteria {
         return addTag(":DOCTOR", doctor.toString());
     }
 
-    public Optional<String> getDoctor() {
+    private Optional<String> getDoctor() {
         return get(":DOCTOR");
     }
 
@@ -61,7 +61,7 @@ public class SearchFreeSlotsCriteria {
         return addTag(":LOCATION", location);
     }
 
-    public Optional<String> getLocation() {
+    private Optional<String> getLocation() {
         return get(":LOCATION");
     }
 

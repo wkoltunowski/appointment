@@ -4,6 +4,7 @@ import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.GenerateFreeSlotsService;
 import com.example.appointment.application.ReserveAppointmentService;
+import com.example.appointment.domain.ApplicationEventing;
 import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.FromScheduleDuration;
 import com.example.appointment.domain.schedule.ScheduleRepository;

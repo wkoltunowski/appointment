@@ -1,4 +1,4 @@
-package com.example.appointment.application;
+package com.example.appointment.domain.schedule;
 
 import com.example.appointment.domain.schedule.ScheduleId;
 

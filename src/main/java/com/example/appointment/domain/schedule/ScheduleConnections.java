@@ -1,9 +1,5 @@
 package com.example.appointment.domain.schedule;
 
-import com.example.appointment.DoctorId;
-import com.example.appointment.LocationId;
-import com.example.appointment.ServiceId;
-
 import java.time.Duration;
 import java.util.Optional;
 

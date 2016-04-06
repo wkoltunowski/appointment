@@ -2,7 +2,10 @@ package com.example.appointment;
 
 import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
+import com.example.appointment.domain.schedule.DoctorId;
+import com.example.appointment.domain.schedule.LocationId;
 import com.example.appointment.domain.SearchFreeSlotsCriteria;
+import com.example.appointment.domain.schedule.ServiceId;
 import com.example.appointment.domain.freeslot.FreeAppointment;
 import com.example.appointment.domain.freeslot.FreeAppointments;
 import com.example.appointment.domain.schedule.ScheduleConnections;
