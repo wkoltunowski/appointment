@@ -1,7 +1,7 @@
 package com.example.appointment.application;
 
-import com.example.appointment.domain.freeslot.Appointment;
-import com.example.appointment.domain.freeslot.Appointments;
+import com.example.appointment.domain.freeslot.FreeAppointment;
+import com.example.appointment.domain.freeslot.FreeAppointments;
 import com.example.appointment.domain.freeslot.FreeSlot;
 import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.ScheduleDurations;
@@ -30,25 +30,25 @@ public class FindFreeAppointmentsService {
         this.storage = storage;
     }
 
-    public Appointments findFirstFree(LocalDateTime startingFrom) {
+    public FreeAppointments findFirstFree(LocalDateTime startingFrom) {
         return findFirstFree(startingFrom, SearchTags.empty());
     }
 
-    public Appointments findFirstFree(LocalDateTime startingFrom, SearchTags searchTags) {
+    public FreeAppointments findFirstFree(LocalDateTime startingFrom, SearchTags searchTags) {
         LocalDate startingDay = startingFrom.toLocalDate();
-        List<Appointment> appointments = StreamSupport
+        List<FreeAppointment> freeAppointments = StreamSupport
                 .stream(this.storage.findAfter(startingDay).spliterator(), false)
                 .filter(fs -> fs.matches(searchTags))
                 .flatMap(appointmentsStream(startingFrom))
                 .limit(firstFreeCount)
                 .collect(toList());
-        return Appointments.of(appointments);
+        return FreeAppointments.of(freeAppointments);
     }
 
-    private Function<FreeSlot, Stream<Appointment>> appointmentsStream(LocalDateTime startingDate) {
+    private Function<FreeSlot, Stream<FreeAppointment>> appointmentsStream(LocalDateTime startingDate) {
         return fs -> {
             Duration duration = this.scheduleDurations.durationFor(fs.scheduleId());
-            Spliterator<Appointment> spliterator = fs.appointmentsFor(startingDate, duration).spliterator();
+            Spliterator<FreeAppointment> spliterator = fs.appointmentsFor(startingDate, duration).spliterator();
             return StreamSupport.stream(spliterator, false);
         };
     }

@@ -3,7 +3,7 @@ package com.example.appointment;
 import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.ReserveAppointmentService;
-import com.example.appointment.domain.freeslot.Appointments;
+import com.example.appointment.domain.freeslot.FreeAppointments;
 import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.WorkingHours;
 import com.google.common.base.Stopwatch;
@@ -48,11 +48,11 @@ public class AppointmentReservationPerformanceTest {
 
     private void reserveFirstFreeFor(Supplier<LocalDateTime> date) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        Appointments appointments = findFreeSlots.findFirstFree(date.get());
+        FreeAppointments freeAppointments = findFreeSlots.findFirstFree(date.get());
         int count = 0;
-        while (!appointments.getAppointments().isEmpty()) {
-            reserveAppointmentService.reserve(appointments.getAppointments().first());
-            appointments = findFreeSlots.findFirstFree(date.get());
+        while (!freeAppointments.getFreeAppointments().isEmpty()) {
+            reserveAppointmentService.reserve(freeAppointments.getFreeAppointments().first());
+            freeAppointments = findFreeSlots.findFirstFree(date.get());
             count++;
         }
         stopwatch.stop();

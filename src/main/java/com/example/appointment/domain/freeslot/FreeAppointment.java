@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 
 import static com.google.common.collect.Range.closedOpen;
 
-public class Appointment {
+public class FreeAppointment {
 
     private final ScheduleId scheduleId;
     private final Range<LocalDateTime> range;
 
-    public Appointment(ScheduleId scheduleId, Range<LocalDateTime> range) {
+    public FreeAppointment(ScheduleId scheduleId, Range<LocalDateTime> range) {
         this.scheduleId = scheduleId;
         this.range = range;
     }
@@ -51,15 +51,15 @@ public class Appointment {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
-    public static Appointment appointmentFor(LocalDateTime dateTime, Duration duration, ScheduleId scheduleId) {
-        return new Appointment(scheduleId, closedOpen(dateTime, dateTime.plus(duration)));
+    public static FreeAppointment appointmentFor(LocalDateTime dateTime, Duration duration, ScheduleId scheduleId) {
+        return new FreeAppointment(scheduleId, closedOpen(dateTime, dateTime.plus(duration)));
     }
 
-    public static Appointment appointmentFor(LocalDateTime start, LocalDateTime end, ScheduleId scheduleId) {
+    public static FreeAppointment appointmentFor(LocalDateTime start, LocalDateTime end, ScheduleId scheduleId) {
         return appointmentFor(closedOpen(start, end), scheduleId);
     }
 
-    public static Appointment appointmentFor(Range<LocalDateTime> range, ScheduleId scheduleId) {
-        return new Appointment(scheduleId, range);
+    public static FreeAppointment appointmentFor(Range<LocalDateTime> range, ScheduleId scheduleId) {
+        return new FreeAppointment(scheduleId, range);
     }
 }

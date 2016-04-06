@@ -55,7 +55,7 @@ public class FreeSlot implements Comparable<FreeSlot> {
     }
 
 
-    public Iterable<Appointment> appointmentsFor(LocalDateTime startingDate, Duration duration) {
+    public Iterable<FreeAppointment> appointmentsFor(LocalDateTime startingDate, Duration duration) {
         return () -> new AppointmentsIterator(this, startingDate, duration);
     }
 
@@ -88,7 +88,7 @@ public class FreeSlot implements Comparable<FreeSlot> {
         return of(scheduleId, range, searchTags);
     }
 
-    private class AppointmentsIterator implements Iterator<Appointment> {
+    private class AppointmentsIterator implements Iterator<FreeAppointment> {
 
         private final FreeSlot fs;
 
@@ -121,10 +121,10 @@ public class FreeSlot implements Comparable<FreeSlot> {
         }
 
         @Override
-        public Appointment next() {
+        public FreeAppointment next() {
             LocalDateTime oldDate = this.date;
             this.date = this.date.plus(duration);
-            return Appointment.appointmentFor(oldDate, duration, fs.scheduleId());
+            return FreeAppointment.appointmentFor(oldDate, duration, fs.scheduleId());
         }
 
     }

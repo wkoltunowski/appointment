@@ -1,7 +1,7 @@
 package com.example.appointment;
 
 import com.example.appointment.application.DefineNewScheduleService;
-import com.example.appointment.application.FindFreeSlotsService;
+import com.example.appointment.application.FindFreeAppointmentsService;
 
 public class Application {
     private final Factory factory = new Factory();
@@ -12,7 +12,7 @@ public class Application {
 
     }
 
-    public FindFreeSlotsService findFreeSlots(int maxResultCount) {
-        return new FindFreeSlotsService(factory.findFreeService(maxResultCount));
+    public FindFreeAppointmentsService findFreeSlots(int maxResultCount) {
+        return factory.findFreeService(maxResultCount);
     }
 }

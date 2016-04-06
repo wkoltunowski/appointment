@@ -3,7 +3,10 @@ package com.example.appointment.application;
 import com.example.appointment.domain.freeslot.FreeSlot;
 import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.freeslot.SearchTags;
-import com.example.appointment.domain.schedule.*;
+import com.example.appointment.domain.schedule.Schedule;
+import com.example.appointment.domain.schedule.ScheduleConnections;
+import com.example.appointment.domain.schedule.ScheduleId;
+import com.example.appointment.domain.schedule.ScheduleRepository;
 import com.google.common.collect.Range;
 
 import java.time.LocalDate;

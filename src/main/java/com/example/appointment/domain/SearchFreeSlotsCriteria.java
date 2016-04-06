@@ -2,6 +2,7 @@ package com.example.appointment.domain;
 
 import com.example.appointment.DoctorId;
 import com.example.appointment.ServiceId;
+import com.example.appointment.domain.freeslot.SearchTags;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -62,5 +63,24 @@ public class SearchFreeSlotsCriteria {
 
     public Optional<String> getLocation() {
         return get(":LOCATION");
+    }
+
+    public SearchTags searchTags() {
+        SearchTags searchTags = SearchTags.empty();
+
+        Optional<String> requestedDoc = this.getDoctor();
+        if (requestedDoc.isPresent()) {
+            searchTags = searchTags.forDoctor(requestedDoc.get());
+        }
+
+        Optional<String> requestedService = this.getService();
+        if (requestedService.isPresent()) {
+            searchTags = searchTags.forService(requestedService.get());
+        }
+        Optional<String> requestedLocation = this.getLocation();
+        if (requestedLocation.isPresent()) {
+            searchTags = searchTags.forLocation(requestedLocation.get());
+        }
+        return searchTags;
     }
 }

@@ -11,28 +11,28 @@ import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
 
-public class Appointments {
+public class FreeAppointments {
 
-    private final TreeSet<Appointment> appointments;
-    public static final Comparator<Appointment> START_THEN_SCHEDULE_ID_COMPARATOR =
-            Comparator.comparing(Appointment::start)
+    private final TreeSet<FreeAppointment> freeAppointments;
+    public static final Comparator<FreeAppointment> START_THEN_SCHEDULE_ID_COMPARATOR =
+            Comparator.comparing(FreeAppointment::start)
                     .thenComparing(Comparator.comparing(v -> v.scheduleId().toString()));
 
-    public TreeSet<Appointment> getAppointments() {
-        return appointments;
+    public TreeSet<FreeAppointment> getFreeAppointments() {
+        return freeAppointments;
     }
 
-    public Appointments(Collection<Appointment> appointments) {
-        this.appointments = new TreeSet<>(START_THEN_SCHEDULE_ID_COMPARATOR);
-        this.appointments.addAll(appointments);
+    public FreeAppointments(Collection<FreeAppointment> freeAppointments) {
+        this.freeAppointments = new TreeSet<>(START_THEN_SCHEDULE_ID_COMPARATOR);
+        this.freeAppointments.addAll(freeAppointments);
     }
 
-    public static Appointments of(List<Appointment> appointments) {
-        return new Appointments(appointments);
+    public static FreeAppointments of(List<FreeAppointment> freeAppointments) {
+        return new FreeAppointments(freeAppointments);
     }
 
-    public static Appointments of(Appointment... appointments) {
-        return of(asList(appointments));
+    public static FreeAppointments of(FreeAppointment... freeAppointments) {
+        return of(asList(freeAppointments));
     }
 
 

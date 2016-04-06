@@ -3,9 +3,9 @@ package com.example.appointment;
 import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.ReserveAppointmentService;
-import com.example.appointment.domain.freeslot.Appointment;
+import com.example.appointment.domain.freeslot.FreeAppointment;
 import com.example.appointment.domain.freeslot.AppointmentTakenException;
-import com.example.appointment.domain.freeslot.Appointments;
+import com.example.appointment.domain.freeslot.FreeAppointments;
 import com.example.appointment.domain.schedule.WorkingHours;
 import com.example.appointment.domain.schedule.ScheduleId;
 import com.example.appointment.domain.schedule.Validity;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 
 import static com.example.appointment.DateTestUtils.today;
 import static com.example.appointment.DateTestUtils.tommorrow;
-import static com.example.appointment.domain.freeslot.Appointment.appointmentFor;
+import static com.example.appointment.domain.freeslot.FreeAppointment.appointmentFor;
 import static java.util.Arrays.asList;
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -140,8 +140,8 @@ public class ReserveAppointmentTest {
         reserveAppointmentService = factory.reservationService();
     }
 
-    private void assertFoundAppointments(LocalDateTime searchDate, Appointment... expectedAppointments) {
-        assertEquals(Appointments.of(asList(expectedAppointments)), findFreeSlots.findFirstFree(searchDate));
+    private void assertFoundAppointments(LocalDateTime searchDate, FreeAppointment... expectedFreeAppointments) {
+        assertEquals(FreeAppointments.of(asList(expectedFreeAppointments)), findFreeSlots.findFirstFree(searchDate));
     }
 
 

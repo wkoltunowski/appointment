@@ -17,7 +17,7 @@ public interface FreeSlotRepository {
 
     Iterable<FreeSlot> findAfter(LocalDate localDate);
 
-    Optional<FreeSlot> findByAppointment(Appointment appointment);
+    Optional<FreeSlot> findByAppointment(FreeAppointment freeAppointment);
 
     List<FreeSlot> findByScheduleId(ScheduleId scheduleId);
 }

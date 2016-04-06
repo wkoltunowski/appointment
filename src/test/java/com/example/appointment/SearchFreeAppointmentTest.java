@@ -1,11 +1,11 @@
 package com.example.appointment;
 
 import com.example.appointment.application.DefineNewScheduleService;
-import com.example.appointment.application.FindFreeSlotsService;
-import com.example.appointment.domain.schedule.ScheduleConnections;
+import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.domain.SearchFreeSlotsCriteria;
-import com.example.appointment.domain.freeslot.Appointment;
-import com.example.appointment.domain.freeslot.Appointments;
+import com.example.appointment.domain.freeslot.FreeAppointment;
+import com.example.appointment.domain.freeslot.FreeAppointments;
+import com.example.appointment.domain.schedule.ScheduleConnections;
 import com.example.appointment.domain.schedule.ScheduleId;
 import com.example.appointment.domain.schedule.WorkingHours;
 import org.testng.annotations.BeforeMethod;
@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.is;
 
 public class SearchFreeAppointmentTest {
 
-    private FindFreeSlotsService freeSlots;
+    private FindFreeAppointmentsService freeSlots;
     private DefineNewScheduleService defineNewScheduleService;
 
 
@@ -37,7 +37,7 @@ public class SearchFreeAppointmentTest {
     public void shouldFindAnySlot() throws Exception {
         ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn(), ofHours("08:00-15:00")));
 
-        assertFoundAppointments(startingFrom(tommorrowAt(8, 0)), Appointment.appointmentFor(tommorrow("08:00-08:15"), smithSchedule));
+        assertFoundAppointments(startingFrom(tommorrowAt(8, 0)), FreeAppointment.appointmentFor(tommorrow("08:00-08:15"), smithSchedule));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class SearchFreeAppointmentTest {
         ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(howardMichael, ofHours("08:00-15:00")));
         ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn(), ofHours("08:00-15:00")));
 
-        assertFoundAppointments(startingFrom(tommorrowAt(8, 0)).forDoctor(howardMichael), Appointment.appointmentFor(tommorrow("08:00-08:15"), howardSchedule));
+        assertFoundAppointments(startingFrom(tommorrowAt(8, 0)).forDoctor(howardMichael), FreeAppointment.appointmentFor(tommorrow("08:00-08:15"), howardSchedule));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class SearchFreeAppointmentTest {
 
         assertFoundAppointments(
                 startingFrom(tommorrowAt(8, 0)).forService(consultation),
-                Appointment.appointmentFor(tommorrow("08:00-08:15"), howardSchedule));
+                FreeAppointment.appointmentFor(tommorrow("08:00-08:15"), howardSchedule));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class SearchFreeAppointmentTest {
 
         assertFoundAppointments(
                 startingFrom(tommorrowAt(8, 0)).forLocation(warsaw.toString()),
-                Appointment.appointmentFor(tommorrow("08:00-08:15"), smithSchedule));
+                FreeAppointment.appointmentFor(tommorrow("08:00-08:15"), smithSchedule));
     }
 
     private ScheduleConnections newSchedule(DoctorId doctorId, WorkingHours workingHours) {
@@ -83,8 +83,8 @@ public class SearchFreeAppointmentTest {
 
     }
 
-    private void assertFoundAppointments(SearchFreeSlotsCriteria crit, Appointment appointment) {
-        assertThat(freeSlots.findFreeSlots(crit), is(Appointments.of(appointment)));
+    private void assertFoundAppointments(SearchFreeSlotsCriteria crit, FreeAppointment freeAppointment) {
+        assertThat(freeSlots.findFirstFree(crit.getStartingFrom(), crit.searchTags()), is(FreeAppointments.of(freeAppointment)));
     }
 
     private DoctorId drSmithJohn() {
