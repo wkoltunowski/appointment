@@ -15,6 +15,10 @@ public class ReserveAppointmentService {
     }
 
     public void reserve(FreeAppointment freeAppointment) {
+        adjustFreeSlots(freeAppointment);
+    }
+
+    private void adjustFreeSlots(FreeAppointment freeAppointment) {
         Optional<FreeSlot> scheduleSlots = this.freeSlotRepository.findByAppointment(freeAppointment);
         FreeSlot freeSlot = scheduleSlots.orElseThrow(AppointmentTakenException::new);
         this.freeSlotRepository.remove(freeSlot);

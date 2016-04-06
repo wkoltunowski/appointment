@@ -28,8 +28,12 @@ public class GenerateFreeSlotsService {
     }
 
     public void generateFreeSlots(ScheduleId scheduleId) {
-        Schedule schedule = this.scheduleRepository.findById(scheduleId);
         Range<LocalDate> generationRange = Range.closed(now(), now().plus(Period.ofDays(90)));
+        generateFreeSlotsInRange(scheduleId, generationRange);
+    }
+
+    public void generateFreeSlotsInRange(ScheduleId scheduleId, Range<LocalDate> generationRange) {
+        Schedule schedule = this.scheduleRepository.findById(scheduleId);
         freeSlotRepository.addAll(scheduleFreeSlots(schedule, generationRange));
     }
 
