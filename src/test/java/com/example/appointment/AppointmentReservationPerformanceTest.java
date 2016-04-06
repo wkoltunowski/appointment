@@ -1,6 +1,6 @@
 package com.example.appointment;
 
-import com.example.appointment.application.DefineScheduleService;
+import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.ReserveAppointmentService;
 import com.example.appointment.domain.freeslot.Appointments;
@@ -21,7 +21,7 @@ import static com.example.appointment.DateTestUtils.today;
 
 public class AppointmentReservationPerformanceTest {
     private FindFreeAppointmentsService findFreeSlots;
-    private DefineScheduleService defineScheduleService;
+    private DefineNewScheduleService defineNewScheduleService;
     private ReserveAppointmentService reserveAppointmentService;
     private FreeSlotRepository storage;
 
@@ -29,7 +29,7 @@ public class AppointmentReservationPerformanceTest {
     public void setUp() throws Exception {
         Factory factory = new Factory();
         findFreeSlots = factory.findFreeService(50);
-        defineScheduleService = factory.scheduleDefinitionService();
+        defineNewScheduleService = factory.scheduleDefinitionService();
         reserveAppointmentService = factory.reservationService();
         storage = factory.freeSlotRepository();
     }
@@ -65,7 +65,7 @@ public class AppointmentReservationPerformanceTest {
     private void generateNSchedules(int n) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         for (int i = 0; i < n; i++) {
-            defineScheduleService.addSchedule(WorkingHours.ofHours("08:00-16:00"), Duration.ofMinutes(15));
+            defineNewScheduleService.addSchedule(WorkingHours.ofHours("08:00-16:00"), Duration.ofMinutes(15));
         }
         System.out.println("free slots count\t\t\t : " + storage.size());
         stopwatch.stop();

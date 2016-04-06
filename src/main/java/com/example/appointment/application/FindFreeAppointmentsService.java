@@ -5,7 +5,7 @@ import com.example.appointment.domain.freeslot.Appointments;
 import com.example.appointment.domain.freeslot.FreeSlot;
 import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.ScheduleDurations;
-import com.example.appointment.domain.schedule.SearchTags;
+import com.example.appointment.domain.freeslot.SearchTags;
 
 import java.time.Duration;
 import java.time.LocalDate;

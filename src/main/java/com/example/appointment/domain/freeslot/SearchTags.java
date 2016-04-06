@@ -1,4 +1,4 @@
-package com.example.appointment.domain.schedule;
+package com.example.appointment.domain.freeslot;
 
 import java.util.Collections;
 import java.util.Map;

@@ -1,13 +1,13 @@
 package com.example.appointment;
 
-import com.example.appointment.application.DefineScheduleService;
+import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeSlotsService;
 
 public class Application {
     private final Factory factory = new Factory();
 
 
-    public DefineScheduleService defineDoctorSchedule() {
+    public DefineNewScheduleService defineDoctorSchedule() {
         return factory.scheduleDefinitionService();
 
     }

@@ -1,7 +1,6 @@
 package com.example.appointment.domain.freeslot;
 
 import com.example.appointment.domain.schedule.ScheduleId;
-import com.example.appointment.domain.schedule.SearchTags;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;

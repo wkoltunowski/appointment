@@ -2,7 +2,7 @@ package com.example.appointment.application;
 
 import com.example.appointment.domain.SearchFreeSlotsCriteria;
 import com.example.appointment.domain.freeslot.Appointments;
-import com.example.appointment.domain.schedule.SearchTags;
+import com.example.appointment.domain.freeslot.SearchTags;
 
 import java.util.Optional;
 

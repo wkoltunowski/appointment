@@ -1,6 +1,6 @@
 package com.example.appointment.infrastructure;
 
-import com.example.appointment.domain.DaysDomain;
+import com.example.appointment.domain.schedule.DaysDomain;
 import com.example.appointment.domain.freeslot.Appointment;
 import com.example.appointment.domain.freeslot.FreeSlot;
 import com.example.appointment.domain.freeslot.FreeSlotRepository;

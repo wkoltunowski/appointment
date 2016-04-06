@@ -1,8 +1,8 @@
 package com.example.appointment;
 
-import com.example.appointment.application.DefineScheduleService;
+import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeSlotsService;
-import com.example.appointment.application.ScheduleDefinition;
+import com.example.appointment.domain.schedule.ScheduleConnections;
 import com.example.appointment.domain.SearchFreeSlotsCriteria;
 import com.example.appointment.domain.freeslot.Appointment;
 import com.example.appointment.domain.freeslot.Appointments;
@@ -23,19 +23,19 @@ import static org.hamcrest.Matchers.is;
 public class SearchFreeAppointmentTest {
 
     private FindFreeSlotsService freeSlots;
-    private DefineScheduleService defineScheduleService;
+    private DefineNewScheduleService defineNewScheduleService;
 
 
     @BeforeMethod
     public void setUp() throws Exception {
         Application app = new Application();
         freeSlots = app.findFreeSlots(1);
-        defineScheduleService = app.defineDoctorSchedule();
+        defineNewScheduleService = app.defineDoctorSchedule();
     }
 
     @Test
     public void shouldFindAnySlot() throws Exception {
-        ScheduleId smithSchedule = givenSchedule(newSchedule(ofHours("08:00-15:00"), drSmithJohn()));
+        ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn(), ofHours("08:00-15:00")));
 
         assertFoundAppointments(startingFrom(tommorrowAt(8, 0)), Appointment.appointmentFor(tommorrow("08:00-08:15"), smithSchedule));
     }
@@ -43,8 +43,8 @@ public class SearchFreeAppointmentTest {
     @Test
     public void shouldFindSlotByDoctor() throws Exception {
         DoctorId howardMichael = drHowardMichael();
-        ScheduleId howardSchedule = givenSchedule(newSchedule(ofHours("08:00-15:00"), howardMichael));
-        ScheduleId smithSchedule = givenSchedule(newSchedule(ofHours("08:00-15:00"), drSmithJohn()));
+        ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(howardMichael, ofHours("08:00-15:00")));
+        ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn(), ofHours("08:00-15:00")));
 
         assertFoundAppointments(startingFrom(tommorrowAt(8, 0)).forDoctor(howardMichael), Appointment.appointmentFor(tommorrow("08:00-08:15"), howardSchedule));
     }
@@ -53,10 +53,10 @@ public class SearchFreeAppointmentTest {
     public void shouldFindSlotByService() throws Exception {
 
         DoctorId doctorId = drSmithJohn();
-        givenSchedule(newSchedule(ofHours("08:00-15:00"), doctorId).withService(surgery()));
+        givenSchedule(ofHours("08:00-15:00"), newSchedule(doctorId, ofHours("08:00-15:00")).withService(surgery()));
 
         ServiceId consultation = consultation();
-        ScheduleId howardSchedule = givenSchedule(newSchedule(ofHours("08:00-15:00"), drHowardMichael()).withService(consultation));
+        ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drHowardMichael(), ofHours("08:00-15:00")).withService(consultation));
 
         assertFoundAppointments(
                 startingFrom(tommorrowAt(8, 0)).forService(consultation),
@@ -65,22 +65,21 @@ public class SearchFreeAppointmentTest {
 
     @Test
     public void shouldFindSlotByLocation() throws Exception {
-        WorkingHours workingHours = ofHours("08:00-15:00");
         LocationId warsaw = warsaw();
-        ScheduleId smithSchedule = givenSchedule(newSchedule(workingHours, drSmithJohn()).withLocation(warsaw));
-        ScheduleId howardSchedule = givenSchedule(newSchedule(ofHours("08:00-15:00"), drHowardMichael()).withLocation(lublin()));
+        ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn(), ofHours("08:00-15:00")).withLocation(warsaw));
+        ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drHowardMichael(), ofHours("08:00-15:00")).withLocation(lublin()));
 
         assertFoundAppointments(
                 startingFrom(tommorrowAt(8, 0)).forLocation(warsaw.toString()),
                 Appointment.appointmentFor(tommorrow("08:00-08:15"), smithSchedule));
     }
 
-    private ScheduleDefinition newSchedule(WorkingHours workingHours, DoctorId doctorId) {
-        return new ScheduleDefinition(doctorId, workingHours, Duration.ofMinutes(15));
+    private ScheduleConnections newSchedule(DoctorId doctorId, WorkingHours workingHours) {
+        return ScheduleConnections.empty().withDuration(Duration.ofMinutes(15)).withDoctorId(doctorId);
     }
 
-    private ScheduleId givenSchedule(ScheduleDefinition scheduleDefinition) {
-        return defineScheduleService.addSchedule(scheduleDefinition);
+    private ScheduleId givenSchedule(WorkingHours workingHours, ScheduleConnections scheduleDefinition) {
+        return defineNewScheduleService.addSchedule(workingHours, scheduleDefinition);
 
     }
 

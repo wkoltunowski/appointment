@@ -1,6 +1,6 @@
 package com.example.appointment;
 
-import com.example.appointment.application.DefineScheduleService;
+import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.GenerateFreeSlotsService;
 import com.example.appointment.application.ReserveAppointmentService;
@@ -35,8 +35,8 @@ public class Factory {
         return freeSlotRepository;
     }
 
-    public DefineScheduleService scheduleDefinitionService() {
-        return new DefineScheduleService(scheduleRepository(), applicationEventing());
+    public DefineNewScheduleService scheduleDefinitionService() {
+        return new DefineNewScheduleService(scheduleRepository(), applicationEventing());
     }
 
     private ApplicationEventing applicationEventing() {
