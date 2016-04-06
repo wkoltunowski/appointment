@@ -8,7 +8,7 @@ import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.FromScheduleDuration;
 import com.example.appointment.domain.schedule.ScheduleRepository;
 import com.example.appointment.infrastructure.DayCollectionFreeSlotRepository;
-import com.example.appointment.infrastructure.InMemoryApplicationEventing;
+import com.example.appointment.infrastructure.SynchronousApplicationEventing;
 import com.example.appointment.infrastructure.InMemoryScheduleRepository;
 
 public class Factory {
@@ -40,7 +40,7 @@ public class Factory {
     }
 
     private ApplicationEventing applicationEventing() {
-        return new InMemoryApplicationEventing(generateFreeSlotsService());
+        return new SynchronousApplicationEventing(generateFreeSlotsService());
     }
 
     private GenerateFreeSlotsService generateFreeSlotsService() {

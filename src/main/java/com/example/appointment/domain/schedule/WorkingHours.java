@@ -34,4 +34,9 @@ public class WorkingHours {
 
         return new WorkingHours(from, to);
     }
+
+    public static WorkingHours none() {
+        return ofHours("00:00-00:00");
+
+    }
 }

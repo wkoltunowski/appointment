@@ -6,41 +6,50 @@ import com.example.appointment.ServiceId;
 import com.example.appointment.domain.DaysDomain;
 import com.example.appointment.domain.freeslot.FreeSlot;
 import com.google.common.collect.ContiguousSet;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
 public class Schedule {
 
     private final ScheduleId scheduleId;
-    private WorkingHours workingHours;
+    private final WorkingHours workingHours;
+
     private Duration appointmentDuration;
+
     private Validity validity = Validity.infinite();
-    private DoctorId doctorId;
-    private Set<ServiceId> services = new HashSet<>();
-    private Set<LocationId> locations = new HashSet<>();
 
-    public Schedule(ScheduleId scheduleId) {
-        this.scheduleId = scheduleId;
-    }
+    private Optional<DoctorId> doctorId;
+    private Optional<LocationId> locationId;
+    private Optional<ServiceId> serviceId;
 
-    public void updateWorkingHours(WorkingHours workingHours) {
+    public Schedule(WorkingHours workingHours, Validity validity) {
+        this.scheduleId = ScheduleId.newId();
+        this.locationId = Optional.empty();
+        this.serviceId = Optional.empty();
+        this.validity = validity;
         this.workingHours = workingHours;
     }
 
-    public void updateDoctorId(DoctorId doctorId) {
-        this.doctorId = doctorId;
+    public Schedule(WorkingHours workingHours) {
+        this(workingHours, Validity.infinite());
+    }
+
+    public ScheduleId scheduleId() {
+        return scheduleId;
     }
 
     public void updateValidity(Validity validity) {
         this.validity = validity;
+    }
+
+    public void updateDoctorId(DoctorId doctorId) {
+        this.doctorId = Optional.of(doctorId);
     }
 
     public void updateDuration(Duration duration) {
@@ -63,36 +72,37 @@ public class Schedule {
         return FreeSlot.of(scheduleId, workingHours.toRange(date), searchTags);
     }
 
+
     public SearchTags searchTags() {
-        SearchTags searchTags = SearchTags.empty()
-                .forDoctor(doctorId.toString());
-        if (!locations.isEmpty()){
-            searchTags = searchTags.forLocation(locations.iterator().next().toString());
+        SearchTags searchTags = SearchTags.empty();
+
+        if (doctorId.isPresent()) {
+            searchTags = searchTags.forDoctor(doctorId.get().toString());
         }
-        if (!services.isEmpty()){
-            searchTags = searchTags.forService(services.iterator().next().toString());
+        if (locationId.isPresent()) {
+            searchTags = searchTags.forLocation(locationId.get().toString());
+        }
+        if (serviceId.isPresent()) {
+            searchTags = searchTags.forService(serviceId.get().toString());
         }
         return searchTags;
-    }
-
-
-    public ScheduleId scheduleId() {
-        return scheduleId;
     }
 
     public Duration duration() {
         return appointmentDuration;
     }
 
-    public void addService(ServiceId service) {
-        this.services.add(service);
+    public void updateService(ServiceId service) {
+        this.serviceId = Optional.of(service);
     }
 
-    public void addLocation(LocationId location) {
-        this.locations.add(location);
+    public void updateLocation(LocationId location) {
+        this.locationId = Optional.of(location);
     }
 
-    public Set<ServiceId> services() {
-        return ImmutableSet.copyOf(services);
+    public static Schedule of(WorkingHours workingHours) {
+        return new Schedule(workingHours, Validity.infinite());
     }
+
+
 }

@@ -94,8 +94,8 @@ public class ReserveAppointmentTest {
     @Test
     public void shouldFindEmptyForFullSchedule() throws Exception {
         ScheduleId scheduleId = defineScheduleService.addSchedule(
-                Validity.fromTo(LocalDate.now(), LocalDate.now()),
-                Duration.ofMinutes(15), WorkingHours.ofHours("08:00-08:30"));
+                WorkingHours.ofHours("08:00-08:30"), Duration.ofMinutes(15), Validity.fromTo(LocalDate.now(), LocalDate.now())
+        );
 
         reserveAppointmentService.reserve(appointmentFor(today(8, 0), today(8, 15), scheduleId));
         reserveAppointmentService.reserve(appointmentFor(today(8, 15), today(8, 30), scheduleId));
