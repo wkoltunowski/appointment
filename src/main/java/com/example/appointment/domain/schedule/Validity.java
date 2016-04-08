@@ -20,6 +20,10 @@ public class Validity {
         return new Validity(Range.closed(from, to));
     }
 
+    public static Validity validTill(LocalDate to) {
+        return new Validity(Range.atMost(to));
+    }
+
     public Range<LocalDate> range() {
         return range;
     }

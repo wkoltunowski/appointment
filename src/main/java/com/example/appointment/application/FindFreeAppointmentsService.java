@@ -36,6 +36,9 @@ public class FindFreeAppointmentsService {
 
     public FreeAppointments findFirstFree(LocalDateTime startingFrom, SearchTags searchTags) {
         LocalDate startingDay = startingFrom.toLocalDate();
+
+
+
         List<FreeAppointment> freeAppointments = StreamSupport
                 .stream(this.storage.findAfter(startingDay).spliterator(), false)
                 .filter(fs -> fs.matches(searchTags))

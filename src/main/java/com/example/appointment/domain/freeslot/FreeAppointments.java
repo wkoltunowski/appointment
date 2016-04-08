@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -16,6 +17,7 @@ public class FreeAppointments {
     private final TreeSet<FreeAppointment> freeAppointments;
     public static final Comparator<FreeAppointment> START_THEN_SCHEDULE_ID_COMPARATOR =
             Comparator.comparing(FreeAppointment::start)
+                    .thenComparing(fa -> Duration.between(fa.range().lowerEndpoint(), fa.range().upperEndpoint()))
                     .thenComparing(Comparator.comparing(v -> v.scheduleId().toString()));
 
     public TreeSet<FreeAppointment> getFreeAppointments() {
