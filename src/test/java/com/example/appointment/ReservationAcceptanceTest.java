@@ -1,6 +1,7 @@
 package com.example.appointment;
 
 import com.example.appointment.application.FindFreeAppointmentsService;
+import com.example.appointment.application.ReserveAppointmentService;
 import com.example.appointment.domain.freeslot.AppointmentTakenException;
 import com.example.appointment.domain.freeslot.FreeAppointment;
 import com.example.appointment.domain.freeslot.FreeAppointments;
@@ -32,45 +33,47 @@ public class ReservationAcceptanceTest {
     private Factory factory;
 
     private Map<String, DoctorId> doctorsByName;
-    private Map<ScheduleId, String> doctorsNamesByScheduleId;
-
-    private Map<String, ServiceId> servicesByName;
-    private Map<ScheduleId, String> servicesNamesByScheduleId;
 
     private List<Reservation> reservations;
+    private ScheduleId smithSchedule;
+    private ScheduleId wilsonSchedule;
+    private ServiceFinder serviceFinder;
+    private ServiceDefinitionService serviceDefinitionService;
+    private ReserveAppointmentService reserveAppointmentService;
+    private ScheduleRepository scheduleRepository;
 
     @BeforeMethod
     public void setUp() throws Exception {
         factory = new Factory();
         doctorsByName = new HashMap<>();
-        doctorsNamesByScheduleId = new HashMap<>();
-        servicesByName = new HashMap<>();
-        servicesNamesByScheduleId = new HashMap<>();
         reservations = new ArrayList<>();
-
 
         givenDoctor(drWilson());
         givenDoctor(drSmith());
-        givenService(consultation());
+        serviceDefinitionService.addService(consultation());
 
-    }
-
-    @Test
-    public void shouldFindReservationCandidates() throws Exception {
-        ScheduleId smithSchedule = givenSchedule(scheduleDefinition()
+        smithSchedule = givenSchedule(scheduleDefinition()
                 .forDoctor(drSmith())
                 .atLocation("Warsaw")
                 .withDefaultDuration("PT15M")
                 .forWorkingHours("08:00-10:00")
                 .forService(consultation())
         );
-        ScheduleId wilsonSchedule = givenSchedule(scheduleDefinition()
+        wilsonSchedule = givenSchedule(scheduleDefinition()
                 .forDoctor(drWilson())
                 .atLocation("Warsaw")
                 .withDefaultDuration("PT20M")
                 .forWorkingHours("08:00-11:00")
                 .forService(consultation())
         );
+        serviceFinder = this.factory.serviceFinder();
+        serviceDefinitionService = factory.serviceDefinitionService();
+        reserveAppointmentService = factory.reservationService();
+        scheduleRepository = factory.scheduleRepository();
+    }
+
+    @Test
+    public void shouldFindReservationCandidates() throws Exception {
 
         ReservationCriteria reservationCriteria = reservationCriteria()
                 .service(consultation())
@@ -97,20 +100,12 @@ public class ReservationAcceptanceTest {
 
     @Test
     public void shouldMakeReservation() throws Exception {
-        ScheduleId scheduleId = givenSchedule(scheduleDefinition()
-                .forDoctor(drSmith())
-                .atLocation("Warsaw")
-                .withDefaultDuration("PT15M")
-                .forWorkingHours("08:00-15:00")
-                .forService(consultation())
-        );
-
         ReservationCriteria reservationCriteria = reservationCriteria()
                 .service(consultation())
                 .doctor(drSmith())
                 .startingFrom(todayAt(LocalTime.of(0, 8)));
         List<ReservationCandidate> reservationCandidates = findReservationCandidates(reservationCriteria, 1);
-        assertThat(reservationCandidates, contains(reservationFor(today("08:00-08:15"), scheduleId)));
+        assertThat(reservationCandidates, contains(reservationFor(today("08:00-08:15"), smithSchedule)));
         Validate.notEmpty(reservationCandidates, "no reservations found for :" + reservationCriteria);
         makeReservationFor(patient("Smith, John"), reservationCandidates.get(0));
 
@@ -123,8 +118,9 @@ public class ReservationAcceptanceTest {
 
     @Test
     public void shouldNotFindReservationForFullSchedule() throws Exception {
+        givenDoctor("fullScheduleDoctor");
         givenSchedule(scheduleDefinition()
-                .forDoctor(drSmith())
+                .forDoctor("fullScheduleDoctor")
                 .withDefaultDuration("PT1H")
                 .atLocation("Warsaw")
                 .forWorkingHours("08:00-09:00")
@@ -133,7 +129,7 @@ public class ReservationAcceptanceTest {
 
         ReservationCriteria criteria = reservationCriteria()
                 .service(consultation())
-                .doctor(drSmith())
+                .doctor("fullScheduleDoctor")
                 .startingFrom(todayAt(LocalTime.of(8, 0)));
         reserveFirstAvailable(criteria);
 
@@ -143,17 +139,12 @@ public class ReservationAcceptanceTest {
 
     @Test
     public void shouldNotFindReservationForNoSchedule() throws Exception {
-        givenSchedule(scheduleDefinition()
-                .forDoctor(drWilson())
-                .forWorkingHours("08:00-09:00")
-                .withDefaultDuration("PT1H")
-                .atLocation("Warsaw")
-                .forService(consultation()));
+        givenDoctor("fullScheduleDoctor");
 
         List<ReservationCandidate> reservationsFor = findReservationCandidates(
                 reservationCriteria()
                         .service(consultation())
-                        .doctor(drSmith())
+                        .doctor("fullScheduleDoctor")
                         .startingFrom(todayAt(LocalTime.of(8, 0))),
                 1);
         assertThat(reservationsFor, hasSize(0));
@@ -161,13 +152,6 @@ public class ReservationAcceptanceTest {
 
     @Test(expectedExceptions = AppointmentTakenException.class)
     public void shouldNotReserveTwice() throws Exception {
-        givenSchedule(scheduleDefinition()
-                .forDoctor(drSmith())
-                .withDefaultDuration("PT15M")
-                .atLocation("Warsaw")
-                .forWorkingHours("08:00-09:00")
-                .forService(consultation()));
-
         ReservationCandidate firstCandidate = findReservationCandidates(
                 reservationCriteria()
                         .service(consultation())
@@ -204,26 +188,18 @@ public class ReservationAcceptanceTest {
     }
 
     private void makeReservationFor(String patient, ReservationCandidate reservationCandidate) {
-        factory.reservationService().reserve(FreeAppointment.appointmentFor(reservationCandidate.range(), reservationCandidate.scheduleId()));
+        reserveAppointmentService.reserve(FreeAppointment.appointmentFor(reservationCandidate.range(), reservationCandidate.scheduleId()));
         reserveForPatient(patient, reservationCandidate);
     }
 
     private void reserveForPatient(String patient, ReservationCandidate reservationCandidate) {
         ScheduleId scheduleId = reservationCandidate.scheduleId();
-        ScheduleConnections scheduleConnections = factory.scheduleRepository().findById(scheduleId).scheduleDefinition();
+        ScheduleConnections scheduleConnections = scheduleRepository.findById(scheduleId).scheduleDefinition();
 
         String doctorName = findDoctorName(scheduleConnections.doctorId());
-        String serviceName = findServiceName(scheduleConnections.serviceId());
+        String serviceName = scheduleConnections.serviceId().map(s -> serviceFinder.findServiceName(s)).orElse("");
 
         reservations.add(Reservation.of(patient, doctorName, serviceName));
-    }
-
-    private String findServiceName(Optional<ServiceId> serviceId) {
-        return this.servicesByName.entrySet().stream().filter(entry -> entry.getValue().equals(serviceId.get())).findFirst().get().getKey();
-    }
-
-    private String findDoctorName(Optional<DoctorId> doctorId) {
-        return this.doctorsByName.entrySet().stream().filter(entry -> entry.getValue().equals(doctorId.get())).findFirst().get().getKey();
     }
 
     private List<ReservationCandidate> findReservationCandidates(ReservationCriteria reservationCriteria, int maxResultCount) {
@@ -240,7 +216,7 @@ public class ReservationAcceptanceTest {
     private SearchTags searchTags(ReservationCriteria reservationCriteria) {
         SearchTags searchTags = SearchTags.empty();
 
-        ServiceId serviceId = findServiceId(reservationCriteria.getServiceName());
+        ServiceId serviceId = serviceFinder.findServiceId(reservationCriteria.getServiceName());
         if (serviceId != null) {
             searchTags = searchTags.forService(serviceId.toString());
         }
@@ -253,7 +229,7 @@ public class ReservationAcceptanceTest {
 
     private ScheduleId givenSchedule(ScheduleDefinition scheduleDefinition) {
         DoctorId doctorId = findDoctorId(scheduleDefinition.getDoctorName());
-        ServiceId serviceId = findServiceId(scheduleDefinition.getServiceName());
+        ServiceId serviceId = serviceFinder.findServiceId(scheduleDefinition.getServiceName());
 
         Validity validity = Validity.infinite();
         if (scheduleDefinition.getValidTo() != null) {
@@ -271,15 +247,6 @@ public class ReservationAcceptanceTest {
         return scheduleId;
     }
 
-    private ServiceId givenService(String serviceName) {
-        ServiceId serviceId = servicesByName.get(serviceName);
-        if (serviceId == null) {
-            serviceId = ServiceId.newId();
-            servicesByName.put(serviceName, serviceId);
-        }
-        return serviceId;
-    }
-
     private DoctorId givenDoctor(String doctorName) {
         DoctorId doctorId = doctorsByName.get(doctorName);
         if (doctorId == null) {
@@ -289,8 +256,8 @@ public class ReservationAcceptanceTest {
         return doctorId;
     }
 
-    private ServiceId findServiceId(String serviceName) {
-        return servicesByName.get(serviceName);
+    private String findDoctorName(Optional<DoctorId> doctorId) {
+        return this.doctorsByName.entrySet().stream().filter(entry -> entry.getValue().equals(doctorId.get())).findFirst().get().getKey();
     }
 
     private DoctorId findDoctorId(String doctorName) {

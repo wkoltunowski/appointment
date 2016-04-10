@@ -9,14 +9,15 @@ import com.example.appointment.domain.freeslot.FreeSlotRepository;
 import com.example.appointment.domain.schedule.FromScheduleDuration;
 import com.example.appointment.domain.schedule.ScheduleRepository;
 import com.example.appointment.infrastructure.DayCollectionFreeSlotRepository;
-import com.example.appointment.infrastructure.SynchronousApplicationEventing;
 import com.example.appointment.infrastructure.InMemoryScheduleRepository;
+import com.example.appointment.infrastructure.SynchronousApplicationEventing;
 
 public class Factory {
     private DayCollectionFreeSlotRepository freeSlotRepository;
     private FromScheduleDuration scheduleDurations;
     private ScheduleRepository scheduleRepository;
     private GenerateFreeSlotsService generateFreeSlotsService;
+    private ServiceDefinitionService serviceDefinitionService;
 
     public FindFreeAppointmentsService findFreeService(int maxResultCount) {
         return new FindFreeAppointmentsService(maxResultCount, scheduleDurations(), freeSlotRepository());
@@ -60,5 +61,19 @@ public class Factory {
             scheduleRepository = new InMemoryScheduleRepository();
         }
         return scheduleRepository;
+    }
+
+    public ServiceFinder serviceFinder() {
+        if (serviceDefinitionService == null) {
+            this.serviceDefinitionService = new ServiceDefinitionService();
+        }
+        return serviceDefinitionService;
+    }
+
+    public ServiceDefinitionService serviceDefinitionService() {
+        if (serviceDefinitionService == null) {
+            this.serviceDefinitionService = new ServiceDefinitionService();
+        }
+        return serviceDefinitionService;
     }
 }

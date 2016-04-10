@@ -25,11 +25,7 @@ public class DefineNewScheduleService {
     }
 
     public ScheduleId addSchedule(WorkingHours workingHours, ScheduleConnections scheduleDefinition) {
-        Schedule schedule = new Schedule(workingHours, scheduleDefinition);
-        scheduleRepository.save(schedule);
-        ScheduleId scheduleId = schedule.scheduleId();
-        applicationEventing.publishEvent(new ScheduleAddedEvent(scheduleId));
-        return scheduleId;
+        return this.addSchedule(workingHours, Validity.infinite(), scheduleDefinition);
 
     }
 
