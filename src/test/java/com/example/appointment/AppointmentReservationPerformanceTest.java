@@ -78,7 +78,7 @@ public class AppointmentReservationPerformanceTest {
         generateNSchedules(100);
         int count = 0;
         List<LocalDateTime> randomDates = Lists.newArrayList();
-        while (count < 100000) {
+        while (count < 10000) {
             randomDates.add(randomDate(today(8, 0), today(8, 0).plusDays(90)));
             count++;
         }

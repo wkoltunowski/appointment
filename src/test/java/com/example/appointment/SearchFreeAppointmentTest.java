@@ -38,7 +38,7 @@ public class SearchFreeAppointmentTest {
 
     @Test
     public void shouldFindAnySlot() throws Exception {
-        ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn(), ofHours("08:00-15:00")));
+        ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn()));
 
         assertFoundAppointments(startingFrom(tommorrowAt(8, 0)), FreeAppointment.appointmentFor(tommorrow("08:00-08:15"), smithSchedule));
     }
@@ -46,8 +46,8 @@ public class SearchFreeAppointmentTest {
     @Test
     public void shouldFindSlotByDoctor() throws Exception {
         DoctorId howardMichael = drHowardMichael();
-        ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(howardMichael, ofHours("08:00-15:00")));
-        ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn(), ofHours("08:00-15:00")));
+        ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(howardMichael));
+        ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn()));
 
         assertFoundAppointments(startingFrom(tommorrowAt(8, 0)).forDoctor(howardMichael), FreeAppointment.appointmentFor(tommorrow("08:00-08:15"), howardSchedule));
     }
@@ -56,10 +56,10 @@ public class SearchFreeAppointmentTest {
     public void shouldFindSlotByService() throws Exception {
 
         DoctorId doctorId = drSmithJohn();
-        givenSchedule(ofHours("08:00-15:00"), newSchedule(doctorId, ofHours("08:00-15:00")).withService(surgery()));
+        givenSchedule(ofHours("08:00-15:00"), newSchedule(doctorId).withService(surgery()));
 
         ServiceId consultation = consultation();
-        ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drHowardMichael(), ofHours("08:00-15:00")).withService(consultation));
+        ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drHowardMichael()).withService(consultation));
 
         assertFoundAppointments(
                 startingFrom(tommorrowAt(8, 0)).forService(consultation),
@@ -69,15 +69,15 @@ public class SearchFreeAppointmentTest {
     @Test
     public void shouldFindSlotByLocation() throws Exception {
         LocationId warsaw = warsaw();
-        ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn(), ofHours("08:00-15:00")).withLocation(warsaw));
-        ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drHowardMichael(), ofHours("08:00-15:00")).withLocation(lublin()));
+        ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn()).withLocation(warsaw));
+        ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drHowardMichael()).withLocation(lublin()));
 
         assertFoundAppointments(
                 startingFrom(tommorrowAt(8, 0)).forLocation(warsaw.toString()),
                 FreeAppointment.appointmentFor(tommorrow("08:00-08:15"), smithSchedule));
     }
 
-    private ScheduleConnections newSchedule(DoctorId doctorId, WorkingHours workingHours) {
+    private ScheduleConnections newSchedule(DoctorId doctorId) {
         return ScheduleConnections.empty().withDuration(Duration.ofMinutes(15)).withDoctorId(doctorId);
     }
 
