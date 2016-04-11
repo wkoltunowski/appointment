@@ -5,6 +5,8 @@ import com.example.appointment.domain.schedule.ServiceId;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class ServiceDefinitionService implements ServiceFinder {
 
     private Map<String, ServiceId> servicesByName = new HashMap<>();
@@ -25,6 +27,6 @@ public class ServiceDefinitionService implements ServiceFinder {
 
     @Override
     public ServiceId findServiceId(String serviceName) {
-        return servicesByName.get(serviceName);
+        return checkNotNull(servicesByName.get(serviceName), "No service found for given name:" + serviceName);
     }
 }

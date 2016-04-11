@@ -18,6 +18,7 @@ public class Factory {
     private ScheduleRepository scheduleRepository;
     private GenerateFreeSlotsService generateFreeSlotsService;
     private ServiceDefinitionService serviceDefinitionService;
+    private DoctorDefinitionService doctorDefinitionService;
 
     public FindFreeAppointmentsService findFreeService(int maxResultCount) {
         return new FindFreeAppointmentsService(maxResultCount, scheduleDurations(), freeSlotRepository());
@@ -75,5 +76,19 @@ public class Factory {
             this.serviceDefinitionService = new ServiceDefinitionService();
         }
         return serviceDefinitionService;
+    }
+
+    public DoctorFinder doctorFinder() {
+        if (this.doctorDefinitionService == null) {
+            this.doctorDefinitionService = new DoctorDefinitionService();
+        }
+        return doctorDefinitionService;
+    }
+
+    public DoctorDefinitionService doctorDefinitionService() {
+        if (this.doctorDefinitionService == null) {
+            this.doctorDefinitionService = new DoctorDefinitionService();
+        }
+        return doctorDefinitionService;
     }
 }

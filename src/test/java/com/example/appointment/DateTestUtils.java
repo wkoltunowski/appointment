@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class DateTestUtils {
-    public static Range<LocalDateTime> today(String timeRangeStr) {
+    public static Range<LocalDateTime> todayBetween(String timeRangeStr) {
         return toRange(LocalDate.now(), timeRangeStr);
     }
 
@@ -28,10 +28,14 @@ public class DateTestUtils {
     }
 
     public static LocalDateTime tommorrowAt(int hour, int minute) {
-        return today(hour, minute).plusDays(1);
+        return todayBetween(hour, minute).plusDays(1);
     }
 
-    public static LocalDateTime today(int hour, int minute) {
+    public static LocalDateTime todayBetween(int hour, int minute) {
         return LocalDate.now().atTime(LocalTime.of(hour, minute));
+    }
+
+    public static LocalDateTime todayAt(String hour) {
+        return LocalDate.now().atTime(LocalTime.parse(hour));
     }
 }

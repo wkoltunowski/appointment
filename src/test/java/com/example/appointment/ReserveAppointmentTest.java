@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static com.example.appointment.DateTestUtils.today;
+import static com.example.appointment.DateTestUtils.todayBetween;
 import static com.example.appointment.DateTestUtils.tommorrow;
 import static com.example.appointment.domain.freeslot.FreeAppointment.appointmentFor;
 import static com.example.appointment.domain.schedule.Validity.validFromTo;
@@ -34,17 +34,17 @@ public class ReserveAppointmentTest {
     public void shouldFindFirst10Appointments() throws Exception {
         Duration fifteenMinutes = ofMinutes(15);
         ScheduleId scheduleId = defineNewScheduleService.addSchedule(ofHours("08:00-16:00"), fifteenMinutes);
-        assertFoundAppointments(today(8, 0),
-                appointmentFor(today("08:00-08:15"), scheduleId),
-                appointmentFor(today("08:15-08:30"), scheduleId),
-                appointmentFor(today("08:30-08:45"), scheduleId),
-                appointmentFor(today("08:45-09:00"), scheduleId),
-                appointmentFor(today("09:00-09:15"), scheduleId),
-                appointmentFor(today("09:15-09:30"), scheduleId),
-                appointmentFor(today("09:30-09:45"), scheduleId),
-                appointmentFor(today("09:45-10:00"), scheduleId),
-                appointmentFor(today("10:00-10:15"), scheduleId),
-                appointmentFor(today("10:15-10:30"), scheduleId)
+        assertFoundAppointments(todayBetween(8, 0),
+                appointmentFor(DateTestUtils.todayBetween("08:00-08:15"), scheduleId),
+                appointmentFor(DateTestUtils.todayBetween("08:15-08:30"), scheduleId),
+                appointmentFor(DateTestUtils.todayBetween("08:30-08:45"), scheduleId),
+                appointmentFor(DateTestUtils.todayBetween("08:45-09:00"), scheduleId),
+                appointmentFor(DateTestUtils.todayBetween("09:00-09:15"), scheduleId),
+                appointmentFor(DateTestUtils.todayBetween("09:15-09:30"), scheduleId),
+                appointmentFor(DateTestUtils.todayBetween("09:30-09:45"), scheduleId),
+                appointmentFor(DateTestUtils.todayBetween("09:45-10:00"), scheduleId),
+                appointmentFor(DateTestUtils.todayBetween("10:00-10:15"), scheduleId),
+                appointmentFor(DateTestUtils.todayBetween("10:15-10:30"), scheduleId)
         );
     }
 
@@ -53,16 +53,16 @@ public class ReserveAppointmentTest {
         buildSearchServiceForMaxResults(1);
         ScheduleId scheduleId = defineNewScheduleService.addSchedule(ofHours("08:00-08:30"), ofMinutes(15));
 
-        assertFoundAppointments(today(8, 1), appointmentFor(today("08:15-08:30"), scheduleId));
-        assertFoundAppointments(today(8, 10), appointmentFor(today("08:15-08:30"), scheduleId));
-        assertFoundAppointments(today(8, 15), appointmentFor(today("08:15-08:30"), scheduleId));
+        assertFoundAppointments(todayBetween(8, 1), appointmentFor(DateTestUtils.todayBetween("08:15-08:30"), scheduleId));
+        assertFoundAppointments(todayBetween(8, 10), appointmentFor(DateTestUtils.todayBetween("08:15-08:30"), scheduleId));
+        assertFoundAppointments(todayBetween(8, 15), appointmentFor(DateTestUtils.todayBetween("08:15-08:30"), scheduleId));
     }
 
     @Test
     public void shouldFindAppointmentWhenInMiddleRequested() throws Exception {
         buildSearchServiceForMaxResults(1);
         ScheduleId scheduleId = defineNewScheduleService.addSchedule(ofHours("08:00-08:30"), ofMinutes(15));
-        assertFoundAppointments(today(8, 10), appointmentFor(today("08:15-08:30"), scheduleId));
+        assertFoundAppointments(todayBetween(8, 10), appointmentFor(DateTestUtils.todayBetween("08:15-08:30"), scheduleId));
     }
 
     @Test
@@ -70,8 +70,8 @@ public class ReserveAppointmentTest {
         buildSearchServiceForMaxResults(2);
         ScheduleId scheduleId = defineNewScheduleService.addSchedule(ofHours("23:30-00:30"), ofMinutes(30));
 
-        assertFoundAppointments(today(23, 0),
-                appointmentFor(today("23:30-00:00"), scheduleId),
+        assertFoundAppointments(todayBetween(23, 0),
+                appointmentFor(DateTestUtils.todayBetween("23:30-00:00"), scheduleId),
                 appointmentFor(tommorrow("00:00-00:30"), scheduleId));
     }
 
@@ -80,16 +80,16 @@ public class ReserveAppointmentTest {
         buildSearchServiceForMaxResults(1);
         ScheduleId scheduleId = defineNewScheduleService.addSchedule(ofHours("08:00-08:20"), ofMinutes(15));
 
-        assertFoundAppointments(today(8, 20), appointmentFor(tommorrow("08:00-08:15"), scheduleId));
+        assertFoundAppointments(todayBetween(8, 20), appointmentFor(tommorrow("08:00-08:15"), scheduleId));
     }
 
     @Test
     public void shouldFindAppointmentWhenFirstReserved() throws Exception {
         buildSearchServiceForMaxResults(1);
         ScheduleId scheduleId = defineNewScheduleService.addSchedule(ofHours("08:00-08:30"), ofMinutes(15));
-        reserveAppointmentService.reserve(appointmentFor(today("08:00-08:15"), scheduleId));
+        reserveAppointmentService.reserve(appointmentFor(DateTestUtils.todayBetween("08:00-08:15"), scheduleId));
 
-        assertFoundAppointments(today(8, 0), appointmentFor(today("08:15-08:30"), scheduleId));
+        assertFoundAppointments(todayBetween(8, 0), appointmentFor(DateTestUtils.todayBetween("08:15-08:30"), scheduleId));
     }
 
     @Test
@@ -98,22 +98,22 @@ public class ReserveAppointmentTest {
                 ofHours("08:00-08:30"), ofMinutes(15), validFromTo(now(), now())
         );
 
-        reserveAppointmentService.reserve(appointmentFor(today(8, 0), today(8, 15), scheduleId));
-        reserveAppointmentService.reserve(appointmentFor(today(8, 15), today(8, 30), scheduleId));
+        reserveAppointmentService.reserve(appointmentFor(todayBetween(8, 0), todayBetween(8, 15), scheduleId));
+        reserveAppointmentService.reserve(appointmentFor(todayBetween(8, 15), todayBetween(8, 30), scheduleId));
 
-        assertFoundAppointments(today(8, 0));
+        assertFoundAppointments(todayBetween(8, 0));
     }
 
     @Test
     public void shouldFindEmptyForNoSchedules() throws Exception {
-        assertFoundAppointments(today(8, 0));
+        assertFoundAppointments(todayBetween(8, 0));
     }
 
     @Test(expectedExceptions = AppointmentTakenException.class)
     public void shouldNotReserveSameAppointmentTwice() throws Exception {
         ScheduleId scheduleId = defineNewScheduleService.addSchedule(ofHours("08:00-08:30"), ofMinutes(15));
-        reserveAppointmentService.reserve(appointmentFor(today(8, 0), today(8, 15), scheduleId));
-        reserveAppointmentService.reserve(appointmentFor(today(8, 0), today(8, 15), scheduleId));
+        reserveAppointmentService.reserve(appointmentFor(todayBetween(8, 0), todayBetween(8, 15), scheduleId));
+        reserveAppointmentService.reserve(appointmentFor(todayBetween(8, 0), todayBetween(8, 15), scheduleId));
     }
 
     @Test
@@ -122,10 +122,10 @@ public class ReserveAppointmentTest {
         ScheduleId schedule1 = defineNewScheduleService.addSchedule(ofHours("15:00-16:00"), ofMinutes(10));
         ScheduleId schedule2 = defineNewScheduleService.addSchedule(ofHours("15:05-16:00"), ofMinutes(10));
 
-        assertFoundAppointments(today(15, 40),
-                appointmentFor(today("15:40-15:50"), schedule1),
-                appointmentFor(today("15:45-15:55"), schedule2),
-                appointmentFor(today("15:50-16:00"), schedule1));
+        assertFoundAppointments(todayBetween(15, 40),
+                appointmentFor(DateTestUtils.todayBetween("15:40-15:50"), schedule1),
+                appointmentFor(DateTestUtils.todayBetween("15:45-15:55"), schedule2),
+                appointmentFor(DateTestUtils.todayBetween("15:50-16:00"), schedule1));
     }
 
     @BeforeMethod

@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-import static com.example.appointment.DateTestUtils.today;
+import static com.example.appointment.DateTestUtils.todayBetween;
+
 
 public class AppointmentReservationPerformanceTest {
     private FindFreeAppointmentsService findFreeSlots;
@@ -37,13 +38,13 @@ public class AppointmentReservationPerformanceTest {
     @Test
     public void shouldReserveAppointmentsStartingFromToday() throws Exception {
         generateNSchedules(100);
-        reserveFirstFreeFor(() -> today(8, 0));
+        reserveFirstFreeFor(() -> todayBetween(8, 0));
     }
 
     @Test
     public void shouldReserveAppointmentsStartingFromRandom() throws Exception {
         generateNSchedules(100);
-        reserveFirstFreeFor(() -> randomDate(today(8, 0), today(8, 0).plusDays(30)));
+        reserveFirstFreeFor(() -> randomDate(todayBetween(8, 0), todayBetween(8, 0).plusDays(30)));
     }
 
     private void reserveFirstFreeFor(Supplier<LocalDateTime> date) {
@@ -79,7 +80,7 @@ public class AppointmentReservationPerformanceTest {
         int count = 0;
         List<LocalDateTime> randomDates = Lists.newArrayList();
         while (count < 10000) {
-            randomDates.add(randomDate(today(8, 0), today(8, 0).plusDays(90)));
+            randomDates.add(randomDate(todayBetween(8, 0), todayBetween(8, 0).plusDays(90)));
             count++;
         }
         Stopwatch stopwatch = Stopwatch.createStarted();
