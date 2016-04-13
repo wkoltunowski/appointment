@@ -5,15 +5,20 @@ import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.GenerateFreeSlotsService;
 import com.example.appointment.application.ReserveAppointmentService;
 import com.example.appointment.domain.ApplicationEventing;
-import com.example.appointment.domain.freeslot.FreeSlotRepository;
+import com.example.appointment.domain.freescheduleranges.FreeSlotRepository;
+import com.example.appointment.domain.reservation.PatientServiceReservation;
+import com.example.appointment.domain.reservation.PatientReservationService;
+import com.example.appointment.domain.reservation.ReservationRepository;
 import com.example.appointment.domain.schedule.FromScheduleDuration;
 import com.example.appointment.domain.schedule.ScheduleRepository;
 import com.example.appointment.infrastructure.DayCollectionFreeSlotRepository;
 import com.example.appointment.infrastructure.InMemoryScheduleRepository;
 import com.example.appointment.infrastructure.SynchronousApplicationEventing;
+import com.example.appointment.domain.reservation.PatientId;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Factory {
     private FreeSlotRepository freeSlotRepository;
@@ -71,19 +76,17 @@ public class Factory {
                 reservationRepository());
     }
 
-    private ReservationRepository reservationRepository() {
+    public ReservationRepository reservationRepository() {
         if (reservationRepository == null) {
-            final List<PatientReservation> reservations = new ArrayList<>();
+            final List<PatientServiceReservation> reservations = new ArrayList<>();
             reservationRepository = new ReservationRepository() {
                 @Override
-                public void save(PatientReservation reservation) {
+                public void save(PatientServiceReservation reservation) {
                     reservations.add(reservation);
                 }
-
                 @Override
-                public List<PatientReservation> findAll() {
-
-                    return reservations;
+                public List<PatientServiceReservation> findPatientReservations(PatientId patientId) {
+                    return reservations.stream().filter(r->r.patient().equals(patientId)).collect(Collectors.toList());
                 }
             };
         }

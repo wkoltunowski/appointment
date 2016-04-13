@@ -1,7 +1,7 @@
-package com.example.appointment.tmp;
+package com.example.appointment;
 
 import com.example.appointment.domain.schedule.DoctorId;
-import com.example.appointment.domain.schedule.ServiceId;
+import com.example.appointment.domain.ServiceId;
 
 import java.time.LocalDate;
 

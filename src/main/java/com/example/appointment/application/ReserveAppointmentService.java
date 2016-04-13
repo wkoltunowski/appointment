@@ -1,9 +1,8 @@
 package com.example.appointment.application;
 
-import com.example.appointment.domain.freeslot.AppointmentTakenException;
-import com.example.appointment.domain.freeslot.ScheduleRange;
-import com.example.appointment.domain.freeslot.FreeSlot;
-import com.example.appointment.domain.freeslot.FreeSlotRepository;
+import com.example.appointment.domain.freescheduleranges.ScheduleRange;
+import com.example.appointment.domain.freescheduleranges.FreeScheduleSlot;
+import com.example.appointment.domain.freescheduleranges.FreeSlotRepository;
 
 import java.util.Optional;
 
@@ -15,10 +14,10 @@ public class ReserveAppointmentService {
     }
 
     public void reserve(ScheduleRange scheduleRange) {
-        Optional<FreeSlot> scheduleSlots = this.freeSlotRepository.findByAppointment(scheduleRange);
-        FreeSlot freeSlot = scheduleSlots.orElseThrow(AppointmentTakenException::new);
-        this.freeSlotRepository.remove(freeSlot);
-        this.freeSlotRepository.addAll(freeSlot.splitFor(scheduleRange.range()));
+        Optional<FreeScheduleSlot> scheduleSlots = this.freeSlotRepository.findByAppointment(scheduleRange);
+        FreeScheduleSlot freeScheduleSlot = scheduleSlots.orElseThrow(AppointmentTakenException::new);
+        this.freeSlotRepository.remove(freeScheduleSlot);
+        this.freeSlotRepository.addAll(freeScheduleSlot.splitFor(scheduleRange.range()));
     }
 
 

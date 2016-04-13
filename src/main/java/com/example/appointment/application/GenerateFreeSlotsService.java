@@ -1,8 +1,8 @@
 package com.example.appointment.application;
 
-import com.example.appointment.domain.freeslot.FreeSlot;
-import com.example.appointment.domain.freeslot.FreeSlotRepository;
-import com.example.appointment.domain.freeslot.SearchTags;
+import com.example.appointment.domain.freescheduleranges.FreeScheduleSlot;
+import com.example.appointment.domain.freescheduleranges.FreeSlotRepository;
+import com.example.appointment.domain.freescheduleranges.SearchTags;
 import com.example.appointment.domain.schedule.Schedule;
 import com.example.appointment.domain.schedule.ScheduleConnections;
 import com.example.appointment.domain.schedule.ScheduleId;
@@ -37,13 +37,13 @@ public class GenerateFreeSlotsService {
         freeSlotRepository.addAll(scheduleFreeSlots(schedule, generationRange));
     }
 
-    private List<FreeSlot> scheduleFreeSlots(Schedule schedule, Range<LocalDate> generationRange) {
+    private List<FreeScheduleSlot> scheduleFreeSlots(Schedule schedule, Range<LocalDate> generationRange) {
         ScheduleId scheduleId = schedule.scheduleId();
         SearchTags searchTags = searchTagsFor(schedule.scheduleDefinition());
         List<Range<LocalDateTime>> rangesList = schedule.dates(generationRange);
         return rangesList
                 .stream()
-                .map(slotRange -> FreeSlot.of(scheduleId, slotRange, searchTags))
+                .map(slotRange -> FreeScheduleSlot.of(scheduleId, slotRange, searchTags))
                 .collect(toList());
 
     }
@@ -51,9 +51,9 @@ public class GenerateFreeSlotsService {
     public void regenerateFreeSlots(ScheduleId scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId);
         SearchTags searchTags = searchTagsFor(schedule.scheduleDefinition());
-        List<FreeSlot> scheduleSlots = freeSlotRepository.findByScheduleId(scheduleId);
-        for (FreeSlot scheduleSlot : scheduleSlots) {
-            FreeSlot newSlot = scheduleSlot.withSearchTags(searchTags);
+        List<FreeScheduleSlot> scheduleSlots = freeSlotRepository.findByScheduleId(scheduleId);
+        for (FreeScheduleSlot scheduleSlot : scheduleSlots) {
+            FreeScheduleSlot newSlot = scheduleSlot.withSearchTags(searchTags);
             freeSlotRepository.remove(scheduleSlot);
             freeSlotRepository.addAll(Collections.singleton(newSlot));
         }

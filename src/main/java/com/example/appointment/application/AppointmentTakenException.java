@@ -1,4 +1,4 @@
-package com.example.appointment.domain.freeslot;
+package com.example.appointment.application;
 
 public class AppointmentTakenException extends RuntimeException {
 }

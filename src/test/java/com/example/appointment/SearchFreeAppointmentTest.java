@@ -4,10 +4,9 @@ import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.domain.schedule.DoctorId;
 import com.example.appointment.domain.schedule.LocationId;
-import com.example.appointment.domain.SearchFreeSlotsCriteria;
-import com.example.appointment.domain.schedule.ServiceId;
-import com.example.appointment.domain.freeslot.ScheduleRange;
-import com.example.appointment.domain.freeslot.FreeAppointments;
+import com.example.appointment.domain.ServiceId;
+import com.example.appointment.domain.freescheduleranges.ScheduleRange;
+import com.example.appointment.domain.freescheduleranges.FreeScheduleRanges;
 import com.example.appointment.domain.schedule.ScheduleConnections;
 import com.example.appointment.domain.schedule.ScheduleId;
 import com.example.appointment.domain.schedule.WorkingHours;
@@ -87,7 +86,7 @@ public class SearchFreeAppointmentTest {
     }
 
     private void assertFoundAppointments(SearchFreeSlotsCriteria crit, ScheduleRange scheduleRange) {
-        assertThat(freeSlots.findFirstFree(crit.getStartingFrom(), crit.searchTags()), is(FreeAppointments.of(scheduleRange)));
+        assertThat(freeSlots.findFirstFree(crit.getStartingFrom(), crit.searchTags()), is(FreeScheduleRanges.of(scheduleRange)));
     }
 
     private DoctorId drSmithJohn() {

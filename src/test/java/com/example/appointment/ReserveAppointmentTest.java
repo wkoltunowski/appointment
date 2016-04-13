@@ -3,9 +3,9 @@ package com.example.appointment;
 import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.ReserveAppointmentService;
-import com.example.appointment.domain.freeslot.AppointmentTakenException;
-import com.example.appointment.domain.freeslot.ScheduleRange;
-import com.example.appointment.domain.freeslot.FreeAppointments;
+import com.example.appointment.application.AppointmentTakenException;
+import com.example.appointment.domain.freescheduleranges.ScheduleRange;
+import com.example.appointment.domain.freescheduleranges.FreeScheduleRanges;
 import com.example.appointment.domain.schedule.ScheduleId;
 import com.google.common.collect.Range;
 import org.testng.annotations.BeforeMethod;
@@ -146,7 +146,7 @@ public class ReserveAppointmentTest {
     }
 
     private void assertFoundAppointments(LocalDateTime searchDate, ScheduleRange... expectedScheduleRanges) {
-        assertEquals(FreeAppointments.of(asList(expectedScheduleRanges)), findFreeSlots.findFirstFree(searchDate));
+        assertEquals(FreeScheduleRanges.of(asList(expectedScheduleRanges)), findFreeSlots.findFirstFree(searchDate));
     }
 
 

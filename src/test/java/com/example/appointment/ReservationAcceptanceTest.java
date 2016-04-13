@@ -1,16 +1,16 @@
 package com.example.appointment;
 
 import com.example.appointment.application.FindFreeAppointmentsService;
-import com.example.appointment.domain.freeslot.AppointmentTakenException;
-import com.example.appointment.domain.freeslot.FreeAppointments;
-import com.example.appointment.domain.freeslot.ScheduleRange;
-import com.example.appointment.domain.freeslot.SearchTags;
+import com.example.appointment.application.AppointmentTakenException;
+import com.example.appointment.domain.ServiceId;
+import com.example.appointment.domain.freescheduleranges.FreeScheduleRanges;
+import com.example.appointment.domain.freescheduleranges.ScheduleRange;
+import com.example.appointment.domain.freescheduleranges.SearchTags;
+import com.example.appointment.domain.reservation.PatientServiceReservation;
+import com.example.appointment.domain.reservation.PatientReservationService;
+import com.example.appointment.domain.reservation.ReservationRepository;
 import com.example.appointment.domain.schedule.*;
-import com.example.appointment.tmp.PatientId;
-import com.example.appointment.tmp.Reservation;
-import com.example.appointment.tmp.ReservationCriteria;
-import com.example.appointment.tmp.ScheduleDefinition;
-import org.apache.commons.lang3.Validate;
+import com.example.appointment.domain.reservation.PatientId;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -22,18 +22,18 @@ import java.util.stream.Collectors;
 
 import static com.example.appointment.DateTestUtils.todayAt;
 import static com.example.appointment.DateTestUtils.todayBetween;
-import static com.example.appointment.domain.freeslot.ScheduleRange.of;
+import static com.example.appointment.domain.freescheduleranges.ScheduleRange.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 
 public class ReservationAcceptanceTest {
 
-    public static final PatientId PATIENT_DOUGLAS = PatientId.randomId();
-    private ServiceId consultation = ServiceId.newId();
-
-    private final DoctorId drSmith = DoctorId.newId();
-    private final DoctorId drWilson = DoctorId.newId();
+    private static final PatientId PATIENT_DOUGLAS = PatientId.randomId();
+    private static final String WARSAW = "Warsaw";
+    private static final ServiceId CONSULTATION = ServiceId.newId();
+    private static final DoctorId DR_SMITH = DoctorId.newId();
+    private static final DoctorId DR_WILSON = DoctorId.newId();
 
     private ScheduleId smithSchedule;
     private ScheduleId wilsonSchedule;
@@ -41,34 +41,36 @@ public class ReservationAcceptanceTest {
 
     private Factory factory;
     private PatientReservationService patientReservationService;
+    private ReservationRepository reservationRepository;
 
     @BeforeMethod
     public void setUp() throws Exception {
         factory = new Factory();
 
         smithSchedule = givenSchedule(scheduleDefinition()
-                .forDoctor(drSmith)
-                .atLocation("Warsaw")
+                .forDoctor(DR_SMITH)
+                .atLocation(WARSAW)
                 .withDefaultDuration("PT15M")
                 .forWorkingHours("08:00-10:00")
-                .forService(consultation)
+                .forService(CONSULTATION)
         );
         wilsonSchedule = givenSchedule(scheduleDefinition()
-                .forDoctor(drWilson)
-                .atLocation("Warsaw")
+                .forDoctor(DR_WILSON)
+                .atLocation(WARSAW)
                 .withDefaultDuration("PT20M")
                 .forWorkingHours("08:00-11:00")
-                .forService(consultation)
+                .forService(CONSULTATION)
         );
         patientReservationService = factory.patientReservation();
+        reservationRepository = factory.reservationRepository();
     }
 
     @Test
     public void shouldFindReservationCandidates() throws Exception {
 
-        List<ScheduleRange> scheduleRanges = findReservationCandidates(
+        List<ScheduleRange> scheduleRanges = findScheduleRanges(
                 reservationCriteria()
-                        .service(consultation)
+                        .service(CONSULTATION)
                         .startingFrom(todayAt("08:00")),
                 maxVisitsCount(10));
         assertThat(scheduleRanges, contains(
@@ -89,20 +91,16 @@ public class ReservationAcceptanceTest {
     @Test
     public void shouldMakeReservation() throws Exception {
         ReservationCriteria reservationCriteria = reservationCriteria()
-                .service(consultation)
-                .doctor(drSmith)
+                .service(CONSULTATION)
+                .doctor(DR_SMITH)
                 .startingFrom(todayAt("08:00"));
-        List<ScheduleRange> scheduleRanges = findReservationCandidates(reservationCriteria, maxVisitsCount(1));
-
-        ScheduleRange firstCandidate = scheduleRanges
-                .stream()
-                .findFirst()
+        ScheduleRange firstCandidate = findFreeRanges(reservationCriteria, maxVisitsCount(1)).first()
                 .orElseThrow(() -> new IllegalStateException("No reservations found for :" + reservationCriteria));
-        makeReservationFor(PATIENT_DOUGLAS, firstCandidate);
+        reserveFor(PATIENT_DOUGLAS, firstCandidate);
 
 
-        assertThat(patientReservationService.findAllReservations(), contains(
-                Reservation.forService(PATIENT_DOUGLAS, of(todayBetween("08:00-08:15"), smithSchedule), consultation)
+        assertThat(reservationRepository.findPatientReservations(PATIENT_DOUGLAS), contains(
+                PatientServiceReservation.serviceReservation(PATIENT_DOUGLAS, CONSULTATION, of(todayBetween("08:00-08:15"), smithSchedule))
         ));
     }
 
@@ -113,27 +111,27 @@ public class ReservationAcceptanceTest {
         givenSchedule(scheduleDefinition()
                 .forDoctor(fullScheduleDoctor)
                 .withDefaultDuration("PT1H")
-                .atLocation("Warsaw")
+                .atLocation(WARSAW)
                 .forWorkingHours("08:00-09:00")
                 .validTill(LocalDate.now())
-                .forService(consultation));
+                .forService(CONSULTATION));
 
         ReservationCriteria criteria = reservationCriteria()
-                .service(consultation)
+                .service(CONSULTATION)
                 .doctor(fullScheduleDoctor)
                 .startingFrom(todayAt("08:00"));
         reserveFirst(criteria);
 
-        assertThat(findReservationCandidates(criteria, maxVisitsCount(10)), hasSize(0));
+        assertThat(findScheduleRanges(criteria, maxVisitsCount(10)), hasSize(0));
     }
 
     @Test
     public void shouldNotFindReservationForNoSchedule() throws Exception {
         DoctorId noScheduleDoctor = DoctorId.newId();
 
-        List<ScheduleRange> reservationsFor = findReservationCandidates(
+        List<ScheduleRange> reservationsFor = findScheduleRanges(
                 reservationCriteria()
-                        .service(consultation)
+                        .service(CONSULTATION)
                         .doctor(noScheduleDoctor)
                         .startingFrom(todayAt("08:00")),
                 1);
@@ -142,17 +140,14 @@ public class ReservationAcceptanceTest {
 
     @Test(expectedExceptions = AppointmentTakenException.class)
     public void shouldNotReserveTwice() throws Exception {
-        ScheduleRange firstCandidate = findReservationCandidates(
-                reservationCriteria()
-                        .service(consultation)
-                        .doctor(drSmith)
-                        .startingFrom(LocalDateTime.now()), 1)
-                .stream()
-                .findFirst()
-                .orElseThrow(IllegalStateException::new);
+        FreeScheduleRanges firstFree = findFreeRanges(reservationCriteria()
+                .service(CONSULTATION)
+                .doctor(DR_SMITH)
+                .startingFrom(LocalDateTime.now()), 1);
+        ScheduleRange firstFreeRange = firstFree.first().orElseThrow(IllegalStateException::new);
 
-        makeReservationFor(PATIENT_DOUGLAS, firstCandidate);
-        makeReservationFor(PATIENT_DOUGLAS, firstCandidate);
+        reserveFor(PATIENT_DOUGLAS, firstFreeRange);
+        reserveFor(PATIENT_DOUGLAS, firstFreeRange);
     }
 
     private int maxVisitsCount(int maxVisitsCount) {
@@ -161,24 +156,22 @@ public class ReservationAcceptanceTest {
 
 
     private void reserveFirst(ReservationCriteria reservationCriteria) {
-        List<ScheduleRange> scheduleRange = findReservationCandidates(reservationCriteria, 1);
-        Validate.notEmpty(scheduleRange, "no reservations found for :" + reservationCriteria);
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, scheduleRange.get(0));
+        FreeScheduleRanges firstFree = findFreeRanges(reservationCriteria, 1);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFree.first().orElseThrow(() -> new IllegalArgumentException("no reservations found for :" + reservationCriteria)));
     }
 
-    private void makeReservationFor(PatientId patient, ScheduleRange scheduleRange) {
+    private void reserveFor(PatientId patient, ScheduleRange scheduleRange) {
         patientReservationService.makeReservationFor(patient, scheduleRange);
     }
 
-    private List<ScheduleRange> findReservationCandidates(ReservationCriteria reservationCriteria, int maxResultCount) {
+    private List<ScheduleRange> findScheduleRanges(ReservationCriteria reservationCriteria, int maxResultCount) {
+        FreeScheduleRanges firstFree = findFreeRanges(reservationCriteria, maxResultCount);
+        return firstFree.getScheduleRanges().stream().collect(Collectors.toList());
+    }
+
+    private FreeScheduleRanges findFreeRanges(ReservationCriteria reservationCriteria, int maxResultCount) {
         FindFreeAppointmentsService freeService = factory.findFreeService(maxResultCount);
-        SearchTags searchTags = searchTags(reservationCriteria);
-        FreeAppointments firstFree = freeService
-                .findFirstFree(reservationCriteria.getStartingFrom(), searchTags);
-        return firstFree.getScheduleRanges()
-                .stream()
-                .map(app -> of(app.range(), app.scheduleId()))
-                .collect(Collectors.toList());
+        return freeService.findFirstFree(reservationCriteria.getStartingFrom(), searchTags(reservationCriteria));
     }
 
     private SearchTags searchTags(ReservationCriteria reservationCriteria) {

@@ -1,9 +1,9 @@
 package com.example.appointment.infrastructure;
 
 import com.example.appointment.domain.schedule.DaysDomain;
-import com.example.appointment.domain.freeslot.ScheduleRange;
-import com.example.appointment.domain.freeslot.FreeSlot;
-import com.example.appointment.domain.freeslot.FreeSlotRepository;
+import com.example.appointment.domain.freescheduleranges.ScheduleRange;
+import com.example.appointment.domain.freescheduleranges.FreeScheduleSlot;
+import com.example.appointment.domain.freescheduleranges.FreeSlotRepository;
 import com.example.appointment.domain.schedule.ScheduleId;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.ImmutableList;
@@ -18,21 +18,21 @@ import static java.util.Collections.emptyList;
 
 public class DayCollectionFreeSlotRepository implements FreeSlotRepository {
 
-    private final Map<LocalDate, Collection<FreeSlot>> index = new HashMap<>();
+    private final Map<LocalDate, Collection<FreeScheduleSlot>> index = new HashMap<>();
     private LocalDate maxDay = LocalDate.MIN;
-    private final Map<ScheduleId, List<FreeSlot>> slotByScheduleId = new HashMap<>();
+    private final Map<ScheduleId, List<FreeScheduleSlot>> slotByScheduleId = new HashMap<>();
 
     @Override
-    public void remove(FreeSlot freeSlot) {
-        LocalDate day = freeSlot.start().toLocalDate();
-        Collection<FreeSlot> freeSlots = index.get(day);
-        freeSlots.remove(freeSlot);
-        if (freeSlots.isEmpty()) {
+    public void remove(FreeScheduleSlot freeScheduleSlot) {
+        LocalDate day = freeScheduleSlot.start().toLocalDate();
+        Collection<FreeScheduleSlot> freeScheduleSlots = index.get(day);
+        freeScheduleSlots.remove(freeScheduleSlot);
+        if (freeScheduleSlots.isEmpty()) {
             index.remove(day);
         }
-        ScheduleId scheduleId = freeSlot.scheduleId();
-        List<FreeSlot> scheduleSlots = slotByScheduleId.get(scheduleId);
-        scheduleSlots.remove(freeSlot);
+        ScheduleId scheduleId = freeScheduleSlot.scheduleId();
+        List<FreeScheduleSlot> scheduleSlots = slotByScheduleId.get(scheduleId);
+        scheduleSlots.remove(freeScheduleSlot);
         if (scheduleSlots.isEmpty()) {
             slotByScheduleId.remove(scheduleId);
         }
@@ -44,17 +44,17 @@ public class DayCollectionFreeSlotRepository implements FreeSlotRepository {
     }
 
     @Override
-    public void addAll(Collection<FreeSlot> freeSlots) {
-        for (FreeSlot freeSlot : freeSlots) {
-            add(freeSlot);
+    public void addAll(Collection<FreeScheduleSlot> freeScheduleSlots) {
+        for (FreeScheduleSlot freeScheduleSlot : freeScheduleSlots) {
+            add(freeScheduleSlot);
         }
     }
 
-    private void add(FreeSlot of) {
+    private void add(FreeScheduleSlot of) {
         LocalDate slotStartDay = of.start().toLocalDate();
-        Collection<FreeSlot> freeSlots = index.get(slotStartDay);
-        Collection<FreeSlot> slots = Optional.ofNullable(freeSlots).orElseGet(() -> {
-            Collection<FreeSlot> treeSet = new ArrayList<FreeSlot>();
+        Collection<FreeScheduleSlot> freeScheduleSlots = index.get(slotStartDay);
+        Collection<FreeScheduleSlot> slots = Optional.ofNullable(freeScheduleSlots).orElseGet(() -> {
+            Collection<FreeScheduleSlot> treeSet = new ArrayList<FreeScheduleSlot>();
             index.put(slotStartDay, treeSet);
             return treeSet;
         });
@@ -63,8 +63,8 @@ public class DayCollectionFreeSlotRepository implements FreeSlotRepository {
             maxDay = slotStartDay;
         }
 
-        List<FreeSlot> scheduleSlots = Optional.ofNullable(slotByScheduleId.get(of.scheduleId())).orElseGet(() -> {
-            List<FreeSlot> newList = newArrayList();
+        List<FreeScheduleSlot> scheduleSlots = Optional.ofNullable(slotByScheduleId.get(of.scheduleId())).orElseGet(() -> {
+            List<FreeScheduleSlot> newList = newArrayList();
             slotByScheduleId.put(of.scheduleId(), newList);
             return newList;
         });
@@ -72,36 +72,36 @@ public class DayCollectionFreeSlotRepository implements FreeSlotRepository {
     }
 
     @Override
-    public Iterable<FreeSlot> findAfter(LocalDate localDate) {
+    public Iterable<FreeScheduleSlot> findAfter(LocalDate localDate) {
         if (!localDate.isAfter(maxDay)) {
-            Stream<FreeSlot> collectionStream = ContiguousSet
+            Stream<FreeScheduleSlot> collectionStream = ContiguousSet
                     .create(Range.closed(localDate, maxDay), DaysDomain.daysDomain())
                     .stream()
                     .map(this::dayFreeSlots)
                     .flatMap(Collection::stream);
             return collectionStream::iterator;
         }
-        return () -> Collections.<FreeSlot>emptyList().iterator();
+        return () -> Collections.<FreeScheduleSlot>emptyList().iterator();
     }
 
     @Override
-    public Optional<FreeSlot> findByAppointment(ScheduleRange scheduleRange) {
+    public Optional<FreeScheduleSlot> findByAppointment(ScheduleRange scheduleRange) {
         return slotsByScheduleId(scheduleRange.scheduleId())
                 .stream()
                 .filter(fs -> fs.contains(scheduleRange.range()))
                 .findFirst();
     }
 
-    private List<FreeSlot> slotsByScheduleId(ScheduleId scheduleId) {
+    private List<FreeScheduleSlot> slotsByScheduleId(ScheduleId scheduleId) {
         return ImmutableList.copyOf(Optional.ofNullable(slotByScheduleId.get(scheduleId)).orElse(emptyList()));
     }
 
     @Override
-    public List<FreeSlot> findByScheduleId(ScheduleId scheduleId) {
+    public List<FreeScheduleSlot> findByScheduleId(ScheduleId scheduleId) {
         return slotsByScheduleId(scheduleId);
     }
 
-    private Collection<FreeSlot> dayFreeSlots(LocalDate day) {
+    private Collection<FreeScheduleSlot> dayFreeSlots(LocalDate day) {
         return Optional.ofNullable(index.get(day)).orElse(emptyList());
     }
 

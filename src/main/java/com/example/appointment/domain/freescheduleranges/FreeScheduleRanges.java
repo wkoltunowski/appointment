@@ -1,18 +1,15 @@
-package com.example.appointment.domain.freeslot;
+package com.example.appointment.domain.freescheduleranges;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.Duration;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 
-public class FreeAppointments {
+public class FreeScheduleRanges {
 
     private final TreeSet<ScheduleRange> scheduleRanges;
     public static final Comparator<ScheduleRange> START_THEN_SCHEDULE_ID_COMPARATOR =
@@ -24,16 +21,16 @@ public class FreeAppointments {
         return scheduleRanges;
     }
 
-    public FreeAppointments(Collection<ScheduleRange> scheduleRanges) {
+    public FreeScheduleRanges(Collection<ScheduleRange> scheduleRanges) {
         this.scheduleRanges = new TreeSet<>(START_THEN_SCHEDULE_ID_COMPARATOR);
         this.scheduleRanges.addAll(scheduleRanges);
     }
 
-    public static FreeAppointments of(List<ScheduleRange> scheduleRanges) {
-        return new FreeAppointments(scheduleRanges);
+    public static FreeScheduleRanges of(List<ScheduleRange> scheduleRanges) {
+        return new FreeScheduleRanges(scheduleRanges);
     }
 
-    public static FreeAppointments of(ScheduleRange... scheduleRanges) {
+    public static FreeScheduleRanges of(ScheduleRange... scheduleRanges) {
         return of(asList(scheduleRanges));
     }
 
@@ -54,4 +51,7 @@ public class FreeAppointments {
     }
 
 
+    public Optional<ScheduleRange> first() {
+        return scheduleRanges.stream().findFirst();
+    }
 }

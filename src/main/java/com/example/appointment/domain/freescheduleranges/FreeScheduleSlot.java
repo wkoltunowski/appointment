@@ -1,4 +1,4 @@
-package com.example.appointment.domain.freeslot;
+package com.example.appointment.domain.freescheduleranges;
 
 import com.example.appointment.domain.schedule.ScheduleId;
 import com.google.common.collect.Range;
@@ -15,19 +15,19 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
-public class FreeSlot implements Comparable<FreeSlot> {
+public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
 
     private final ScheduleId scheduleId;
     private final Range<LocalDateTime> range;
     private final SearchTags searchTags;
 
-    public FreeSlot(ScheduleId scheduleId, Range<LocalDateTime> range, SearchTags searchTags) {
+    public FreeScheduleSlot(ScheduleId scheduleId, Range<LocalDateTime> range, SearchTags searchTags) {
         this.range = range;
         this.scheduleId = scheduleId;
         this.searchTags = searchTags;
     }
 
-    public Collection<FreeSlot> splitFor(Range<LocalDateTime> range) {
+    public Collection<FreeScheduleSlot> splitFor(Range<LocalDateTime> range) {
 
         RangeSet<LocalDateTime> rangeSet = TreeRangeSet.create();
         rangeSet.add(this.range);
@@ -42,10 +42,10 @@ public class FreeSlot implements Comparable<FreeSlot> {
     }
 
     @Override
-    public int compareTo(FreeSlot o) {
-        Comparator<FreeSlot> freeSlotComparator = Comparator
-                .comparing(FreeSlot::start)
-                .thenComparing(FreeSlot::end)
+    public int compareTo(FreeScheduleSlot o) {
+        Comparator<FreeScheduleSlot> freeSlotComparator = Comparator
+                .comparing(FreeScheduleSlot::start)
+                .thenComparing(FreeScheduleSlot::end)
                 .thenComparing(fs -> fs.scheduleId().toString());
         return freeSlotComparator.compare(this, o);
     }
@@ -71,12 +71,12 @@ public class FreeSlot implements Comparable<FreeSlot> {
         return scheduleId;
     }
 
-    public FreeSlot withRange(Range<LocalDateTime> newRange) {
+    public FreeScheduleSlot withRange(Range<LocalDateTime> newRange) {
         return of(scheduleId, newRange, searchTags);
     }
 
-    public static FreeSlot of(ScheduleId scheduleId, Range<LocalDateTime> range, SearchTags searchTags) {
-        return new FreeSlot(scheduleId, range, searchTags);
+    public static FreeScheduleSlot of(ScheduleId scheduleId, Range<LocalDateTime> range, SearchTags searchTags) {
+        return new FreeScheduleSlot(scheduleId, range, searchTags);
     }
 
 
@@ -84,18 +84,18 @@ public class FreeSlot implements Comparable<FreeSlot> {
         return this.searchTags.matches(searchTags);
     }
 
-    public FreeSlot withSearchTags(SearchTags searchTags) {
+    public FreeScheduleSlot withSearchTags(SearchTags searchTags) {
         return of(scheduleId, range, searchTags);
     }
 
     private class AppointmentsIterator implements Iterator<ScheduleRange> {
 
-        private final FreeSlot fs;
+        private final FreeScheduleSlot fs;
 
         private final Duration duration;
         private LocalDateTime date;
 
-        public AppointmentsIterator(FreeSlot fs, LocalDateTime startingDate, Duration duration) {
+        public AppointmentsIterator(FreeScheduleSlot fs, LocalDateTime startingDate, Duration duration) {
             this.fs = fs;
             this.duration = duration;
             this.date = calcStartingDate(startingDate);

@@ -1,14 +1,12 @@
-package com.example.appointment;
+package com.example.appointment.domain.reservation;
 
 import com.example.appointment.application.ReserveAppointmentService;
-import com.example.appointment.domain.freeslot.ScheduleRange;
+import com.example.appointment.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.domain.schedule.ScheduleConnections;
 import com.example.appointment.domain.schedule.ScheduleRepository;
-import com.example.appointment.tmp.PatientId;
-import com.example.appointment.tmp.Reservation;
+import com.example.appointment.domain.ServiceId;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class PatientReservationService {
     private final ReserveAppointmentService reserveAppointmentService;
@@ -32,15 +30,10 @@ public class PatientReservationService {
     }
 
     private void reserve(PatientId patient, ScheduleRange scheduleRange) {
-        reservationRepository.save(PatientReservation.of(patient, ScheduleRange.of(scheduleRange.range(), scheduleRange.scheduleId())));
+        ScheduleConnections scheduleConnections = scheduleRepository.findById(scheduleRange.scheduleId()).scheduleDefinition();
+        Optional<ServiceId> serviceId = scheduleConnections.serviceId();
+        reservationRepository.save(PatientServiceReservation.serviceReservation(patient, serviceId, ScheduleRange.of(scheduleRange.range(), scheduleRange.scheduleId())));
     }
 
-    public List<Reservation> findAllReservations() {
-        return reservationRepository.findAll().stream().map(this::toReservation).collect(Collectors.toList());
-    }
 
-    private Reservation toReservation(PatientReservation pr) {
-        ScheduleConnections scheduleConnections = scheduleRepository.findById(pr.scheduleRange().scheduleId()).scheduleDefinition();
-        return Reservation.of(pr.patient(), pr.scheduleRange(), scheduleConnections.serviceId());
-    }
 }
