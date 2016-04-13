@@ -1,4 +1,9 @@
-package com.example.appointment.domain.schedule;
+package com.example.appointment.infrastructure;
+
+import com.example.appointment.domain.schedule.Schedule;
+import com.example.appointment.domain.schedule.ScheduleDurations;
+import com.example.appointment.domain.schedule.ScheduleId;
+import com.example.appointment.domain.schedule.ScheduleRepository;
 
 import java.time.Duration;
 

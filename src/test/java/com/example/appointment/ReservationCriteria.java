@@ -1,5 +1,6 @@
 package com.example.appointment;
 
+import com.example.appointment.domain.freescheduleranges.SearchTags;
 import com.example.appointment.domain.schedule.DoctorId;
 import com.example.appointment.domain.ServiceId;
 
@@ -10,23 +11,15 @@ public class ReservationCriteria {
     private DoctorId doctor;
     private ServiceId service;
 
+    public ReservationCriteria() {
+    }
+
     public ReservationCriteria(ReservationCriteria reservationCriteria) {
         this.service = reservationCriteria.service;
         this.startingFrom = reservationCriteria.startingFrom;
         this.doctor = reservationCriteria.doctor;
     }
 
-    public ReservationCriteria() {
-
-    }
-
-    public DoctorId getDoctor() {
-        return doctor;
-    }
-
-    public ServiceId getService() {
-        return service;
-    }
 
     public LocalDateTime getStartingFrom() {
         return startingFrom;
@@ -48,6 +41,18 @@ public class ReservationCriteria {
         ReservationCriteria reservationCriteria = new ReservationCriteria(this);
         reservationCriteria.startingFrom = dateTime;
         return reservationCriteria;
+    }
+
+    public SearchTags searchTags() {
+        SearchTags searchTags = SearchTags.empty();
+
+        if (service != null) {
+            searchTags = searchTags.forService(service.toString());
+        }
+        if (doctor != null) {
+            searchTags = searchTags.forDoctor(doctor.toString());
+        }
+        return searchTags;
     }
 
     @Override

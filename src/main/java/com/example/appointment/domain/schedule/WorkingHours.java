@@ -37,6 +37,5 @@ public class WorkingHours {
 
     public static WorkingHours none() {
         return ofHours("00:00-00:00");
-
     }
 }

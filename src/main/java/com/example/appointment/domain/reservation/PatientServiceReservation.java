@@ -16,16 +16,8 @@ public class PatientServiceReservation {
         this.scheduleRange = scheduleRange;
     }
 
-    public ScheduleRange scheduleRange() {
-        return scheduleRange;
-    }
-
     public PatientId patient() {
         return patient;
-    }
-
-    public Optional<ServiceId> service() {
-        return serviceId;
     }
 
 

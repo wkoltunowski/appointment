@@ -96,7 +96,7 @@ public class ReservationAcceptanceTest {
                 .startingFrom(todayAt("08:00"));
         ScheduleRange firstCandidate = findFreeRanges(reservationCriteria, maxVisitsCount(1)).first()
                 .orElseThrow(() -> new IllegalStateException("No reservations found for :" + reservationCriteria));
-        reserveFor(PATIENT_DOUGLAS, firstCandidate);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstCandidate);
 
 
         assertThat(reservationRepository.findPatientReservations(PATIENT_DOUGLAS), contains(
@@ -146,8 +146,8 @@ public class ReservationAcceptanceTest {
                 .startingFrom(LocalDateTime.now()), 1);
         ScheduleRange firstFreeRange = firstFree.first().orElseThrow(IllegalStateException::new);
 
-        reserveFor(PATIENT_DOUGLAS, firstFreeRange);
-        reserveFor(PATIENT_DOUGLAS, firstFreeRange);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFreeRange);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFreeRange);
     }
 
     private int maxVisitsCount(int maxVisitsCount) {
@@ -160,10 +160,6 @@ public class ReservationAcceptanceTest {
         patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFree.first().orElseThrow(() -> new IllegalArgumentException("no reservations found for :" + reservationCriteria)));
     }
 
-    private void reserveFor(PatientId patient, ScheduleRange scheduleRange) {
-        patientReservationService.makeReservationFor(patient, scheduleRange);
-    }
-
     private List<ScheduleRange> findScheduleRanges(ReservationCriteria reservationCriteria, int maxResultCount) {
         FreeScheduleRanges firstFree = findFreeRanges(reservationCriteria, maxResultCount);
         return firstFree.getScheduleRanges().stream().collect(Collectors.toList());
@@ -171,22 +167,10 @@ public class ReservationAcceptanceTest {
 
     private FreeScheduleRanges findFreeRanges(ReservationCriteria reservationCriteria, int maxResultCount) {
         FindFreeAppointmentsService freeService = factory.findFreeService(maxResultCount);
-        return freeService.findFirstFree(reservationCriteria.getStartingFrom(), searchTags(reservationCriteria));
+        return freeService.findFirstFree(reservationCriteria.getStartingFrom(), reservationCriteria.searchTags());
     }
 
-    private SearchTags searchTags(ReservationCriteria reservationCriteria) {
-        SearchTags searchTags = SearchTags.empty();
 
-        ServiceId serviceId = reservationCriteria.getService();
-        if (serviceId != null) {
-            searchTags = searchTags.forService(serviceId.toString());
-        }
-        DoctorId doctorId = reservationCriteria.getDoctor();
-        if (doctorId != null) {
-            searchTags = searchTags.forDoctor(doctorId.toString());
-        }
-        return searchTags;
-    }
 
     private ScheduleId givenSchedule(ScheduleDefinition scheduleDefinition) {
         DoctorId doctorId = scheduleDefinition.getDoctor();
