@@ -1,7 +1,7 @@
 package com.example.appointment.application;
 
 import com.example.appointment.domain.freeslot.AppointmentTakenException;
-import com.example.appointment.domain.freeslot.FreeAppointment;
+import com.example.appointment.domain.freeslot.ScheduleRange;
 import com.example.appointment.domain.freeslot.FreeSlot;
 import com.example.appointment.domain.freeslot.FreeSlotRepository;
 
@@ -14,11 +14,11 @@ public class ReserveAppointmentService {
         this.freeSlotRepository = freeSlotRepository;
     }
 
-    public void reserve(FreeAppointment freeAppointment) {
-        Optional<FreeSlot> scheduleSlots = this.freeSlotRepository.findByAppointment(freeAppointment);
+    public void reserve(ScheduleRange scheduleRange) {
+        Optional<FreeSlot> scheduleSlots = this.freeSlotRepository.findByAppointment(scheduleRange);
         FreeSlot freeSlot = scheduleSlots.orElseThrow(AppointmentTakenException::new);
         this.freeSlotRepository.remove(freeSlot);
-        this.freeSlotRepository.addAll(freeSlot.splitFor(freeAppointment.range()));
+        this.freeSlotRepository.addAll(freeSlot.splitFor(scheduleRange.range()));
     }
 
 

@@ -1,31 +1,23 @@
 package com.example.appointment.tmp;
 
+import com.example.appointment.domain.freeslot.ScheduleRange;
+import com.example.appointment.domain.schedule.ServiceId;
+
+import java.util.Optional;
+
 public class Reservation {
-    private final ReservationId id;
-    private String service;
-    private String patientName;
-    private String doctorName;
+    private ScheduleRange scheduleRange;
+    private PatientId patientId;
+    private Optional<ServiceId> serviceId;
 
-    public Reservation() {
-        id = ReservationId.randomId();
-    }
 
-    public static Reservation of(String patientName, String doctorName, String service) {
+    public static Reservation of(PatientId patientName, ScheduleRange scheduleRange, Optional<ServiceId> serviceId) {
         Reservation reservation = new Reservation();
-        reservation.patientName = patientName;
-        reservation.doctorName = doctorName;
-        reservation.service = service;
+        reservation.patientId = patientName;
+        reservation.scheduleRange = scheduleRange;
+        reservation.serviceId = serviceId;
 
         return reservation;
-    }
-
-    @Override
-    public String toString() {
-        return "Reservation{" +
-                "doctorName='" + doctorName + '\'' +
-                ", service='" + service + '\'' +
-                ", patientName='" + patientName + '\'' +
-                '}';
     }
 
     @Override
@@ -35,21 +27,30 @@ public class Reservation {
 
         Reservation that = (Reservation) o;
 
-        if (service != null ? !service.equals(that.service) : that.service != null) return false;
-        if (patientName != null ? !patientName.equals(that.patientName) : that.patientName != null) return false;
-        return doctorName != null ? doctorName.equals(that.doctorName) : that.doctorName == null;
+        if (!serviceId.equals(that.serviceId)) return false;
+        if (!patientId.equals(that.patientId)) return false;
+        return scheduleRange.equals(that.scheduleRange);
 
     }
 
     @Override
     public int hashCode() {
-        int result = service != null ? service.hashCode() : 0;
-        result = 31 * result + (patientName != null ? patientName.hashCode() : 0);
-        result = 31 * result + (doctorName != null ? doctorName.hashCode() : 0);
+        int result = serviceId.hashCode();
+        result = 31 * result + patientId.hashCode();
+        result = 31 * result + scheduleRange.hashCode();
         return result;
     }
 
-    public ReservationId id() {
-        return id;
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "scheduleRange='" + scheduleRange + '\'' +
+                ", service='" + serviceId + '\'' +
+                ", patientName='" + patientId + '\'' +
+                '}';
+    }
+
+    public static Reservation forService(PatientId patient, ScheduleRange scheduleRange, ServiceId serviceId) {
+        return of(patient, scheduleRange, Optional.of(serviceId));
     }
 }

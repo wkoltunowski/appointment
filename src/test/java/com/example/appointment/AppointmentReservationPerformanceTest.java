@@ -51,8 +51,8 @@ public class AppointmentReservationPerformanceTest {
         Stopwatch stopwatch = Stopwatch.createStarted();
         FreeAppointments freeAppointments = findFreeSlots.findFirstFree(date.get());
         int count = 0;
-        while (!freeAppointments.getFreeAppointments().isEmpty()) {
-            reserveAppointmentService.reserve(freeAppointments.getFreeAppointments().first());
+        while (!freeAppointments.getScheduleRanges().isEmpty()) {
+            reserveAppointmentService.reserve(freeAppointments.getScheduleRanges().first());
             freeAppointments = findFreeSlots.findFirstFree(date.get());
             count++;
         }

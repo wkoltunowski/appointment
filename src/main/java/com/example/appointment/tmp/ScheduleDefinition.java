@@ -1,19 +1,22 @@
 package com.example.appointment.tmp;
 
+import com.example.appointment.domain.schedule.DoctorId;
+import com.example.appointment.domain.schedule.ServiceId;
+
 import java.time.LocalDate;
 
 public class ScheduleDefinition {
     private String locationName;
-    private String doctorName;
-    private String serviceName;
+    private DoctorId doctor;
+    private ServiceId service;
     private String workingHours;
     private String duration;
     private LocalDate validTo;
 
     public ScheduleDefinition(ScheduleDefinition scheduleDefinition) {
         this.locationName = scheduleDefinition.locationName;
-        this.doctorName = scheduleDefinition.doctorName;
-        this.serviceName = scheduleDefinition.serviceName;
+        this.doctor = scheduleDefinition.doctor;
+        this.service = scheduleDefinition.service;
         this.workingHours = scheduleDefinition.workingHours;
         this.duration = scheduleDefinition.duration;
         this.validTo = scheduleDefinition.validTo;
@@ -23,20 +26,16 @@ public class ScheduleDefinition {
 
     }
 
-    public String getDoctorName() {
-        return doctorName;
+    public DoctorId getDoctor() {
+        return doctor;
     }
 
     public String getDuration() {
         return duration;
     }
 
-    public String getLocationName() {
-        return locationName;
-    }
-
-    public String getServiceName() {
-        return serviceName;
+    public ServiceId getService() {
+        return service;
     }
 
     public LocalDate getValidTo() {
@@ -47,9 +46,9 @@ public class ScheduleDefinition {
         return workingHours;
     }
 
-    public ScheduleDefinition forDoctor(String doctorName) {
+    public ScheduleDefinition forDoctor(DoctorId doctorName) {
         ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
-        scheduleDefinition.doctorName = doctorName;
+        scheduleDefinition.doctor = doctorName;
         return scheduleDefinition;
     }
 
@@ -65,9 +64,9 @@ public class ScheduleDefinition {
         return scheduleDefinition;
     }
 
-    public ScheduleDefinition forService(String serviceName) {
+    public ScheduleDefinition forService(ServiceId serviceName) {
         ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
-        scheduleDefinition.serviceName = serviceName;
+        scheduleDefinition.service = serviceName;
         return scheduleDefinition;
     }
 

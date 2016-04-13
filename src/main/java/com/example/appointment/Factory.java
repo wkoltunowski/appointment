@@ -12,13 +12,15 @@ import com.example.appointment.infrastructure.DayCollectionFreeSlotRepository;
 import com.example.appointment.infrastructure.InMemoryScheduleRepository;
 import com.example.appointment.infrastructure.SynchronousApplicationEventing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Factory {
-    private DayCollectionFreeSlotRepository freeSlotRepository;
+    private FreeSlotRepository freeSlotRepository;
     private FromScheduleDuration scheduleDurations;
     private ScheduleRepository scheduleRepository;
+    private ReservationRepository reservationRepository;
     private GenerateFreeSlotsService generateFreeSlotsService;
-    private ServiceDefinitionService serviceDefinitionService;
-    private DoctorDefinitionService doctorDefinitionService;
 
     public FindFreeAppointmentsService findFreeService(int maxResultCount) {
         return new FindFreeAppointmentsService(maxResultCount, scheduleDurations(), freeSlotRepository());
@@ -64,31 +66,28 @@ public class Factory {
         return scheduleRepository;
     }
 
-    public ServiceFinder serviceFinder() {
-        if (serviceDefinitionService == null) {
-            this.serviceDefinitionService = new ServiceDefinitionService();
-        }
-        return serviceDefinitionService;
+    public PatientReservationService patientReservation() {
+        return new PatientReservationService(reservationService(), scheduleRepository(),
+                reservationRepository());
     }
 
-    public ServiceDefinitionService serviceDefinitionService() {
-        if (serviceDefinitionService == null) {
-            this.serviceDefinitionService = new ServiceDefinitionService();
+    private ReservationRepository reservationRepository() {
+        if (reservationRepository == null) {
+            final List<PatientReservation> reservations = new ArrayList<>();
+            reservationRepository = new ReservationRepository() {
+                @Override
+                public void save(PatientReservation reservation) {
+                    reservations.add(reservation);
+                }
+
+                @Override
+                public List<PatientReservation> findAll() {
+
+                    return reservations;
+                }
+            };
         }
-        return serviceDefinitionService;
+        return reservationRepository;
     }
 
-    public DoctorFinder doctorFinder() {
-        if (this.doctorDefinitionService == null) {
-            this.doctorDefinitionService = new DoctorDefinitionService();
-        }
-        return doctorDefinitionService;
-    }
-
-    public DoctorDefinitionService doctorDefinitionService() {
-        if (this.doctorDefinitionService == null) {
-            this.doctorDefinitionService = new DoctorDefinitionService();
-        }
-        return doctorDefinitionService;
-    }
 }

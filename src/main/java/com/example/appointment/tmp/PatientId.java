@@ -5,10 +5,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.UUID;
 
-public class ReservationId {
+public class PatientId {
     private final UUID id;
 
-    public ReservationId() {
+    public PatientId() {
         id = UUID.randomUUID();
     }
 
@@ -29,13 +29,13 @@ public class ReservationId {
                 '}';
     }
 
-    public static ReservationId newId() {
-        return new ReservationId();
+    public static PatientId newId() {
+        return new PatientId();
     }
 
 
 
-    public static ReservationId randomId() {
+    public static PatientId randomId() {
         return newId();
     }
 }

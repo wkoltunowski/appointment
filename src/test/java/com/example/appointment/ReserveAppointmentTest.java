@@ -4,9 +4,10 @@ import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.ReserveAppointmentService;
 import com.example.appointment.domain.freeslot.AppointmentTakenException;
-import com.example.appointment.domain.freeslot.FreeAppointment;
+import com.example.appointment.domain.freeslot.ScheduleRange;
 import com.example.appointment.domain.freeslot.FreeAppointments;
 import com.example.appointment.domain.schedule.ScheduleId;
+import com.google.common.collect.Range;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -15,7 +16,6 @@ import java.time.LocalDateTime;
 
 import static com.example.appointment.DateTestUtils.todayBetween;
 import static com.example.appointment.DateTestUtils.tommorrow;
-import static com.example.appointment.domain.freeslot.FreeAppointment.appointmentFor;
 import static com.example.appointment.domain.schedule.Validity.validFromTo;
 import static com.example.appointment.domain.schedule.WorkingHours.ofHours;
 import static java.time.Duration.ofMinutes;
@@ -98,10 +98,14 @@ public class ReserveAppointmentTest {
                 ofHours("08:00-08:30"), ofMinutes(15), validFromTo(now(), now())
         );
 
-        reserveAppointmentService.reserve(appointmentFor(todayBetween(8, 0), todayBetween(8, 15), scheduleId));
-        reserveAppointmentService.reserve(appointmentFor(todayBetween(8, 15), todayBetween(8, 30), scheduleId));
+        reserveAppointmentService.reserve(appointmentFor(todayBetween("08:00-08:15"), scheduleId));
+        reserveAppointmentService.reserve(appointmentFor(todayBetween("08:15-08:30"), scheduleId));
 
         assertFoundAppointments(todayBetween(8, 0));
+    }
+
+    private ScheduleRange appointmentFor(Range<LocalDateTime> range, ScheduleId scheduleId) {
+        return ScheduleRange.of(range, scheduleId);
     }
 
     @Test
@@ -112,8 +116,8 @@ public class ReserveAppointmentTest {
     @Test(expectedExceptions = AppointmentTakenException.class)
     public void shouldNotReserveSameAppointmentTwice() throws Exception {
         ScheduleId scheduleId = defineNewScheduleService.addSchedule(ofHours("08:00-08:30"), ofMinutes(15));
-        reserveAppointmentService.reserve(appointmentFor(todayBetween(8, 0), todayBetween(8, 15), scheduleId));
-        reserveAppointmentService.reserve(appointmentFor(todayBetween(8, 0), todayBetween(8, 15), scheduleId));
+        reserveAppointmentService.reserve(appointmentFor(todayBetween("08:00-08:15"), scheduleId));
+        reserveAppointmentService.reserve(appointmentFor(todayBetween("08:00-08:15"), scheduleId));
     }
 
     @Test
@@ -141,8 +145,8 @@ public class ReserveAppointmentTest {
         reserveAppointmentService = factory.reservationService();
     }
 
-    private void assertFoundAppointments(LocalDateTime searchDate, FreeAppointment... expectedFreeAppointments) {
-        assertEquals(FreeAppointments.of(asList(expectedFreeAppointments)), findFreeSlots.findFirstFree(searchDate));
+    private void assertFoundAppointments(LocalDateTime searchDate, ScheduleRange... expectedScheduleRanges) {
+        assertEquals(FreeAppointments.of(asList(expectedScheduleRanges)), findFreeSlots.findFirstFree(searchDate));
     }
 
 

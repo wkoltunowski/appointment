@@ -14,27 +14,27 @@ import static java.util.Arrays.asList;
 
 public class FreeAppointments {
 
-    private final TreeSet<FreeAppointment> freeAppointments;
-    public static final Comparator<FreeAppointment> START_THEN_SCHEDULE_ID_COMPARATOR =
-            Comparator.comparing(FreeAppointment::start)
+    private final TreeSet<ScheduleRange> scheduleRanges;
+    public static final Comparator<ScheduleRange> START_THEN_SCHEDULE_ID_COMPARATOR =
+            Comparator.comparing(ScheduleRange::start)
                     .thenComparing(fa -> Duration.between(fa.range().lowerEndpoint(), fa.range().upperEndpoint()))
                     .thenComparing(Comparator.comparing(v -> v.scheduleId().toString()));
 
-    public TreeSet<FreeAppointment> getFreeAppointments() {
-        return freeAppointments;
+    public TreeSet<ScheduleRange> getScheduleRanges() {
+        return scheduleRanges;
     }
 
-    public FreeAppointments(Collection<FreeAppointment> freeAppointments) {
-        this.freeAppointments = new TreeSet<>(START_THEN_SCHEDULE_ID_COMPARATOR);
-        this.freeAppointments.addAll(freeAppointments);
+    public FreeAppointments(Collection<ScheduleRange> scheduleRanges) {
+        this.scheduleRanges = new TreeSet<>(START_THEN_SCHEDULE_ID_COMPARATOR);
+        this.scheduleRanges.addAll(scheduleRanges);
     }
 
-    public static FreeAppointments of(List<FreeAppointment> freeAppointments) {
-        return new FreeAppointments(freeAppointments);
+    public static FreeAppointments of(List<ScheduleRange> scheduleRanges) {
+        return new FreeAppointments(scheduleRanges);
     }
 
-    public static FreeAppointments of(FreeAppointment... freeAppointments) {
-        return of(asList(freeAppointments));
+    public static FreeAppointments of(ScheduleRange... scheduleRanges) {
+        return of(asList(scheduleRanges));
     }
 
 

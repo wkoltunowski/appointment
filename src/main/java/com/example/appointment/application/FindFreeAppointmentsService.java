@@ -38,36 +38,36 @@ public class FindFreeAppointmentsService {
                 .filter(fs -> fs.matches(searchTags))
                 .iterator();
         Multimap<LocalDate, FreeSlot> map = LinkedListMultimap.create();
-        List<FreeAppointment> freeAppointments = new ArrayList<>(firstFreeCount);
-        while (iterator.hasNext() && freeAppointments.size() < firstFreeCount) {
+        List<ScheduleRange> scheduleRanges = new ArrayList<>(firstFreeCount);
+        while (iterator.hasNext() && scheduleRanges.size() < firstFreeCount) {
             FreeSlot freeSlot = iterator.next();
             LocalDate slotDay = freeSlot.start().toLocalDate();
             if (!map.containsKey(slotDay)) {
-                addToFreeAppointments(freeAppointments, startingFrom, map.values());
+                addToFreeAppointments(scheduleRanges, startingFrom, map.values());
                 map.clear();
             }
             map.put(slotDay, freeSlot);
         }
 
-        addToFreeAppointments(freeAppointments, startingFrom, map.values());
+        addToFreeAppointments(scheduleRanges, startingFrom, map.values());
 
-        return FreeAppointments.of(freeAppointments);
+        return FreeAppointments.of(scheduleRanges);
     }
 
-    private void addToFreeAppointments(List<FreeAppointment> freeAppointments, LocalDateTime startingFrom, Collection<FreeSlot> values) {
-        freeAppointments.addAll(values
+    private void addToFreeAppointments(List<ScheduleRange> scheduleRanges, LocalDateTime startingFrom, Collection<FreeSlot> values) {
+        scheduleRanges.addAll(values
                 .stream()
                 .flatMap(appointmentsStream(startingFrom))
-                .sorted(Comparator.comparing(FreeAppointment::start).thenComparing(a -> Duration.between(a.start(), a.end())))
-                .limit(firstFreeCount - freeAppointments.size())
+                .sorted(Comparator.comparing(ScheduleRange::start).thenComparing(ScheduleRange::duration))
+                .limit(firstFreeCount - scheduleRanges.size())
                 .collect(toList()));
     }
 
 
-    private Function<FreeSlot, Stream<FreeAppointment>> appointmentsStream(LocalDateTime startingDate) {
+    private Function<FreeSlot, Stream<ScheduleRange>> appointmentsStream(LocalDateTime startingDate) {
         return fs -> {
             Duration duration = this.scheduleDurations.durationFor(fs.scheduleId());
-            Spliterator<FreeAppointment> spliterator = fs.appointmentsFor(startingDate, duration).spliterator();
+            Spliterator<ScheduleRange> spliterator = fs.appointmentsFor(startingDate, duration).spliterator();
             return StreamSupport.stream(spliterator, false);
         };
     }

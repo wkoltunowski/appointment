@@ -1,43 +1,46 @@
 package com.example.appointment.tmp;
 
+import com.example.appointment.domain.schedule.DoctorId;
+import com.example.appointment.domain.schedule.ServiceId;
+
 import java.time.LocalDateTime;
 
 public class ReservationCriteria {
-    private String serviceName;
     private LocalDateTime startingFrom;
-    private String doctorName;
+    private DoctorId doctor;
+    private ServiceId service;
 
     public ReservationCriteria(ReservationCriteria reservationCriteria) {
-        this.serviceName = reservationCriteria.serviceName;
+        this.service = reservationCriteria.service;
         this.startingFrom = reservationCriteria.startingFrom;
-        this.doctorName = reservationCriteria.doctorName;
+        this.doctor = reservationCriteria.doctor;
     }
 
     public ReservationCriteria() {
 
     }
 
-    public String getDoctorName() {
-        return doctorName;
+    public DoctorId getDoctor() {
+        return doctor;
     }
 
-    public String getServiceName() {
-        return serviceName;
+    public ServiceId getService() {
+        return service;
     }
 
     public LocalDateTime getStartingFrom() {
         return startingFrom;
     }
 
-    public ReservationCriteria service(String serviceName) {
+    public ReservationCriteria service(ServiceId serviceId) {
         ReservationCriteria reservationCriteria = new ReservationCriteria(this);
-        reservationCriteria.serviceName = serviceName;
+        reservationCriteria.service = serviceId;
         return reservationCriteria;
     }
 
-    public ReservationCriteria doctor(String doctorName) {
+    public ReservationCriteria doctor(DoctorId doctorName) {
         ReservationCriteria reservationCriteria = new ReservationCriteria(this);
-        reservationCriteria.doctorName= doctorName;
+        reservationCriteria.doctor = doctorName;
         return reservationCriteria;
     }
 
@@ -50,8 +53,8 @@ public class ReservationCriteria {
     @Override
     public String toString() {
         return "ReservationCriteria{" +
-                "doctorName='" + doctorName + '\'' +
-                ", serviceName='" + serviceName + '\'' +
+                "doctorName='" + doctor + '\'' +
+                ", serviceName='" + service + '\'' +
                 ", startingFrom=" + startingFrom +
                 '}';
     }
