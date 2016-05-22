@@ -1,18 +1,18 @@
 package com.example.appointment.domain.freescheduleranges;
 
 import com.example.appointment.domain.schedule.ScheduleId;
+import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.stream.Collectors;
 
 public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
@@ -54,6 +54,10 @@ public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
         return this.range.encloses(range);
     }
 
+    public Range<LocalDateTime> range() {
+        return range;
+    }
+
 
     public Iterable<ScheduleRange> appointmentsFor(LocalDateTime startingDate, Duration duration) {
         return () -> new AppointmentsIterator(this, startingDate, duration);
@@ -88,7 +92,7 @@ public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
         return of(scheduleId, range, searchTags);
     }
 
-    private class AppointmentsIterator implements Iterator<ScheduleRange> {
+    private class AppointmentsIterator extends AbstractIterator<ScheduleRange> {
 
         private final FreeScheduleSlot fs;
 
@@ -98,34 +102,34 @@ public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
         public AppointmentsIterator(FreeScheduleSlot fs, LocalDateTime startingDate, Duration duration) {
             this.fs = fs;
             this.duration = duration;
-            this.date = calcStartingDate(startingDate);
+            this.date = calcStartingDate(startingDate.truncatedTo(ChronoUnit.MINUTES));
+        }
+
+        @Override
+        protected ScheduleRange computeNext() {
+            if (!date.isBefore(fs.end())) {
+                return endOfData();
+            }
+            LocalDateTime oldDate = this.date;
+            this.date = this.date.plus(duration);
+            return ScheduleRange.of(oldDate, duration, fs.scheduleId());
         }
 
         private LocalDateTime calcStartingDate(LocalDateTime appointmentDate) {
-            long appointmentsFromSlotStart = calculateAppointmentNo(appointmentDate);
-            return fs.start().plus(this.duration.multipliedBy(appointmentsFromSlotStart));
+            if (fs.start().isAfter(appointmentDate)) {
+                return fs.start();
+            }
+            return fs.start().plus(Duration.ofSeconds(this.duration.getSeconds() * durationsBetween(fs.start(), appointmentDate)));
         }
 
-        private long calculateAppointmentNo(LocalDateTime startingDate) {
-            LocalDateTime max = ObjectUtils.max(startingDate, fs.start());
-            long secondsBetweenStartMax = Duration.between(fs.start(), max).getSeconds();
+        private long durationsBetween(LocalDateTime aBeginning, LocalDateTime anEnd) {
+            long secondsBetweenStartMax = Duration.between(aBeginning, anEnd).getSeconds();
             long durationInSeconds = this.duration.getSeconds();
             long appointmentFromStart = secondsBetweenStartMax / durationInSeconds;
             int mod = (secondsBetweenStartMax % durationInSeconds) > 0 ? 1 : 0;
             return appointmentFromStart + mod;
         }
 
-        @Override
-        public boolean hasNext() {
-            return !date.plus(duration).isAfter(fs.end());
-        }
-
-        @Override
-        public ScheduleRange next() {
-            LocalDateTime oldDate = this.date;
-            this.date = this.date.plus(duration);
-            return ScheduleRange.of(oldDate, duration, fs.scheduleId());
-        }
 
     }
 

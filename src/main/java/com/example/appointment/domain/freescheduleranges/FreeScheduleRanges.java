@@ -11,19 +11,20 @@ import static java.util.Arrays.asList;
 
 public class FreeScheduleRanges {
 
-    private final TreeSet<ScheduleRange> scheduleRanges;
+    private final Collection<ScheduleRange> scheduleRanges;
     public static final Comparator<ScheduleRange> START_THEN_SCHEDULE_ID_COMPARATOR =
             Comparator.comparing(ScheduleRange::start)
                     .thenComparing(fa -> Duration.between(fa.range().lowerEndpoint(), fa.range().upperEndpoint()))
                     .thenComparing(Comparator.comparing(v -> v.scheduleId().toString()));
 
     public TreeSet<ScheduleRange> getScheduleRanges() {
-        return scheduleRanges;
+        TreeSet<ScheduleRange> scheduleRanges1 = new TreeSet<>(START_THEN_SCHEDULE_ID_COMPARATOR);
+        scheduleRanges1.addAll(scheduleRanges);
+        return scheduleRanges1;
     }
 
     public FreeScheduleRanges(Collection<ScheduleRange> scheduleRanges) {
-        this.scheduleRanges = new TreeSet<>(START_THEN_SCHEDULE_ID_COMPARATOR);
-        this.scheduleRanges.addAll(scheduleRanges);
+        this.scheduleRanges = scheduleRanges;
     }
 
     public static FreeScheduleRanges of(List<ScheduleRange> scheduleRanges) {

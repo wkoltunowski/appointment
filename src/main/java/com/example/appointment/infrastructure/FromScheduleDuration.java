@@ -18,8 +18,7 @@ public class FromScheduleDuration implements ScheduleDurations {
 
     @Override
     public Duration durationFor(ScheduleId scheduleId) {
-        Schedule schedule = this.scheduleRepository
-                .findById(scheduleId);
+        Schedule schedule = this.scheduleRepository.findById(scheduleId);
         return schedule.duration()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("No duration defined for schedule :'%s'", scheduleId)));
     }

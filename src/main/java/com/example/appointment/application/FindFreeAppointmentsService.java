@@ -2,21 +2,22 @@ package com.example.appointment.application;
 
 import com.example.appointment.domain.freescheduleranges.*;
 import com.example.appointment.domain.schedule.ScheduleDurations;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
+import com.example.appointment.domain.schedule.ScheduleId;
+import com.google.common.collect.ImmutableList;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
+import java.util.stream.BaseStream;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static java.util.stream.Collectors.toList;
-
 public class FindFreeAppointmentsService {
 
+    public static final ScheduleId SCHEDULE_ID = ScheduleId.newId();
+    public static final Duration DURATION = Duration.ofMinutes(15);
+    public static final ScheduleRange OF = ScheduleRange.of(null, DURATION, SCHEDULE_ID);
     private final int firstFreeCount;
     private final ScheduleDurations scheduleDurations;
     private final FreeSlotRepository storage;
@@ -32,44 +33,83 @@ public class FindFreeAppointmentsService {
     }
 
     public FreeScheduleRanges findFirstFree(LocalDateTime startingFrom, SearchTags searchTags) {
-        LocalDate startingDay = startingFrom.toLocalDate();
-        Iterator<FreeScheduleSlot> iterator = StreamSupport
-                .stream(this.storage.findAfter(startingDay).spliterator(), false)
-                .filter(fs -> fs.matches(searchTags))
+//        return findVer5(startingFrom, searchTags);
+        return findVer5StreamImpr(startingFrom, searchTags);
+//        return findStreamNoOrder(startingFrom, searchTags);
+
+//        return findVer6(startingFrom, searchTags);
+//        return findVer7(startingFrom, searchTags);
+    }
+
+    private FreeScheduleRanges findVer7(LocalDateTime startingFrom, SearchTags searchTags) {
+        return FreeScheduleRanges.of(ImmutableList.of());
+    }
+
+    private FreeScheduleRanges findVer6(LocalDateTime startingFrom, SearchTags searchTags) {
+        return FreeScheduleRanges.of(ImmutableList.of(OF));
+    }
+
+
+    private FreeScheduleRanges findStreamNoOrder(LocalDateTime startingFrom, SearchTags searchTags) {
+        Stream<FreeScheduleSlot> stream = StreamSupport.stream(this.storage.findAfter(startingFrom).spliterator(), false);
+        Stream<ScheduleRange> rangesStream = stream
+                .filter(s -> s.matches(searchTags))
+                .flatMap(slot -> freeSlotRanges(startingFrom, slot));
+        List<ScheduleRange> firstNRanges = rangesStream.limit(firstFreeCount).collect(Collectors.toList());
+        return FreeScheduleRanges.of(firstNRanges);
+    }
+
+
+    private FreeScheduleRanges findVer5StreamImpr(LocalDateTime startingFrom, SearchTags searchTags) {
+        Stream<FreeScheduleSlot> stream = StreamSupport.stream(this.storage.findAfter(startingFrom).spliterator(), false);
+        Iterator<Iterator<ScheduleRange>> iterators = stream
+                .filter(s -> s.matches(searchTags))
+                .map(slot -> freeSlotRanges(startingFrom, slot))
+                .map(BaseStream::iterator)
                 .iterator();
-        Multimap<LocalDate, FreeScheduleSlot> map = LinkedListMultimap.create();
-        List<ScheduleRange> scheduleRanges = new ArrayList<>(firstFreeCount);
-        while (iterator.hasNext() && scheduleRanges.size() < firstFreeCount) {
-            FreeScheduleSlot freeScheduleSlot = iterator.next();
-            LocalDate slotDay = freeScheduleSlot.start().toLocalDate();
-            if (!map.containsKey(slotDay)) {
-                addToFreeAppointments(scheduleRanges, startingFrom, map.values());
-                map.clear();
+        List<ScheduleRange> ranges = new ArrayList<>();
+        while (iterators.hasNext()) {
+            Iterator<ScheduleRange> slotIterator = iterators.hasNext() ? iterators.next() : Collections.emptyListIterator();
+            Iterator<ScheduleRange> nextIterator = iterators.hasNext() ? iterators.next() : Collections.emptyListIterator();
+            Optional<ScheduleRange> nextIteratorRange = Optional.empty();
+            if (nextIterator.hasNext()) {
+                nextIteratorRange = Optional.of(nextIterator.next());
             }
-            map.put(slotDay, freeScheduleSlot);
+            while (slotIterator.hasNext()) {
+                ScheduleRange thisSlotRange = slotIterator.next();
+                while (nextIteratorRange.isPresent() && nextIteratorRange.get().start().isBefore(thisSlotRange.start())) {
+                    ranges.add(nextIteratorRange.get());
+                    if (nextIterator.hasNext()) {
+                        nextIteratorRange = Optional.of(nextIterator.next());
+                    } else {
+                        if (iterators.hasNext()) {
+                            nextIterator = iterators.next();
+                            if (nextIterator.hasNext()) {
+                                nextIteratorRange = Optional.of(nextIterator.next());
+                            }
+                        } else {
+                            nextIteratorRange = Optional.empty();
+                        }
+                    }
+                    if (ranges.size() >= firstFreeCount) {
+                        return FreeScheduleRanges.of(ranges);
+                    }
+                }
+                ranges.add(thisSlotRange);
+                if (ranges.size() >= firstFreeCount) {
+                    return FreeScheduleRanges.of(ranges);
+                }
+            }
+
+
         }
-
-        addToFreeAppointments(scheduleRanges, startingFrom, map.values());
-
-        return FreeScheduleRanges.of(scheduleRanges);
-    }
-
-    private void addToFreeAppointments(List<ScheduleRange> scheduleRanges, LocalDateTime startingFrom, Collection<FreeScheduleSlot> values) {
-        scheduleRanges.addAll(values
-                .stream()
-                .flatMap(appointmentsStream(startingFrom))
-                .sorted(Comparator.comparing(ScheduleRange::start).thenComparing(ScheduleRange::duration))
-                .limit(firstFreeCount - scheduleRanges.size())
-                .collect(toList()));
+        return FreeScheduleRanges.of();
     }
 
 
-    private Function<FreeScheduleSlot, Stream<ScheduleRange>> appointmentsStream(LocalDateTime startingDate) {
-        return fs -> {
-            Duration duration = this.scheduleDurations.durationFor(fs.scheduleId());
-            Spliterator<ScheduleRange> spliterator = fs.appointmentsFor(startingDate, duration).spliterator();
-            return StreamSupport.stream(spliterator, false);
-        };
+    private Stream<ScheduleRange> freeSlotRanges(LocalDateTime startingFrom, FreeScheduleSlot freeSlot) {
+        Duration duration = this.scheduleDurations.durationFor(freeSlot.scheduleId());
+        return StreamSupport.stream(freeSlot.appointmentsFor(startingFrom, duration).spliterator(), false);
     }
 
 

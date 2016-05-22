@@ -5,12 +5,12 @@ import com.example.appointment.application.AppointmentTakenException;
 import com.example.appointment.domain.ServiceId;
 import com.example.appointment.domain.freescheduleranges.FreeScheduleRanges;
 import com.example.appointment.domain.freescheduleranges.ScheduleRange;
-import com.example.appointment.domain.freescheduleranges.SearchTags;
 import com.example.appointment.domain.reservation.PatientServiceReservation;
 import com.example.appointment.domain.reservation.PatientReservationService;
 import com.example.appointment.domain.reservation.ReservationRepository;
 import com.example.appointment.domain.schedule.*;
 import com.example.appointment.domain.reservation.PatientId;
+import com.google.common.collect.ImmutableList;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -26,6 +26,7 @@ import static com.example.appointment.domain.freescheduleranges.ScheduleRange.of
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 
 public class ReservationAcceptanceTest {
 
@@ -73,7 +74,7 @@ public class ReservationAcceptanceTest {
                         .service(CONSULTATION)
                         .startingFrom(todayAt("08:00")),
                 maxVisitsCount(10));
-        assertThat(scheduleRanges, contains(
+        assertThat(scheduleRanges, is(ImmutableList.of(
                 of(todayBetween("08:00-08:15"), smithSchedule),
                 of(todayBetween("08:00-08:20"), wilsonSchedule),
                 of(todayBetween("08:15-08:30"), smithSchedule),
@@ -83,7 +84,7 @@ public class ReservationAcceptanceTest {
                 of(todayBetween("08:45-09:00"), smithSchedule),
                 of(todayBetween("09:00-09:15"), smithSchedule),
                 of(todayBetween("09:00-09:20"), wilsonSchedule),
-                of(todayBetween("09:15-09:30"), smithSchedule)
+                of(todayBetween("09:15-09:30"), smithSchedule))
 
         ));
     }

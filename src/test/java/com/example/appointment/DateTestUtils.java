@@ -28,10 +28,10 @@ public class DateTestUtils {
     }
 
     public static LocalDateTime tommorrowAt(int hour, int minute) {
-        return todayBetween(hour, minute).plusDays(1);
+        return todayAt(hour, minute).plusDays(1);
     }
 
-    public static LocalDateTime todayBetween(int hour, int minute) {
+    public static LocalDateTime todayAt(int hour, int minute) {
         return LocalDate.now().atTime(LocalTime.of(hour, minute));
     }
 

@@ -14,11 +14,9 @@ public class ReserveAppointmentService {
     }
 
     public void reserve(ScheduleRange scheduleRange) {
-        Optional<FreeScheduleSlot> scheduleSlots = this.freeSlotRepository.findByAppointment(scheduleRange);
+        Optional<FreeScheduleSlot> scheduleSlots = this.freeSlotRepository.findByScheduleRange(scheduleRange);
         FreeScheduleSlot freeScheduleSlot = scheduleSlots.orElseThrow(AppointmentTakenException::new);
         this.freeSlotRepository.remove(freeScheduleSlot);
         this.freeSlotRepository.addAll(freeScheduleSlot.splitFor(scheduleRange.range()));
     }
-
-
 }
