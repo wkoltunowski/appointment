@@ -1,7 +1,5 @@
 package com.example.appointment.domain.schedule;
 
-import com.example.appointment.domain.schedule.ScheduleId;
-
 public class ScheduleAddedEvent {
     private final ScheduleId scheduleId;
 

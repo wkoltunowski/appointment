@@ -1,8 +1,8 @@
-package com.example.appointment;
+package com.example.appointment.domain.schedule;
 
-import com.example.appointment.domain.schedule.DoctorId;
 import com.example.appointment.domain.ServiceId;
 
+import java.time.Duration;
 import java.time.LocalDate;
 
 public class ScheduleDefinition {
@@ -23,32 +23,11 @@ public class ScheduleDefinition {
     }
 
     public ScheduleDefinition() {
-
     }
 
-    public DoctorId getDoctor() {
-        return doctor;
-    }
-
-    public String getDuration() {
-        return duration;
-    }
-
-    public ServiceId getService() {
-        return service;
-    }
-
-    public LocalDate getValidTo() {
-        return validTo;
-    }
-
-    public String getWorkingHours() {
-        return workingHours;
-    }
-
-    public ScheduleDefinition forDoctor(DoctorId doctorName) {
+    public ScheduleDefinition forDoctor(DoctorId doctor) {
         ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
-        scheduleDefinition.doctor = doctorName;
+        scheduleDefinition.doctor = doctor;
         return scheduleDefinition;
     }
 
@@ -82,5 +61,24 @@ public class ScheduleDefinition {
         ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
         scheduleDefinition.validTo = endDate;
         return scheduleDefinition;
+    }
+
+    public Validity validity() {
+        Validity validity = Validity.infinite();
+        if (validTo != null) {
+            validity = Validity.validTill(validTo);
+        }
+        return validity;
+    }
+
+    public WorkingHours workingHours() {
+        return WorkingHours.ofHours(workingHours);
+    }
+
+    public ScheduleConnections scheduleConnections() {
+        return ScheduleConnections.empty()
+                .withDoctorId(doctor)
+                .withService(service)
+                .withDuration(Duration.parse(duration));
     }
 }

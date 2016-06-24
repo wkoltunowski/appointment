@@ -2,6 +2,7 @@ package com.example.appointment;
 
 import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
+import com.example.appointment.domain.freescheduleranges.SearchFreeSlotsCriteria;
 import com.example.appointment.domain.schedule.DoctorId;
 import com.example.appointment.domain.schedule.LocationId;
 import com.example.appointment.domain.ServiceId;
@@ -39,7 +40,7 @@ public class SearchFreeAppointmentTest {
     public void shouldFindAnySlot() throws Exception {
         ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn()));
 
-        assertFoundAppointments(startingFrom(tommorrowAt(8, 0)), ScheduleRange.of(tommorrow("08:00-08:15"), smithSchedule));
+        assertFoundAppointments(startingFrom(tommorrowAt(8, 0)), ScheduleRange.scheduleRange(tommorrow("08:00-08:15"), smithSchedule));
     }
 
     @Test
@@ -48,7 +49,7 @@ public class SearchFreeAppointmentTest {
         ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(howardMichael));
         ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drSmithJohn()));
 
-        assertFoundAppointments(startingFrom(tommorrowAt(8, 0)).forDoctor(howardMichael), ScheduleRange.of(tommorrow("08:00-08:15"), howardSchedule));
+        assertFoundAppointments(startingFrom(tommorrowAt(8, 0)).forDoctor(howardMichael), ScheduleRange.scheduleRange(tommorrow("08:00-08:15"), howardSchedule));
     }
 
     @Test
@@ -62,7 +63,7 @@ public class SearchFreeAppointmentTest {
 
         assertFoundAppointments(
                 startingFrom(tommorrowAt(8, 0)).forService(consultation),
-                ScheduleRange.of(tommorrow("08:00-08:15"), howardSchedule));
+                ScheduleRange.scheduleRange(tommorrow("08:00-08:15"), howardSchedule));
     }
 
     @Test
@@ -73,7 +74,7 @@ public class SearchFreeAppointmentTest {
 
         assertFoundAppointments(
                 startingFrom(tommorrowAt(8, 0)).forLocation(warsaw.toString()),
-                ScheduleRange.of(tommorrow("08:00-08:15"), smithSchedule));
+                ScheduleRange.scheduleRange(tommorrow("08:00-08:15"), smithSchedule));
     }
 
     private ScheduleConnections newSchedule(DoctorId doctorId) {
@@ -86,7 +87,7 @@ public class SearchFreeAppointmentTest {
     }
 
     private void assertFoundAppointments(SearchFreeSlotsCriteria crit, ScheduleRange scheduleRange) {
-        assertThat(freeSlots.findFirstFree(crit.getStartingFrom(), crit.searchTags()), is(FreeScheduleRanges.of(scheduleRange)));
+        assertThat(freeSlots.findFirstFree(crit), is(FreeScheduleRanges.of(scheduleRange)));
     }
 
     private DoctorId drSmithJohn() {

@@ -23,7 +23,7 @@ public class PatientReservationService {
     }
 
     public void makeReservationFor(PatientId patient, ScheduleRange scheduleRange) {
-        ScheduleRange freeAppointment = ScheduleRange.of(scheduleRange.range(), scheduleRange.scheduleId());
+        ScheduleRange freeAppointment = ScheduleRange.scheduleRange(scheduleRange.range(), scheduleRange.scheduleId());
         reserveAppointmentService.reserve(freeAppointment);
 
         reserve(patient, freeAppointment);
@@ -32,7 +32,7 @@ public class PatientReservationService {
     private void reserve(PatientId patient, ScheduleRange scheduleRange) {
         ScheduleConnections scheduleConnections = scheduleRepository.findById(scheduleRange.scheduleId()).scheduleDefinition();
         Optional<ServiceId> serviceId = scheduleConnections.serviceId();
-        reservationRepository.save(PatientServiceReservation.serviceReservation(patient, serviceId, ScheduleRange.of(scheduleRange.range(), scheduleRange.scheduleId())));
+        reservationRepository.save(PatientServiceReservation.serviceReservation(patient, serviceId, ScheduleRange.scheduleRange(scheduleRange.range(), scheduleRange.scheduleId())));
     }
 
 

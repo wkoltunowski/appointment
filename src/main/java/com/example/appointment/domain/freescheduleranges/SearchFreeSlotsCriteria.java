@@ -1,7 +1,6 @@
-package com.example.appointment;
+package com.example.appointment.domain.freescheduleranges;
 
 import com.example.appointment.domain.ServiceId;
-import com.example.appointment.domain.freescheduleranges.SearchTags;
 import com.example.appointment.domain.schedule.DoctorId;
 
 import java.time.LocalDateTime;

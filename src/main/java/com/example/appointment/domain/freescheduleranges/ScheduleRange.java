@@ -54,11 +54,11 @@ public class ScheduleRange {
     }
 
 
-    public static ScheduleRange of(Range<LocalDateTime> today, ScheduleId scheduleId) {
-        return of(today.lowerEndpoint(), Duration.between(today.lowerEndpoint(), today.upperEndpoint()), scheduleId);
+    public static ScheduleRange scheduleRange(Range<LocalDateTime> today, ScheduleId scheduleId) {
+        return scheduleRange(today.lowerEndpoint(), Duration.between(today.lowerEndpoint(), today.upperEndpoint()), scheduleId);
     }
 
-    public static ScheduleRange of(LocalDateTime start, Duration duration, ScheduleId scheduleId) {
+    public static ScheduleRange scheduleRange(LocalDateTime start, Duration duration, ScheduleId scheduleId) {
         ScheduleRange scheduleRange = new ScheduleRange();
         scheduleRange.start = start;
         scheduleRange.duration = duration;

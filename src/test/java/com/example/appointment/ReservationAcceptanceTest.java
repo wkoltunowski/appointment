@@ -14,15 +14,14 @@ import com.google.common.collect.ImmutableList;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.example.appointment.DateTestUtils.todayAt;
 import static com.example.appointment.DateTestUtils.todayBetween;
-import static com.example.appointment.domain.freescheduleranges.ScheduleRange.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
@@ -68,23 +67,22 @@ public class ReservationAcceptanceTest {
 
     @Test
     public void shouldFindReservationCandidates() throws Exception {
-
         List<ScheduleRange> scheduleRanges = findScheduleRanges(
                 reservationCriteria()
                         .service(CONSULTATION)
                         .startingFrom(todayAt("08:00")),
                 maxVisitsCount(10));
         assertThat(scheduleRanges, is(ImmutableList.of(
-                of(todayBetween("08:00-08:15"), smithSchedule),
-                of(todayBetween("08:00-08:20"), wilsonSchedule),
-                of(todayBetween("08:15-08:30"), smithSchedule),
-                of(todayBetween("08:20-08:40"), wilsonSchedule),
-                of(todayBetween("08:30-08:45"), smithSchedule),
-                of(todayBetween("08:40-09:00"), wilsonSchedule),
-                of(todayBetween("08:45-09:00"), smithSchedule),
-                of(todayBetween("09:00-09:15"), smithSchedule),
-                of(todayBetween("09:00-09:20"), wilsonSchedule),
-                of(todayBetween("09:15-09:30"), smithSchedule))
+                ScheduleRange.scheduleRange(todayBetween("08:00-08:15"), smithSchedule),
+                ScheduleRange.scheduleRange(todayBetween("08:00-08:20"), wilsonSchedule),
+                ScheduleRange.scheduleRange(todayBetween("08:15-08:30"), smithSchedule),
+                ScheduleRange.scheduleRange(todayBetween("08:20-08:40"), wilsonSchedule),
+                ScheduleRange.scheduleRange(todayBetween("08:30-08:45"), smithSchedule),
+                ScheduleRange.scheduleRange(todayBetween("08:40-09:00"), wilsonSchedule),
+                ScheduleRange.scheduleRange(todayBetween("08:45-09:00"), smithSchedule),
+                ScheduleRange.scheduleRange(todayBetween("09:00-09:15"), smithSchedule),
+                ScheduleRange.scheduleRange(todayBetween("09:00-09:20"), wilsonSchedule),
+                ScheduleRange.scheduleRange(todayBetween("09:15-09:30"), smithSchedule))
 
         ));
     }
@@ -95,19 +93,23 @@ public class ReservationAcceptanceTest {
                 .service(CONSULTATION)
                 .doctor(DR_SMITH)
                 .startingFrom(todayAt("08:00"));
-        ScheduleRange firstCandidate = findFreeRanges(reservationCriteria, maxVisitsCount(1)).first()
-                .orElseThrow(() -> new IllegalStateException("No reservations found for :" + reservationCriteria));
+        ScheduleRange firstCandidate = findFreeRanges(reservationCriteria, maxVisitsCount(1))
+                .first().orElseThrow(noReservationsException(reservationCriteria));
         patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstCandidate);
 
 
         assertThat(reservationRepository.findPatientReservations(PATIENT_DOUGLAS), contains(
-                PatientServiceReservation.serviceReservation(PATIENT_DOUGLAS, CONSULTATION, of(todayBetween("08:00-08:15"), smithSchedule))
+                PatientServiceReservation.serviceReservation(PATIENT_DOUGLAS, CONSULTATION,
+                        ScheduleRange.scheduleRange(todayBetween("08:00-08:15"), smithSchedule))
         ));
+    }
+
+    private Supplier<IllegalStateException> noReservationsException(ReservationCriteria reservationCriteria) {
+        return () -> new IllegalStateException("No reservations found for :" + reservationCriteria);
     }
 
     @Test
     public void shouldNotFindReservationForFullSchedule() throws Exception {
-
         DoctorId fullScheduleDoctor = DoctorId.newId();
         givenSchedule(scheduleDefinition()
                 .forDoctor(fullScheduleDoctor)
@@ -172,25 +174,8 @@ public class ReservationAcceptanceTest {
     }
 
 
-
-    private ScheduleId givenSchedule(ScheduleDefinition scheduleDefinition) {
-        DoctorId doctorId = scheduleDefinition.getDoctor();
-        ServiceId serviceId = scheduleDefinition.getService();
-
-        Validity validity = Validity.infinite();
-        if (scheduleDefinition.getValidTo() != null) {
-            validity = Validity.validTill(scheduleDefinition.getValidTo());
-        }
-        ScheduleId scheduleId = factory.scheduleDefinitionService()
-                .addSchedule(WorkingHours.ofHours(scheduleDefinition.getWorkingHours()),
-                        validity,
-                        ScheduleConnections.empty()
-                                .withDoctorId(doctorId)
-                                .withService(serviceId)
-                                .withDuration(Duration.parse(scheduleDefinition.getDuration()))
-
-                );
-        return scheduleId;
+    private ScheduleId givenSchedule(ScheduleDefinition definition) {
+        return factory.scheduleDefinitionService().addSchedule(definition);
     }
 
     private ReservationCriteria reservationCriteria() {
