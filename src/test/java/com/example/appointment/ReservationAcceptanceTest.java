@@ -1,7 +1,7 @@
 package com.example.appointment;
 
 import com.example.appointment.application.AppointmentTakenException;
-import com.example.appointment.application.FindFreeAppointmentsService;
+import com.example.appointment.application.FindFreeScheduleRangesService;
 import com.example.appointment.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.domain.reservation.PatientId;
 import com.example.appointment.domain.reservation.PatientReservation;
@@ -174,13 +174,13 @@ public class ReservationAcceptanceTest {
     }
 
     private List<ScheduleRange> findFreeRanges(ReservationCriteria reservationCriteria, int maxResultCount) {
-        FindFreeAppointmentsService freeService = factory.findFreeService(maxResultCount);
+        FindFreeScheduleRangesService freeService = factory.findFreeService(maxResultCount);
         return freeService.findFirstFree(reservationCriteria.getStartingFrom(), reservationCriteria.searchTags());
     }
 
 
     private ScheduleId givenSchedule(ScheduleDefinition scheduleDefinition) {
-        return factory.scheduleDefinitionService().addSchedule(
+        return factory.scheduleDefinitionService().addDailySchedule(
                 scheduleDefinition.workingHours(),
                 scheduleDefinition.validity(),
                 scheduleDefinition.scheduleConnections()

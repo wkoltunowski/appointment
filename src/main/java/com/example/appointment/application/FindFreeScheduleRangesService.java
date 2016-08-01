@@ -2,7 +2,6 @@ package com.example.appointment.application;
 
 import com.example.appointment.domain.freescheduleranges.*;
 import com.example.appointment.domain.schedule.ScheduleDurations;
-import com.example.appointment.domain.schedule.ScheduleId;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -11,13 +10,13 @@ import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class FindFreeAppointmentsService {
+public class FindFreeScheduleRangesService {
 
     private final int firstFreeCount;
     private final ScheduleDurations scheduleDurations;
     private final FreeScheduleSlotRepository storage;
 
-    public FindFreeAppointmentsService(int firstFreeCount, ScheduleDurations scheduleDurations, FreeScheduleSlotRepository storage) {
+    public FindFreeScheduleRangesService(int firstFreeCount, ScheduleDurations scheduleDurations, FreeScheduleSlotRepository storage) {
         this.firstFreeCount = firstFreeCount;
         this.scheduleDurations = scheduleDurations;
         this.storage = storage;
@@ -80,7 +79,7 @@ public class FindFreeAppointmentsService {
     }
 
 
-    public List<ScheduleRange> findFirstFree(SearchFreeSlotsCriteria crit) {
+    public List<ScheduleRange> findFirstFree(SearchCriteria crit) {
         return findFirstFree(crit.getStartingFrom(), crit.searchTags());
     }
 }

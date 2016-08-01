@@ -8,7 +8,7 @@ import java.util.UUID;
 public class DoctorId {
     private final UUID id;
 
-    public DoctorId(UUID id) {
+    private DoctorId(UUID id) {
         this.id = id;
     }
 
@@ -32,8 +32,5 @@ public class DoctorId {
     public static DoctorId newId() {
         return new DoctorId(UUID.randomUUID());
     }
-    public static DoctorId of(String name) {
-        DoctorId doctorId = new DoctorId(UUID.fromString(name));
-        return doctorId;
-    }
+
 }

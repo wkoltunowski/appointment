@@ -1,7 +1,7 @@
 package com.example.appointment;
 
 import com.example.appointment.application.DefineNewScheduleService;
-import com.example.appointment.application.FindFreeAppointmentsService;
+import com.example.appointment.application.FindFreeScheduleRangesService;
 import com.example.appointment.application.ReserveAppointmentService;
 import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.example.appointment.domain.freescheduleranges.ScheduleRange;
@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 
 
 public class AppointmentReservationPerformanceTest {
-    private FindFreeAppointmentsService findFreeSlots;
+    private FindFreeScheduleRangesService findFreeSlots;
     private DefineNewScheduleService defineNewScheduleService;
     private ReserveAppointmentService reserveAppointmentService;
     private FreeScheduleSlotRepository storage;
@@ -103,7 +103,7 @@ public class AppointmentReservationPerformanceTest {
     private void generateNSchedules(int n) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         for (int i = 0; i < n; i++) {
-            defineNewScheduleService.addSchedule(WorkingHours.ofHours("08:00-16:00"), Duration.ofMinutes(15));
+            defineNewScheduleService.addDailySchedule(WorkingHours.ofHours("08:00-16:00"), Duration.ofMinutes(15));
         }
         System.out.println("free slots count\t\t\t : " + storage.size());
         stopwatch.stop();

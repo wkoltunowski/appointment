@@ -1,7 +1,7 @@
 package com.example.appointment;
 
 import com.example.appointment.application.DefineNewScheduleService;
-import com.example.appointment.application.FindFreeAppointmentsService;
+import com.example.appointment.application.FindFreeScheduleRangesService;
 import com.example.appointment.application.GenerateFreeSlotsService;
 import com.example.appointment.application.ReserveAppointmentService;
 import com.example.appointment.domain.ApplicationEventing;
@@ -22,8 +22,8 @@ public class Factory {
     private ReservationRepository reservationRepository;
     private GenerateFreeSlotsService generateFreeSlotsService;
 
-    public FindFreeAppointmentsService findFreeService(int maxResultCount) {
-        return new FindFreeAppointmentsService(maxResultCount, scheduleDurations(), freeSlotRepository());
+    public FindFreeScheduleRangesService findFreeService(int maxResultCount) {
+        return new FindFreeScheduleRangesService(maxResultCount, scheduleDurations(), freeSlotRepository());
     }
 
     public FromScheduleDuration scheduleDurations() {

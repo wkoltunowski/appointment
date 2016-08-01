@@ -1,10 +1,10 @@
 package com.example.appointment;
 
 import com.example.appointment.application.DefineNewScheduleService;
-import com.example.appointment.application.FindFreeAppointmentsService;
+import com.example.appointment.application.FindFreeScheduleRangesService;
 import com.example.appointment.domain.schedule.ServiceId;
 import com.example.appointment.domain.freescheduleranges.ScheduleRange;
-import com.example.appointment.domain.freescheduleranges.SearchFreeSlotsCriteria;
+import com.example.appointment.domain.freescheduleranges.SearchCriteria;
 import com.example.appointment.domain.schedule.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.contains;
 
 public class SearchFreeAppointmentTest {
 
-    private FindFreeAppointmentsService freeSlots;
+    private FindFreeScheduleRangesService freeSlots;
     private DefineNewScheduleService defineNewScheduleService;
 
 
@@ -77,11 +77,11 @@ public class SearchFreeAppointmentTest {
     }
 
     private ScheduleId givenSchedule(WorkingHours workingHours, ScheduleConnections scheduleDefinition) {
-        return defineNewScheduleService.addSchedule(workingHours, scheduleDefinition);
+        return defineNewScheduleService.addDailySchedule(workingHours, scheduleDefinition);
 
     }
 
-    private void assertFoundAppointments(SearchFreeSlotsCriteria crit, ScheduleRange scheduleRange) {
+    private void assertFoundAppointments(SearchCriteria crit, ScheduleRange scheduleRange) {
         assertThat(freeSlots.findFirstFree(crit), contains(scheduleRange));
     }
 
@@ -94,8 +94,8 @@ public class SearchFreeAppointmentTest {
     }
 
 
-    private SearchFreeSlotsCriteria startingFrom(LocalDateTime startingAt) {
-        return new SearchFreeSlotsCriteria(startingAt);
+    private SearchCriteria startingFrom(LocalDateTime startingAt) {
+        return new SearchCriteria(startingAt);
     }
 
     private LocationId lublin() {

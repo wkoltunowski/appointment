@@ -10,21 +10,21 @@ import java.util.Optional;
 
 import static com.google.common.collect.Maps.newHashMap;
 
-public class SearchFreeSlotsCriteria {
+public class SearchCriteria {
 
     private Map<String, String> map;
     private final LocalDateTime startingFrom;
 
-    public SearchFreeSlotsCriteria(LocalDateTime startingFrom) {
+    public SearchCriteria(LocalDateTime startingFrom) {
         this(startingFrom, Collections.emptyMap());
     }
 
-    public SearchFreeSlotsCriteria(LocalDateTime startingFrom, Map<String, String> map) {
+    public SearchCriteria(LocalDateTime startingFrom, Map<String, String> map) {
         this.startingFrom = startingFrom;
         this.map = newHashMap(map);
     }
 
-    public SearchFreeSlotsCriteria forService(ServiceId service) {
+    public SearchCriteria forService(ServiceId service) {
         return addTag(":SERVICE", service.toString());
     }
 
@@ -32,8 +32,8 @@ public class SearchFreeSlotsCriteria {
         return get(":SERVICE");
     }
 
-    private SearchFreeSlotsCriteria addTag(String key, String value) {
-        SearchFreeSlotsCriteria searchTags = new SearchFreeSlotsCriteria(startingFrom, map);
+    private SearchCriteria addTag(String key, String value) {
+        SearchCriteria searchTags = new SearchCriteria(startingFrom, map);
         searchTags.map.put(key, value);
         return searchTags;
     }
@@ -43,7 +43,7 @@ public class SearchFreeSlotsCriteria {
     }
 
 
-    public SearchFreeSlotsCriteria forDoctor(final DoctorId doctor) {
+    public SearchCriteria forDoctor(final DoctorId doctor) {
         return addTag(":DOCTOR", doctor.toString());
     }
 
@@ -56,7 +56,7 @@ public class SearchFreeSlotsCriteria {
         return startingFrom;
     }
 
-    public SearchFreeSlotsCriteria forLocation(String location) {
+    public SearchCriteria forLocation(String location) {
         return addTag(":LOCATION", location);
     }
 

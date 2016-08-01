@@ -15,7 +15,7 @@ public class DefineNewScheduleService {
         this.applicationEventing = applicationEventing;
     }
 
-    public ScheduleId addSchedule(WorkingHours workingHours, Validity validity, ScheduleConnections scheduleDefinition) {
+    public ScheduleId addDailySchedule(WorkingHours workingHours, Validity validity, ScheduleConnections scheduleDefinition) {
         Schedule schedule = new Schedule(workingHours, validity, scheduleDefinition);
         scheduleRepository.save(schedule);
         ScheduleId scheduleId = schedule.scheduleId();
@@ -24,16 +24,16 @@ public class DefineNewScheduleService {
 
     }
 
-    public ScheduleId addSchedule(WorkingHours workingHours, ScheduleConnections scheduleDefinition) {
-        return this.addSchedule(workingHours, Validity.infinite(), scheduleDefinition);
+    public ScheduleId addDailySchedule(WorkingHours workingHours, ScheduleConnections scheduleDefinition) {
+        return this.addDailySchedule(workingHours, Validity.infinite(), scheduleDefinition);
 
     }
 
-    public ScheduleId addSchedule(WorkingHours workingHours, Duration duration) {
-        return addSchedule(workingHours, duration, Validity.infinite());
+    public ScheduleId addDailySchedule(WorkingHours workingHours, Duration duration) {
+        return addDailySchedule(workingHours, duration, Validity.infinite());
     }
 
-    public ScheduleId addSchedule(WorkingHours workingHours, Duration duration, Validity validity) {
+    public ScheduleId addDailySchedule(WorkingHours workingHours, Duration duration, Validity validity) {
         Schedule schedule = new Schedule(workingHours, validity, ScheduleConnections.empty().withDuration(duration));
         scheduleRepository.save(schedule);
         ScheduleId scheduleId = schedule.scheduleId();
