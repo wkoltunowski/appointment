@@ -2,20 +2,17 @@ package com.example.appointment.domain.freescheduleranges;
 
 import com.example.appointment.domain.schedule.ScheduleId;
 import com.google.common.collect.Range;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class ScheduleRange {
     private ScheduleId scheduleId;
-    private LocalDateTime start;
-    private Duration duration;
     private Range<LocalDateTime> range;
 
     public Range<LocalDateTime> range() {
-        if (range == null) {
-            range = Range.closedOpen(start, start.plus(duration));
-        }
         return range;
     }
 
@@ -25,30 +22,18 @@ public class ScheduleRange {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ScheduleRange that = (ScheduleRange) o;
-
-        if (!scheduleId.equals(that.scheduleId)) return false;
-        if (!start.equals(that.start)) return false;
-        return duration.equals(that.duration);
-
+        return EqualsBuilder.reflectionEquals(this, o);
     }
 
     @Override
     public int hashCode() {
-        int result = scheduleId.hashCode();
-        result = 31 * result + start.hashCode();
-        result = 31 * result + duration.hashCode();
-        return result;
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 
     @Override
     public String toString() {
         return "ReservationCandidate{" +
-                "start=" + start +
-                ", duration=" + duration +
+                "range=" + range +
                 ", scheduleId=" + scheduleId +
                 '}';
     }
@@ -60,17 +45,14 @@ public class ScheduleRange {
 
     public static ScheduleRange scheduleRange(LocalDateTime start, Duration duration, ScheduleId scheduleId) {
         ScheduleRange scheduleRange = new ScheduleRange();
-        scheduleRange.start = start;
-        scheduleRange.duration = duration;
+        scheduleRange.range = Range.closedOpen(start, start.plus(duration));
         scheduleRange.scheduleId = scheduleId;
         return scheduleRange;
     }
 
     public LocalDateTime start() {
-        return start;
+        return range.lowerEndpoint();
     }
 
-    public Duration duration() {
-        return duration;
-    }
+
 }

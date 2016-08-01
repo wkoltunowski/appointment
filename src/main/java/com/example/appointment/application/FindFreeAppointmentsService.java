@@ -13,9 +13,6 @@ import java.util.stream.StreamSupport;
 
 public class FindFreeAppointmentsService {
 
-    public static final ScheduleId SCHEDULE_ID = ScheduleId.newId();
-    public static final Duration DURATION = Duration.ofMinutes(15);
-    public static final ScheduleRange OF = ScheduleRange.scheduleRange(null, DURATION, SCHEDULE_ID);
     private final int firstFreeCount;
     private final ScheduleDurations scheduleDurations;
     private final FreeScheduleSlotRepository storage;
