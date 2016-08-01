@@ -3,8 +3,8 @@ package com.example.appointment;
 import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.ReserveAppointmentService;
-import com.example.appointment.domain.freescheduleranges.FreeScheduleRanges;
 import com.example.appointment.domain.freescheduleranges.FreeSlotRepository;
+import com.example.appointment.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.domain.schedule.WorkingHours;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
@@ -14,7 +14,6 @@ import org.testng.annotations.Test;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -81,7 +80,7 @@ public class AppointmentReservationPerformanceTest {
 
     private void reserveFirstFreeFor(Supplier<LocalDateTime> date) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        FreeScheduleRanges freeScheduleRanges = findFreeSlots.findFirstFree(date.get());
+        List<ScheduleRange> freeScheduleRanges = findFreeSlots.findFirstFree(date.get());
         int count = 0;
 
 
@@ -89,8 +88,8 @@ public class AppointmentReservationPerformanceTest {
         long start = System.currentTimeMillis();
         long maxEnd = maxTime + start;
 
-        while (System.currentTimeMillis() < maxEnd && !freeScheduleRanges.getScheduleRanges().isEmpty()) {
-            reserveAppointmentService.reserve(freeScheduleRanges.first().orElseThrow(IllegalArgumentException::new));
+        while (System.currentTimeMillis() < maxEnd && !freeScheduleRanges.isEmpty()) {
+            reserveAppointmentService.reserve(freeScheduleRanges.get(0));
             freeScheduleRanges = findFreeSlots.findFirstFree(date.get());
             count++;
         }

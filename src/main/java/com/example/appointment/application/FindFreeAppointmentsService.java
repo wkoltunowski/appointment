@@ -26,11 +26,11 @@ public class FindFreeAppointmentsService {
         this.storage = storage;
     }
 
-    public FreeScheduleRanges findFirstFree(LocalDateTime startingFrom) {
+    public List<ScheduleRange> findFirstFree(LocalDateTime startingFrom) {
         return findFirstFree(startingFrom, SearchTags.empty());
     }
 
-    public FreeScheduleRanges findFirstFree(LocalDateTime startingFrom, SearchTags searchTags) {
+    public List<ScheduleRange> findFirstFree(LocalDateTime startingFrom, SearchTags searchTags) {
         Stream<FreeScheduleSlot> stream = StreamSupport.stream(this.storage.findAfter(startingFrom).spliterator(), false);
         Iterator<Iterator<ScheduleRange>> iterators = stream
                 .filter(s -> s.matches(searchTags))
@@ -62,18 +62,18 @@ public class FindFreeAppointmentsService {
                         }
                     }
                     if (ranges.size() >= firstFreeCount) {
-                        return FreeScheduleRanges.of(ranges);
+                        return ranges;
                     }
                 }
                 ranges.add(thisSlotRange);
                 if (ranges.size() >= firstFreeCount) {
-                    return FreeScheduleRanges.of(ranges);
+                    return ranges;
                 }
             }
 
 
         }
-        return FreeScheduleRanges.of();
+        return Collections.emptyList();
     }
 
 
@@ -83,7 +83,7 @@ public class FindFreeAppointmentsService {
     }
 
 
-    public FreeScheduleRanges findFirstFree(SearchFreeSlotsCriteria crit) {
+    public List<ScheduleRange> findFirstFree(SearchFreeSlotsCriteria crit) {
         return findFirstFree(crit.getStartingFrom(), crit.searchTags());
     }
 }

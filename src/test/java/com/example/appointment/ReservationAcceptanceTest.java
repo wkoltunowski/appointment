@@ -93,8 +93,11 @@ public class ReservationAcceptanceTest {
                 .service(CONSULTATION)
                 .doctor(DR_SMITH)
                 .startingFrom(todayAt("08:00"));
-        ScheduleRange firstCandidate = findFreeRanges(reservationCriteria, maxVisitsCount(1))
-                .first().orElseThrow(noReservationsException(reservationCriteria));
+        List<ScheduleRange> freeRanges = findFreeRanges(reservationCriteria, maxVisitsCount(1));
+        if (freeRanges.isEmpty()) {
+            throw noReservationsException(reservationCriteria).get();
+        }
+        ScheduleRange firstCandidate = freeRanges.get(0);
         patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstCandidate);
 
 
@@ -143,11 +146,14 @@ public class ReservationAcceptanceTest {
 
     @Test(expectedExceptions = AppointmentTakenException.class)
     public void shouldNotReserveTwice() throws Exception {
-        FreeScheduleRanges firstFree = findFreeRanges(reservationCriteria()
+        List<ScheduleRange> firstFree = findFreeRanges(reservationCriteria()
                 .service(CONSULTATION)
                 .doctor(DR_SMITH)
                 .startingFrom(LocalDateTime.now()), 1);
-        ScheduleRange firstFreeRange = firstFree.first().orElseThrow(IllegalStateException::new);
+        if (firstFree.isEmpty()) {
+            throw new IllegalStateException();
+        }
+        ScheduleRange firstFreeRange = firstFree.get(0);
 
         patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFreeRange);
         patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFreeRange);
@@ -159,16 +165,18 @@ public class ReservationAcceptanceTest {
 
 
     private void reserveFirst(ReservationCriteria reservationCriteria) {
-        FreeScheduleRanges firstFree = findFreeRanges(reservationCriteria, 1);
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFree.first().orElseThrow(() -> new IllegalArgumentException("no reservations found for :" + reservationCriteria)));
+        List<ScheduleRange> firstFree = findFreeRanges(reservationCriteria, 1);
+        if (firstFree.isEmpty()) {
+            throw new IllegalArgumentException("no reservations found for :" + reservationCriteria);
+        }
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFree.get(0));
     }
 
     private List<ScheduleRange> findScheduleRanges(ReservationCriteria reservationCriteria, int maxResultCount) {
-        FreeScheduleRanges firstFree = findFreeRanges(reservationCriteria, maxResultCount);
-        return firstFree.getScheduleRanges().stream().collect(Collectors.toList());
+        return findFreeRanges(reservationCriteria, maxResultCount);
     }
 
-    private FreeScheduleRanges findFreeRanges(ReservationCriteria reservationCriteria, int maxResultCount) {
+    private List<ScheduleRange> findFreeRanges(ReservationCriteria reservationCriteria, int maxResultCount) {
         FindFreeAppointmentsService freeService = factory.findFreeService(maxResultCount);
         return freeService.findFirstFree(reservationCriteria.getStartingFrom(), reservationCriteria.searchTags());
     }

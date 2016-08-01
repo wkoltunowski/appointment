@@ -141,7 +141,7 @@ public class ReserveAppointmentTest {
     }
 
     private void assertFoundAppointments(LocalDateTime searchDate, ScheduleRange... expectedScheduleRanges) {
-        assertEquals(FreeScheduleRanges.of(asList(expectedScheduleRanges)), findFreeSlots.findFirstFree(searchDate));
+        assertEquals(asList(expectedScheduleRanges), findFreeSlots.findFirstFree(searchDate));
     }
 
 
