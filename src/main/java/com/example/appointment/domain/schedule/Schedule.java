@@ -1,5 +1,6 @@
 package com.example.appointment.domain.schedule;
 
+import com.example.appointment.domain.SearchTags;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.Range;
 
@@ -14,42 +15,37 @@ import static java.util.stream.Collectors.toList;
 public class Schedule {
 
     private final ScheduleId scheduleId;
+    private final Optional<Duration> duration;
     private Validity validity = Validity.infinite();
     private WorkingHours workingHours;
-    private ScheduleConnections scheduleDefinition;
+    private SearchTags searchTags;
 
 
-    public Schedule(WorkingHours workingHours, Validity validity, ScheduleConnections scheduleDefinition) {
+    public Schedule(WorkingHours workingHours, Validity validity, Optional<Duration> duration, SearchTags searchTags) {
         this.scheduleId = ScheduleId.newId();
         this.workingHours = workingHours;
         this.validity = validity;
-        this.scheduleDefinition = scheduleDefinition;
+        this.searchTags = searchTags;
+        this.duration = duration;
     }
 
     public Schedule(WorkingHours workingHours, Validity validity) {
-        this(workingHours, validity, ScheduleConnections.empty());
+        this(workingHours, validity, Optional.empty(), SearchTags.empty());
     }
 
-    public Schedule(WorkingHours workingHours) {
-        this(workingHours, Validity.infinite(), ScheduleConnections.empty());
-    }
-
-    public Schedule(WorkingHours workingHours, ScheduleConnections scheduleDefinition) {
-        this(workingHours, Validity.infinite(), scheduleDefinition);
-    }
 
     public ScheduleId scheduleId() {
         return scheduleId;
     }
 
 
-    public ScheduleConnections scheduleDefinition() {
-        return this.scheduleDefinition;
+    public SearchTags searchTags() {
+        return this.searchTags;
     }
 
 
     public Optional<Duration> duration() {
-        return scheduleDefinition.duration();
+        return duration;
     }
 
     public List<Range<LocalDateTime>> dates(Range<LocalDate> range) {
@@ -69,4 +65,6 @@ public class Schedule {
     public static Schedule of(WorkingHours workingHours) {
         return new Schedule(workingHours, Validity.infinite());
     }
+
+
 }

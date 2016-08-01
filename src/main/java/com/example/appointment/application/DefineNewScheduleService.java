@@ -1,9 +1,11 @@
 package com.example.appointment.application;
 
 import com.example.appointment.domain.ApplicationEventing;
+import com.example.appointment.domain.SearchTags;
 import com.example.appointment.domain.schedule.*;
 
 import java.time.Duration;
+import java.util.Optional;
 
 public class DefineNewScheduleService {
 
@@ -15,8 +17,9 @@ public class DefineNewScheduleService {
         this.applicationEventing = applicationEventing;
     }
 
-    public ScheduleId addDailySchedule(WorkingHours workingHours, Validity validity, ScheduleConnections scheduleDefinition) {
-        Schedule schedule = new Schedule(workingHours, validity, scheduleDefinition);
+
+    public ScheduleId addDailySchedule(WorkingHours workingHours, Validity validity, Duration duration, SearchTags searchTags) {
+        Schedule schedule = new Schedule(workingHours, validity, Optional.of(duration), searchTags);
         scheduleRepository.save(schedule);
         ScheduleId scheduleId = schedule.scheduleId();
         applicationEventing.publishEvent(new ScheduleAddedEvent(scheduleId));
@@ -24,8 +27,8 @@ public class DefineNewScheduleService {
 
     }
 
-    public ScheduleId addDailySchedule(WorkingHours workingHours, ScheduleConnections scheduleDefinition) {
-        return this.addDailySchedule(workingHours, Validity.infinite(), scheduleDefinition);
+    public ScheduleId addDailySchedule(WorkingHours workingHours, Duration duration, SearchTags searchTags) {
+        return this.addDailySchedule(workingHours, Validity.infinite(), duration, searchTags);
 
     }
 
@@ -34,11 +37,7 @@ public class DefineNewScheduleService {
     }
 
     public ScheduleId addDailySchedule(WorkingHours workingHours, Duration duration, Validity validity) {
-        Schedule schedule = new Schedule(workingHours, validity, ScheduleConnections.empty().withDuration(duration));
-        scheduleRepository.save(schedule);
-        ScheduleId scheduleId = schedule.scheduleId();
-        applicationEventing.publishEvent(new ScheduleAddedEvent(scheduleId));
-        return scheduleId;
+        return addDailySchedule(workingHours, validity, duration, SearchTags.empty());
     }
 
 

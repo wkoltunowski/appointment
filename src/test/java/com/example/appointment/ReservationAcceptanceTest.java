@@ -7,9 +7,9 @@ import com.example.appointment.domain.reservation.PatientId;
 import com.example.appointment.domain.reservation.PatientReservation;
 import com.example.appointment.domain.reservation.PatientReservationService;
 import com.example.appointment.domain.reservation.ReservationRepository;
-import com.example.appointment.domain.schedule.DoctorId;
+import com.example.appointment.domain.DoctorId;
 import com.example.appointment.domain.schedule.ScheduleId;
-import com.example.appointment.domain.schedule.ServiceId;
+import com.example.appointment.domain.ServiceId;
 import com.google.common.collect.ImmutableList;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -180,12 +180,14 @@ public class ReservationAcceptanceTest {
 
 
     private ScheduleId givenSchedule(ScheduleDefinition scheduleDefinition) {
-        return factory.scheduleDefinitionService().addDailySchedule(
-                scheduleDefinition.workingHours(),
-                scheduleDefinition.validity(),
-                scheduleDefinition.scheduleConnections()
+        return factory.scheduleDefinitionService()
+                .addDailySchedule(
+                        scheduleDefinition.workingHours(),
+                        scheduleDefinition.validity(),
+                        scheduleDefinition.duration(),
+                        scheduleDefinition.scheduleConnections().searchTagsFor()
 
-        );
+                );
     }
 
     private ReservationCriteria reservationCriteria() {

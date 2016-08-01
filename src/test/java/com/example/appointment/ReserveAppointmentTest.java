@@ -1,11 +1,10 @@
 package com.example.appointment;
 
+import com.example.appointment.application.AppointmentTakenException;
 import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeScheduleRangesService;
 import com.example.appointment.application.ReserveAppointmentService;
-import com.example.appointment.application.AppointmentTakenException;
 import com.example.appointment.domain.freescheduleranges.ScheduleRange;
-import com.example.appointment.domain.freescheduleranges.FreeScheduleRanges;
 import com.example.appointment.domain.schedule.ScheduleId;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

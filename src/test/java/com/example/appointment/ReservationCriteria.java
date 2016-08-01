@@ -1,8 +1,8 @@
 package com.example.appointment;
 
-import com.example.appointment.domain.freescheduleranges.SearchTags;
-import com.example.appointment.domain.schedule.DoctorId;
-import com.example.appointment.domain.schedule.ServiceId;
+import com.example.appointment.domain.SearchTags;
+import com.example.appointment.domain.DoctorId;
+import com.example.appointment.domain.ServiceId;
 
 import java.time.LocalDateTime;
 
@@ -47,10 +47,10 @@ public class ReservationCriteria {
         SearchTags searchTags = SearchTags.empty();
 
         if (service != null) {
-            searchTags = searchTags.forService(service.toString());
+            searchTags = searchTags.forService(service.asString());
         }
         if (doctor != null) {
-            searchTags = searchTags.forDoctor(doctor.toString());
+            searchTags = searchTags.forDoctor(doctor.asString());
         }
         return searchTags;
     }

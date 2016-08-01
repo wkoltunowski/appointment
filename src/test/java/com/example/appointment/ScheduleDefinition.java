@@ -1,6 +1,8 @@
 package com.example.appointment;
 
 import com.example.appointment.domain.schedule.*;
+import com.example.appointment.domain.DoctorId;
+import com.example.appointment.domain.ServiceId;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -78,7 +80,10 @@ public class ScheduleDefinition {
     public ScheduleConnections scheduleConnections() {
         return ScheduleConnections.empty()
                 .withDoctorId(doctor)
-                .withService(service)
-                .withDuration(Duration.parse(duration));
+                .withService(service);
+    }
+
+    public Duration duration() {
+        return Duration.parse(this.duration);
     }
 }

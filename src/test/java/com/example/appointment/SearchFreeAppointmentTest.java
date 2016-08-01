@@ -2,7 +2,9 @@ package com.example.appointment;
 
 import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeScheduleRangesService;
-import com.example.appointment.domain.schedule.ServiceId;
+import com.example.appointment.domain.DoctorId;
+import com.example.appointment.domain.LocationId;
+import com.example.appointment.domain.ServiceId;
 import com.example.appointment.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.domain.freescheduleranges.SearchCriteria;
 import com.example.appointment.domain.schedule.*;
@@ -68,16 +70,16 @@ public class SearchFreeAppointmentTest {
         ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), newSchedule(drHowardMichael()).withLocation(lublin()));
 
         assertFoundAppointments(
-                startingFrom(tommorrowAt(8, 0)).forLocation(warsaw.toString()),
+                startingFrom(tommorrowAt(8, 0)).forLocation(warsaw),
                 ScheduleRange.scheduleRange(tommorrow("08:00-08:15"), smithSchedule));
     }
 
     private ScheduleConnections newSchedule(DoctorId doctorId) {
-        return ScheduleConnections.empty().withDuration(Duration.ofMinutes(15)).withDoctorId(doctorId);
+        return ScheduleConnections.empty().withDoctorId(doctorId);
     }
 
-    private ScheduleId givenSchedule(WorkingHours workingHours, ScheduleConnections scheduleDefinition) {
-        return defineNewScheduleService.addDailySchedule(workingHours, scheduleDefinition);
+    private ScheduleId givenSchedule(WorkingHours workingHours, ScheduleConnections searchTags) {
+        return defineNewScheduleService.addDailySchedule(workingHours, Duration.ofMinutes(15), searchTags.searchTagsFor());
 
     }
 

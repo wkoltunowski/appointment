@@ -1,7 +1,9 @@
 package com.example.appointment.domain.freescheduleranges;
 
-import com.example.appointment.domain.schedule.ServiceId;
-import com.example.appointment.domain.schedule.DoctorId;
+import com.example.appointment.domain.LocationId;
+import com.example.appointment.domain.ServiceId;
+import com.example.appointment.domain.DoctorId;
+import com.example.appointment.domain.SearchTags;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -25,11 +27,11 @@ public class SearchCriteria {
     }
 
     public SearchCriteria forService(ServiceId service) {
-        return addTag(":SERVICE", service.toString());
+        return addTag("SERVICE", service.asString());
     }
 
     private Optional<String> getService() {
-        return get(":SERVICE");
+        return get("SERVICE");
     }
 
     private SearchCriteria addTag(String key, String value) {
@@ -44,11 +46,11 @@ public class SearchCriteria {
 
 
     public SearchCriteria forDoctor(final DoctorId doctor) {
-        return addTag(":DOCTOR", doctor.toString());
+        return addTag("DOCTOR", doctor.asString());
     }
 
     private Optional<String> getDoctor() {
-        return get(":DOCTOR");
+        return get("DOCTOR");
     }
 
 
@@ -56,12 +58,12 @@ public class SearchCriteria {
         return startingFrom;
     }
 
-    public SearchCriteria forLocation(String location) {
-        return addTag(":LOCATION", location);
+    public SearchCriteria forLocation(final LocationId location) {
+        return addTag("LOCATION", location.asString());
     }
 
     private Optional<String> getLocation() {
-        return get(":LOCATION");
+        return get("LOCATION");
     }
 
     public SearchTags searchTags() {

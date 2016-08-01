@@ -2,9 +2,8 @@ package com.example.appointment.application;
 
 import com.example.appointment.domain.freescheduleranges.FreeScheduleSlot;
 import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotRepository;
-import com.example.appointment.domain.freescheduleranges.SearchTags;
+import com.example.appointment.domain.SearchTags;
 import com.example.appointment.domain.schedule.Schedule;
-import com.example.appointment.domain.schedule.ScheduleConnections;
 import com.example.appointment.domain.schedule.ScheduleId;
 import com.example.appointment.domain.schedule.ScheduleRepository;
 import com.google.common.collect.Range;
@@ -39,7 +38,7 @@ public class GenerateFreeSlotsService {
 
     private List<FreeScheduleSlot> scheduleFreeSlots(Schedule schedule, Range<LocalDate> generationRange) {
         ScheduleId scheduleId = schedule.scheduleId();
-        SearchTags searchTags = searchTagsFor(schedule.scheduleDefinition());
+        SearchTags searchTags = schedule.searchTags();
         List<Range<LocalDateTime>> rangesList = schedule.dates(generationRange);
         return rangesList
                 .stream()
@@ -49,9 +48,9 @@ public class GenerateFreeSlotsService {
     }
 
     public void regenerateFreeSlots(ScheduleId scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId);
-        SearchTags searchTags = searchTagsFor(schedule.scheduleDefinition());
         List<FreeScheduleSlot> scheduleSlots = freeScheduleSlotRepository.findByScheduleId(scheduleId);
+        Schedule schedule = scheduleRepository.findById(scheduleId);
+        SearchTags searchTags = schedule.searchTags();
         for (FreeScheduleSlot scheduleSlot : scheduleSlots) {
             FreeScheduleSlot newSlot = scheduleSlot.withSearchTags(searchTags);
             freeScheduleSlotRepository.remove(scheduleSlot);
@@ -59,17 +58,5 @@ public class GenerateFreeSlotsService {
         }
     }
 
-    private SearchTags searchTagsFor(ScheduleConnections scheduleDefinition) {
-        SearchTags searchTags = SearchTags.empty();
-        if (scheduleDefinition.doctorId().isPresent()) {
-            searchTags = searchTags.forDoctor(scheduleDefinition.doctorId().get().toString());
-        }
-        if (scheduleDefinition.locationId().isPresent()) {
-            searchTags = searchTags.forLocation(scheduleDefinition.locationId().get().toString());
-        }
-        if (scheduleDefinition.serviceId().isPresent()) {
-            searchTags = searchTags.forService(scheduleDefinition.serviceId().get().toString());
-        }
-        return searchTags;
-    }
+
 }

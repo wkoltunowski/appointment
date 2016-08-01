@@ -1,4 +1,4 @@
-package com.example.appointment.domain.freescheduleranges;
+package com.example.appointment.domain;
 
 import java.util.Collections;
 import java.util.Map;
@@ -25,27 +25,32 @@ public class SearchTags {
     }
 
     public SearchTags forService(String service) {
-        return addTag(":SERVICE", service);
+        return addTag("SERVICE", service);
     }
 
     public SearchTags forLocation(String location) {
-        return addTag(":LOCATION", location);
+        return addTag("LOCATION", location);
     }
 
     public SearchTags forDoctor(String doctor) {
-        return addTag(":DOCTOR", doctor);
+        return addTag("DOCTOR", doctor);
     }
 
 
-    private String get(String key) {
-        return Optional.ofNullable(map.get(key)).orElse("");
+    public Optional<String> get(String key) {
+        return Optional.ofNullable(map.get(key));
+    }
+
+    private String getOrEmpty(String key) {
+        Optional<String> get = get(key);
+        return get.orElse("");
     }
 
     public boolean matches(SearchTags other) {
         boolean result = true;
         for (String otherKey : other.map.keySet()) {
-            String otherValue = other.get(otherKey);
-            String thisValue = get(otherKey);
+            String otherValue = other.getOrEmpty(otherKey);
+            String thisValue = getOrEmpty(otherKey);
             result = result && otherValue.equals(thisValue);
         }
 
