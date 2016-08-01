@@ -54,12 +54,8 @@ public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
         return this.range.encloses(range);
     }
 
-    public Range<LocalDateTime> range() {
-        return range;
-    }
 
-
-    public Iterable<ScheduleRange> appointmentsFor(LocalDateTime startingDate, Duration duration) {
+    public Iterable<ScheduleRange> scheduleRanges(LocalDateTime startingDate, Duration duration) {
         return () -> new AppointmentsIterator(this, startingDate, duration);
     }
 

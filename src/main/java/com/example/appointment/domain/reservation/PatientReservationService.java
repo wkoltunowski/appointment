@@ -4,7 +4,7 @@ import com.example.appointment.application.ReserveAppointmentService;
 import com.example.appointment.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.domain.schedule.ScheduleConnections;
 import com.example.appointment.domain.schedule.ScheduleRepository;
-import com.example.appointment.domain.ServiceId;
+import com.example.appointment.domain.schedule.ServiceId;
 
 import java.util.Optional;
 
@@ -32,7 +32,7 @@ public class PatientReservationService {
     private void reserve(PatientId patient, ScheduleRange scheduleRange) {
         ScheduleConnections scheduleConnections = scheduleRepository.findById(scheduleRange.scheduleId()).scheduleDefinition();
         Optional<ServiceId> serviceId = scheduleConnections.serviceId();
-        reservationRepository.save(PatientServiceReservation.serviceReservation(patient, serviceId, ScheduleRange.scheduleRange(scheduleRange.range(), scheduleRange.scheduleId())));
+        reservationRepository.save(PatientReservation.serviceReservation(patient, serviceId, ScheduleRange.scheduleRange(scheduleRange.range(), scheduleRange.scheduleId())));
     }
 
 

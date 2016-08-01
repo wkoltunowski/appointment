@@ -1,7 +1,7 @@
 package com.example.appointment.application;
 
 import com.example.appointment.domain.freescheduleranges.FreeScheduleSlot;
-import com.example.appointment.domain.freescheduleranges.FreeSlotRepository;
+import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.example.appointment.domain.freescheduleranges.SearchTags;
 import com.example.appointment.domain.schedule.Schedule;
 import com.example.appointment.domain.schedule.ScheduleConnections;
@@ -20,11 +20,11 @@ import static java.util.stream.Collectors.toList;
 
 public class GenerateFreeSlotsService {
     private final ScheduleRepository scheduleRepository;
-    private final FreeSlotRepository freeSlotRepository;
+    private final FreeScheduleSlotRepository freeScheduleSlotRepository;
 
-    public GenerateFreeSlotsService(ScheduleRepository scheduleRepository, FreeSlotRepository freeSlotRepository) {
+    public GenerateFreeSlotsService(ScheduleRepository scheduleRepository, FreeScheduleSlotRepository freeScheduleSlotRepository) {
         this.scheduleRepository = scheduleRepository;
-        this.freeSlotRepository = freeSlotRepository;
+        this.freeScheduleSlotRepository = freeScheduleSlotRepository;
     }
 
     public void generateFreeSlots(ScheduleId scheduleId) {
@@ -34,7 +34,7 @@ public class GenerateFreeSlotsService {
 
     public void generateFreeSlotsInRange(ScheduleId scheduleId, Range<LocalDate> generationRange) {
         Schedule schedule = this.scheduleRepository.findById(scheduleId);
-        freeSlotRepository.addAll(scheduleFreeSlots(schedule, generationRange));
+        freeScheduleSlotRepository.addAll(scheduleFreeSlots(schedule, generationRange));
     }
 
     private List<FreeScheduleSlot> scheduleFreeSlots(Schedule schedule, Range<LocalDate> generationRange) {
@@ -51,11 +51,11 @@ public class GenerateFreeSlotsService {
     public void regenerateFreeSlots(ScheduleId scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId);
         SearchTags searchTags = searchTagsFor(schedule.scheduleDefinition());
-        List<FreeScheduleSlot> scheduleSlots = freeSlotRepository.findByScheduleId(scheduleId);
+        List<FreeScheduleSlot> scheduleSlots = freeScheduleSlotRepository.findByScheduleId(scheduleId);
         for (FreeScheduleSlot scheduleSlot : scheduleSlots) {
             FreeScheduleSlot newSlot = scheduleSlot.withSearchTags(searchTags);
-            freeSlotRepository.remove(scheduleSlot);
-            freeSlotRepository.addAll(Collections.singleton(newSlot));
+            freeScheduleSlotRepository.remove(scheduleSlot);
+            freeScheduleSlotRepository.addAll(Collections.singleton(newSlot));
         }
     }
 

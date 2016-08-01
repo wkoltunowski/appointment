@@ -1,15 +1,15 @@
 package com.example.appointment;
 
-import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.AppointmentTakenException;
-import com.example.appointment.domain.ServiceId;
-import com.example.appointment.domain.freescheduleranges.FreeScheduleRanges;
+import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.domain.freescheduleranges.ScheduleRange;
-import com.example.appointment.domain.reservation.PatientServiceReservation;
+import com.example.appointment.domain.reservation.PatientId;
+import com.example.appointment.domain.reservation.PatientReservation;
 import com.example.appointment.domain.reservation.PatientReservationService;
 import com.example.appointment.domain.reservation.ReservationRepository;
-import com.example.appointment.domain.schedule.*;
-import com.example.appointment.domain.reservation.PatientId;
+import com.example.appointment.domain.schedule.DoctorId;
+import com.example.appointment.domain.schedule.ScheduleId;
+import com.example.appointment.domain.schedule.ServiceId;
 import com.google.common.collect.ImmutableList;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -18,14 +18,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static com.example.appointment.DateTestUtils.todayAt;
 import static com.example.appointment.DateTestUtils.todayBetween;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class ReservationAcceptanceTest {
 
@@ -102,7 +99,7 @@ public class ReservationAcceptanceTest {
 
 
         assertThat(reservationRepository.findPatientReservations(PATIENT_DOUGLAS), contains(
-                PatientServiceReservation.serviceReservation(PATIENT_DOUGLAS, CONSULTATION,
+                PatientReservation.serviceReservation(PATIENT_DOUGLAS, CONSULTATION,
                         ScheduleRange.scheduleRange(todayBetween("08:00-08:15"), smithSchedule))
         ));
     }
@@ -182,8 +179,13 @@ public class ReservationAcceptanceTest {
     }
 
 
-    private ScheduleId givenSchedule(ScheduleDefinition definition) {
-        return factory.scheduleDefinitionService().addSchedule(definition);
+    private ScheduleId givenSchedule(ScheduleDefinition scheduleDefinition) {
+        return factory.scheduleDefinitionService().addSchedule(
+                scheduleDefinition.workingHours(),
+                scheduleDefinition.validity(),
+                scheduleDefinition.scheduleConnections()
+
+        );
     }
 
     private ReservationCriteria reservationCriteria() {

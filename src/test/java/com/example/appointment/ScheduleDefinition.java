@@ -1,6 +1,6 @@
-package com.example.appointment.domain.schedule;
+package com.example.appointment;
 
-import com.example.appointment.domain.ServiceId;
+import com.example.appointment.domain.schedule.*;
 
 import java.time.Duration;
 import java.time.LocalDate;

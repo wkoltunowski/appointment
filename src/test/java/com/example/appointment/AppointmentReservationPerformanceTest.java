@@ -3,7 +3,7 @@ package com.example.appointment;
 import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.ReserveAppointmentService;
-import com.example.appointment.domain.freescheduleranges.FreeSlotRepository;
+import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.example.appointment.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.domain.schedule.WorkingHours;
 import com.google.common.base.Stopwatch;
@@ -24,7 +24,7 @@ public class AppointmentReservationPerformanceTest {
     private FindFreeAppointmentsService findFreeSlots;
     private DefineNewScheduleService defineNewScheduleService;
     private ReserveAppointmentService reserveAppointmentService;
-    private FreeSlotRepository storage;
+    private FreeScheduleSlotRepository storage;
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
     @BeforeMethod

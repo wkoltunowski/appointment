@@ -1,16 +1,16 @@
 package com.example.appointment.domain.reservation;
 
-import com.example.appointment.domain.ServiceId;
+import com.example.appointment.domain.schedule.ServiceId;
 import com.example.appointment.domain.freescheduleranges.ScheduleRange;
 
 import java.util.Optional;
 
-public class PatientServiceReservation {
+public class PatientReservation {
     private final PatientId patient;
     private final ScheduleRange scheduleRange;
     private final Optional<ServiceId> serviceId;
 
-    public PatientServiceReservation(Optional<ServiceId> serviceId, PatientId patient, ScheduleRange scheduleRange) {
+    public PatientReservation(Optional<ServiceId> serviceId, PatientId patient, ScheduleRange scheduleRange) {
         this.serviceId = serviceId;
         this.patient = patient;
         this.scheduleRange = scheduleRange;
@@ -21,12 +21,12 @@ public class PatientServiceReservation {
     }
 
 
-    public static PatientServiceReservation serviceReservation(PatientId patient, ServiceId serviceId, ScheduleRange scheduleRange) {
-        return new PatientServiceReservation(Optional.of(serviceId), patient, scheduleRange);
+    public static PatientReservation serviceReservation(PatientId patient, ServiceId serviceId, ScheduleRange scheduleRange) {
+        return new PatientReservation(Optional.of(serviceId), patient, scheduleRange);
     }
 
-    public static PatientServiceReservation serviceReservation(PatientId patient, Optional<ServiceId> serviceId, ScheduleRange scheduleRange) {
-        return new PatientServiceReservation(serviceId, patient, scheduleRange);
+    public static PatientReservation serviceReservation(PatientId patient, Optional<ServiceId> serviceId, ScheduleRange scheduleRange) {
+        return new PatientReservation(serviceId, patient, scheduleRange);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class PatientServiceReservation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PatientServiceReservation that = (PatientServiceReservation) o;
+        PatientReservation that = (PatientReservation) o;
 
         if (!serviceId.equals(that.serviceId)) return false;
         if (!patient.equals(that.patient)) return false;

@@ -1,7 +1,6 @@
 package com.example.appointment.application;
 
 import com.example.appointment.domain.ApplicationEventing;
-import com.example.appointment.domain.ServiceId;
 import com.example.appointment.domain.schedule.*;
 
 import java.time.Duration;
@@ -43,11 +42,4 @@ public class DefineNewScheduleService {
     }
 
 
-    public ScheduleId addSchedule(ScheduleDefinition scheduleDefinition) {
-        return addSchedule(scheduleDefinition.workingHours(),
-                scheduleDefinition.validity(),
-                scheduleDefinition.scheduleConnections()
-
-        );
-    }
 }

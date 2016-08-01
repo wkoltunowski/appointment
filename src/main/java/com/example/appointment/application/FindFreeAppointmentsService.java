@@ -18,9 +18,9 @@ public class FindFreeAppointmentsService {
     public static final ScheduleRange OF = ScheduleRange.scheduleRange(null, DURATION, SCHEDULE_ID);
     private final int firstFreeCount;
     private final ScheduleDurations scheduleDurations;
-    private final FreeSlotRepository storage;
+    private final FreeScheduleSlotRepository storage;
 
-    public FindFreeAppointmentsService(int firstFreeCount, ScheduleDurations scheduleDurations, FreeSlotRepository storage) {
+    public FindFreeAppointmentsService(int firstFreeCount, ScheduleDurations scheduleDurations, FreeScheduleSlotRepository storage) {
         this.firstFreeCount = firstFreeCount;
         this.scheduleDurations = scheduleDurations;
         this.storage = storage;
@@ -79,7 +79,7 @@ public class FindFreeAppointmentsService {
 
     private Stream<ScheduleRange> freeSlotRanges(LocalDateTime startingFrom, FreeScheduleSlot freeSlot) {
         Duration duration = this.scheduleDurations.durationFor(freeSlot.scheduleId());
-        return StreamSupport.stream(freeSlot.appointmentsFor(startingFrom, duration).spliterator(), false);
+        return StreamSupport.stream(freeSlot.scheduleRanges(startingFrom, duration).spliterator(), false);
     }
 
 

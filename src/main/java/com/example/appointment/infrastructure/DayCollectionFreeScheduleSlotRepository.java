@@ -1,7 +1,7 @@
 package com.example.appointment.infrastructure;
 
 import com.example.appointment.domain.freescheduleranges.FreeScheduleSlot;
-import com.example.appointment.domain.freescheduleranges.FreeSlotRepository;
+import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.example.appointment.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.domain.schedule.DaysDomain;
 import com.example.appointment.domain.schedule.ScheduleId;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 
-public class DayCollectionFreeSlotRepository implements FreeSlotRepository {
+public class DayCollectionFreeScheduleSlotRepository implements FreeScheduleSlotRepository {
 
     private final Map<LocalDate, List<FreeScheduleSlot>> index = new HashMap<>();
     private LocalDate maxDay = LocalDate.MIN;

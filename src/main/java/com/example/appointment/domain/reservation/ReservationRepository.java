@@ -3,7 +3,7 @@ package com.example.appointment.domain.reservation;
 import java.util.List;
 
 public interface ReservationRepository {
-    void save(PatientServiceReservation reservation);
+    void save(PatientReservation reservation);
 
-    List<PatientServiceReservation> findPatientReservations(PatientId patientId);
+    List<PatientReservation> findPatientReservations(PatientId patientId);
 }

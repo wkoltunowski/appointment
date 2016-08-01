@@ -5,18 +5,18 @@ import com.example.appointment.application.FindFreeAppointmentsService;
 import com.example.appointment.application.GenerateFreeSlotsService;
 import com.example.appointment.application.ReserveAppointmentService;
 import com.example.appointment.domain.ApplicationEventing;
-import com.example.appointment.domain.freescheduleranges.FreeSlotRepository;
+import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.example.appointment.domain.reservation.PatientReservationService;
 import com.example.appointment.domain.reservation.ReservationRepository;
 import com.example.appointment.infrastructure.FromScheduleDuration;
 import com.example.appointment.domain.schedule.ScheduleRepository;
-import com.example.appointment.infrastructure.DayCollectionFreeSlotRepository;
+import com.example.appointment.infrastructure.DayCollectionFreeScheduleSlotRepository;
 import com.example.appointment.infrastructure.InMemoryReservationRepository;
 import com.example.appointment.infrastructure.InMemoryScheduleRepository;
 import com.example.appointment.infrastructure.SynchronousApplicationEventing;
 
 public class Factory {
-    private FreeSlotRepository freeSlotRepository;
+    private FreeScheduleSlotRepository freeScheduleSlotRepository;
     private FromScheduleDuration scheduleDurations;
     private ScheduleRepository scheduleRepository;
     private ReservationRepository reservationRepository;
@@ -33,11 +33,11 @@ public class Factory {
         return scheduleDurations;
     }
 
-    public FreeSlotRepository freeSlotRepository() {
-        if (freeSlotRepository == null) {
-            freeSlotRepository = new DayCollectionFreeSlotRepository();
+    public FreeScheduleSlotRepository freeSlotRepository() {
+        if (freeScheduleSlotRepository == null) {
+            freeScheduleSlotRepository = new DayCollectionFreeScheduleSlotRepository();
         }
-        return freeSlotRepository;
+        return freeScheduleSlotRepository;
     }
 
     public DefineNewScheduleService scheduleDefinitionService() {
