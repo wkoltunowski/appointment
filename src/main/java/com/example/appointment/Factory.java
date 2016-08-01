@@ -3,7 +3,7 @@ package com.example.appointment;
 import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeScheduleRangesService;
 import com.example.appointment.application.GenerateFreeSlotsService;
-import com.example.appointment.application.ReserveAppointmentService;
+import com.example.appointment.application.ReserveScheduleRangeService;
 import com.example.appointment.domain.ApplicationEventing;
 import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.example.appointment.domain.reservation.PatientReservationService;
@@ -55,8 +55,8 @@ public class Factory {
         return generateFreeSlotsService;
     }
 
-    public ReserveAppointmentService reservationService() {
-        return new ReserveAppointmentService(freeSlotRepository());
+    public ReserveScheduleRangeService reservationService() {
+        return new ReserveScheduleRangeService(freeSlotRepository());
     }
 
     public ScheduleRepository scheduleRepository() {
@@ -67,7 +67,7 @@ public class Factory {
     }
 
     public PatientReservationService patientReservation() {
-        return new PatientReservationService(reservationService(), scheduleRepository(),
+        return new PatientReservationService(reservationService(),
                 reservationRepository());
     }
 

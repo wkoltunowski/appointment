@@ -63,4 +63,8 @@ public class ReservationCriteria {
                 ", startingFrom=" + startingFrom +
                 '}';
     }
+
+    public ServiceId serviceId() {
+        return service;
+    }
 }

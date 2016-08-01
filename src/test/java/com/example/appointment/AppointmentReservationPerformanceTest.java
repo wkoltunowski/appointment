@@ -2,7 +2,7 @@ package com.example.appointment;
 
 import com.example.appointment.application.DefineNewScheduleService;
 import com.example.appointment.application.FindFreeScheduleRangesService;
-import com.example.appointment.application.ReserveAppointmentService;
+import com.example.appointment.application.ReserveScheduleRangeService;
 import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.example.appointment.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.domain.schedule.WorkingHours;
@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class AppointmentReservationPerformanceTest {
     private FindFreeScheduleRangesService findFreeSlots;
     private DefineNewScheduleService defineNewScheduleService;
-    private ReserveAppointmentService reserveAppointmentService;
+    private ReserveScheduleRangeService reserveScheduleRangeService;
     private FreeScheduleSlotRepository storage;
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
@@ -32,7 +32,7 @@ public class AppointmentReservationPerformanceTest {
         Factory factory = new Factory();
         findFreeSlots = factory.findFreeService(50);
         defineNewScheduleService = factory.scheduleDefinitionService();
-        reserveAppointmentService = factory.reservationService();
+        reserveScheduleRangeService = factory.reservationService();
         storage = factory.freeSlotRepository();
     }
 
@@ -89,7 +89,7 @@ public class AppointmentReservationPerformanceTest {
         long maxEnd = maxTime + start;
 
         while (System.currentTimeMillis() < maxEnd && !freeScheduleRanges.isEmpty()) {
-            reserveAppointmentService.reserve(freeScheduleRanges.get(0));
+            reserveScheduleRangeService.reserve(freeScheduleRanges.get(0));
             freeScheduleRanges = findFreeSlots.findFirstFree(date.get());
             count++;
         }

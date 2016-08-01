@@ -95,7 +95,7 @@ public class ReservationAcceptanceTest {
             throw noReservationsException(reservationCriteria).get();
         }
         ScheduleRange firstCandidate = freeRanges.get(0);
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstCandidate);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstCandidate, CONSULTATION);
 
 
         assertThat(reservationRepository.findPatientReservations(PATIENT_DOUGLAS), contains(
@@ -152,8 +152,8 @@ public class ReservationAcceptanceTest {
         }
         ScheduleRange firstFreeRange = firstFree.get(0);
 
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFreeRange);
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFreeRange);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFreeRange, CONSULTATION);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFreeRange, CONSULTATION);
     }
 
     private int maxVisitsCount(int maxVisitsCount) {
@@ -166,7 +166,7 @@ public class ReservationAcceptanceTest {
         if (firstFree.isEmpty()) {
             throw new IllegalArgumentException("no reservations found for :" + reservationCriteria);
         }
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFree.get(0));
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFree.get(0), reservationCriteria.serviceId());
     }
 
     private List<ScheduleRange> findScheduleRanges(ReservationCriteria reservationCriteria, int maxResultCount) {

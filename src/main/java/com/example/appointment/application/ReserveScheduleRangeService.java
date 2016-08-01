@@ -6,10 +6,10 @@ import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotReposit
 
 import java.util.Optional;
 
-public class ReserveAppointmentService {
+public class ReserveScheduleRangeService {
     private final FreeScheduleSlotRepository freeScheduleSlotRepository;
 
-    public ReserveAppointmentService(FreeScheduleSlotRepository freeScheduleSlotRepository) {
+    public ReserveScheduleRangeService(FreeScheduleSlotRepository freeScheduleSlotRepository) {
         this.freeScheduleSlotRepository = freeScheduleSlotRepository;
     }
 
