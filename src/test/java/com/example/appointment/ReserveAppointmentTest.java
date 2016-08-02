@@ -1,11 +1,10 @@
 package com.example.appointment;
 
-import com.example.appointment.application.AppointmentTakenException;
-import com.example.appointment.application.DefineNewScheduleService;
-import com.example.appointment.application.FindFreeScheduleRangesService;
-import com.example.appointment.application.ReserveScheduleRangeService;
-import com.example.appointment.domain.freescheduleranges.ScheduleRange;
-import com.example.appointment.domain.schedule.ScheduleId;
+import com.example.appointment.scheduling.application.DefineNewScheduleService;
+import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
+import com.example.appointment.scheduling.application.ReserveScheduleRangeService;
+import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
+import com.example.appointment.scheduling.domain.schedule.ScheduleId;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -14,8 +13,8 @@ import java.time.LocalDateTime;
 
 import static com.example.appointment.DateTestUtils.todayBetween;
 import static com.example.appointment.DateTestUtils.tommorrow;
-import static com.example.appointment.domain.schedule.Validity.validFromTo;
-import static com.example.appointment.domain.schedule.WorkingHours.ofHours;
+import static com.example.appointment.scheduling.domain.schedule.Validity.validFromTo;
+import static com.example.appointment.scheduling.domain.schedule.WorkingHours.ofHours;
 import static java.time.Duration.ofMinutes;
 import static java.time.LocalDate.now;
 import static java.util.Arrays.asList;
@@ -107,7 +106,7 @@ public class ReserveAppointmentTest {
         assertFoundAppointments(DateTestUtils.todayAt(8, 0));
     }
 
-    @Test(expectedExceptions = AppointmentTakenException.class)
+    @Test(expectedExceptions = DefineNewScheduleService.AppointmentTakenException.class)
     public void shouldNotReserveSameAppointmentTwice() throws Exception {
         ScheduleId scheduleId = defineNewScheduleService.addDailySchedule(ofHours("08:00-08:30"), ofMinutes(15));
         reserveScheduleRangeService.reserve(ScheduleRange.scheduleRange(todayBetween("08:00-08:15"), scheduleId));

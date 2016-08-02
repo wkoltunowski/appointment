@@ -1,8 +1,8 @@
 package com.example.appointment.infrastructure;
 
-import com.example.appointment.domain.reservation.PatientId;
-import com.example.appointment.domain.reservation.PatientReservation;
-import com.example.appointment.domain.reservation.ReservationRepository;
+import com.example.appointment.domain.PatientId;
+import com.example.appointment.domain.PatientReservation;
+import com.example.appointment.domain.ReservationRepository;
 
 import java.util.ArrayList;
 import java.util.List;

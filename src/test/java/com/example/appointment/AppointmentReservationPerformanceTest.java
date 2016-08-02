@@ -1,11 +1,11 @@
 package com.example.appointment;
 
-import com.example.appointment.application.DefineNewScheduleService;
-import com.example.appointment.application.FindFreeScheduleRangesService;
-import com.example.appointment.application.ReserveScheduleRangeService;
-import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotRepository;
-import com.example.appointment.domain.freescheduleranges.ScheduleRange;
-import com.example.appointment.domain.schedule.WorkingHours;
+import com.example.appointment.scheduling.application.DefineNewScheduleService;
+import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
+import com.example.appointment.scheduling.application.ReserveScheduleRangeService;
+import com.example.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
+import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
+import com.example.appointment.scheduling.domain.schedule.WorkingHours;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import org.testng.annotations.BeforeMethod;

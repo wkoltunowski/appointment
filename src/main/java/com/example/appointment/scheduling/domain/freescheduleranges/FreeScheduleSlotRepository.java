@@ -1,8 +1,7 @@
-package com.example.appointment.domain.freescheduleranges;
+package com.example.appointment.scheduling.domain.freescheduleranges;
 
-import com.example.appointment.domain.schedule.ScheduleId;
+import com.example.appointment.scheduling.domain.schedule.ScheduleId;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;

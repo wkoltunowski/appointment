@@ -1,6 +1,6 @@
-package com.example.appointment.domain.schedule;
+package com.example.appointment.scheduling.domain.schedule;
 
-import com.example.appointment.domain.SearchTags;
+import com.example.appointment.scheduling.domain.SearchTags;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.Range;
 

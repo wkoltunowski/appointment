@@ -1,7 +1,7 @@
 package com.example.appointment;
 
-import com.example.appointment.application.DefineNewScheduleService;
-import com.example.appointment.application.FindFreeScheduleRangesService;
+import com.example.appointment.scheduling.application.DefineNewScheduleService;
+import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
 
 public class Application {
     private final Factory factory = new Factory();

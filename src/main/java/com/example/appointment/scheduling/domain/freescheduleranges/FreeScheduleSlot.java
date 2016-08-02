@@ -1,7 +1,7 @@
-package com.example.appointment.domain.freescheduleranges;
+package com.example.appointment.scheduling.domain.freescheduleranges;
 
-import com.example.appointment.domain.schedule.ScheduleId;
-import com.example.appointment.domain.SearchTags;
+import com.example.appointment.scheduling.domain.schedule.ScheduleId;
+import com.example.appointment.scheduling.domain.SearchTags;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;

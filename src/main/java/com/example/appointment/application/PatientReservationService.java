@@ -1,8 +1,11 @@
-package com.example.appointment.domain.reservation;
+package com.example.appointment.application;
 
-import com.example.appointment.application.ReserveScheduleRangeService;
+import com.example.appointment.domain.PatientId;
+import com.example.appointment.domain.PatientReservation;
+import com.example.appointment.domain.ReservationRepository;
+import com.example.appointment.scheduling.application.ReserveScheduleRangeService;
 import com.example.appointment.domain.ServiceId;
-import com.example.appointment.domain.freescheduleranges.ScheduleRange;
+import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
 
 import java.util.Optional;
 

@@ -1,42 +1,36 @@
 package com.example.appointment;
 
-import com.example.appointment.domain.schedule.*;
-import com.example.appointment.domain.DoctorId;
-import com.example.appointment.domain.ServiceId;
+import com.example.appointment.domain.*;
+import com.example.appointment.scheduling.domain.SearchTags;
+import com.example.appointment.scheduling.domain.TagValue;
+import com.example.appointment.scheduling.domain.schedule.*;
 
 import java.time.Duration;
 import java.time.LocalDate;
 
 public class ScheduleDefinition {
-    private String locationName;
-    private DoctorId doctor;
-    private ServiceId service;
+
     private String workingHours;
     private String duration;
     private LocalDate validTo;
+    private SearchTags searchTags = SearchTags.empty();
 
     public ScheduleDefinition(ScheduleDefinition scheduleDefinition) {
-        this.locationName = scheduleDefinition.locationName;
-        this.doctor = scheduleDefinition.doctor;
-        this.service = scheduleDefinition.service;
         this.workingHours = scheduleDefinition.workingHours;
         this.duration = scheduleDefinition.duration;
         this.validTo = scheduleDefinition.validTo;
+        this.searchTags = scheduleDefinition.searchTags;
     }
 
     public ScheduleDefinition() {
     }
 
     public ScheduleDefinition forDoctor(DoctorId doctor) {
-        ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
-        scheduleDefinition.doctor = doctor;
-        return scheduleDefinition;
+        return forService(DoctorTag.of(doctor));
     }
 
-    public ScheduleDefinition atLocation(String locationName) {
-        ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
-        scheduleDefinition.locationName = locationName;
-        return scheduleDefinition;
+    public ScheduleDefinition atLocation(LocationId location) {
+        return withTag(LocationTag.of(location));
     }
 
     public ScheduleDefinition forWorkingHours(String workingHours) {
@@ -45,9 +39,13 @@ public class ScheduleDefinition {
         return scheduleDefinition;
     }
 
-    public ScheduleDefinition forService(ServiceId serviceName) {
+    public ScheduleDefinition forService(TagValue tagValue) {
+        return withTag(tagValue);
+    }
+
+    public ScheduleDefinition withTag(TagValue tagValue) {
         ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
-        scheduleDefinition.service = serviceName;
+        scheduleDefinition.searchTags = searchTags.withTagAdded(tagValue);
         return scheduleDefinition;
     }
 
@@ -77,13 +75,11 @@ public class ScheduleDefinition {
         return WorkingHours.ofHours(workingHours);
     }
 
-    public ScheduleConnections scheduleConnections() {
-        return ScheduleConnections.empty()
-                .withDoctorId(doctor)
-                .withService(service);
-    }
-
     public Duration duration() {
         return Duration.parse(this.duration);
+    }
+
+    public SearchTags searchTags() {
+        return searchTags;
     }
 }

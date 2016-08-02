@@ -1,15 +1,15 @@
 package com.example.appointment;
 
-import com.example.appointment.application.DefineNewScheduleService;
-import com.example.appointment.application.FindFreeScheduleRangesService;
-import com.example.appointment.application.GenerateFreeSlotsService;
-import com.example.appointment.application.ReserveScheduleRangeService;
+import com.example.appointment.scheduling.application.DefineNewScheduleService;
+import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
+import com.example.appointment.scheduling.application.GenerateFreeSlotsService;
+import com.example.appointment.scheduling.application.ReserveScheduleRangeService;
 import com.example.appointment.domain.ApplicationEventing;
-import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotRepository;
-import com.example.appointment.domain.reservation.PatientReservationService;
-import com.example.appointment.domain.reservation.ReservationRepository;
+import com.example.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
+import com.example.appointment.application.PatientReservationService;
+import com.example.appointment.domain.ReservationRepository;
 import com.example.appointment.infrastructure.FromScheduleDuration;
-import com.example.appointment.domain.schedule.ScheduleRepository;
+import com.example.appointment.scheduling.domain.schedule.ScheduleRepository;
 import com.example.appointment.infrastructure.DayCollectionFreeScheduleSlotRepository;
 import com.example.appointment.infrastructure.InMemoryReservationRepository;
 import com.example.appointment.infrastructure.InMemoryScheduleRepository;

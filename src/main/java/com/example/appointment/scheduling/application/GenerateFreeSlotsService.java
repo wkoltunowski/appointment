@@ -1,11 +1,11 @@
-package com.example.appointment.application;
+package com.example.appointment.scheduling.application;
 
-import com.example.appointment.domain.freescheduleranges.FreeScheduleSlot;
-import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotRepository;
-import com.example.appointment.domain.SearchTags;
-import com.example.appointment.domain.schedule.Schedule;
-import com.example.appointment.domain.schedule.ScheduleId;
-import com.example.appointment.domain.schedule.ScheduleRepository;
+import com.example.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlot;
+import com.example.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
+import com.example.appointment.scheduling.domain.SearchTags;
+import com.example.appointment.scheduling.domain.schedule.Schedule;
+import com.example.appointment.scheduling.domain.schedule.ScheduleId;
+import com.example.appointment.scheduling.domain.schedule.ScheduleRepository;
 import com.google.common.collect.Range;
 
 import java.time.LocalDate;

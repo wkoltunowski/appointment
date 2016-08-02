@@ -1,7 +1,6 @@
-package com.example.appointment.domain.reservation;
+package com.example.appointment.domain;
 
-import com.example.appointment.domain.ServiceId;
-import com.example.appointment.domain.freescheduleranges.ScheduleRange;
+import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
 
 import java.util.Optional;
 

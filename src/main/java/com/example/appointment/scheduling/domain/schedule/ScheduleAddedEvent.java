@@ -1,4 +1,4 @@
-package com.example.appointment.domain.schedule;
+package com.example.appointment.scheduling.domain.schedule;
 
 public class ScheduleAddedEvent {
     private final ScheduleId scheduleId;

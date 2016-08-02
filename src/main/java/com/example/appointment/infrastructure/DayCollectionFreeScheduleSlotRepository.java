@@ -1,10 +1,10 @@
 package com.example.appointment.infrastructure;
 
-import com.example.appointment.domain.freescheduleranges.FreeScheduleSlot;
-import com.example.appointment.domain.freescheduleranges.FreeScheduleSlotRepository;
-import com.example.appointment.domain.freescheduleranges.ScheduleRange;
-import com.example.appointment.domain.schedule.DaysDomain;
-import com.example.appointment.domain.schedule.ScheduleId;
+import com.example.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlot;
+import com.example.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
+import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
+import com.example.appointment.scheduling.domain.schedule.DaysDomain;
+import com.example.appointment.scheduling.domain.schedule.ScheduleId;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.ImmutableList;

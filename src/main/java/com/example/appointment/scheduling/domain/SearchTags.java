@@ -1,4 +1,4 @@
-package com.example.appointment.domain;
+package com.example.appointment.scheduling.domain;
 
 import java.util.Collections;
 import java.util.Map;
@@ -18,24 +18,11 @@ public class SearchTags {
         this.map = newHashMap(map);
     }
 
-    private SearchTags addTag(String key, String value) {
+    public SearchTags withTagAdded(TagValue tagValue) {
         SearchTags searchTags = new SearchTags(map);
-        searchTags.map.put(key, value);
+        searchTags.map.put(tagValue.getKey(), tagValue.getValue());
         return searchTags;
     }
-
-    public SearchTags forService(String service) {
-        return addTag("SERVICE", service);
-    }
-
-    public SearchTags forLocation(String location) {
-        return addTag("LOCATION", location);
-    }
-
-    public SearchTags forDoctor(String doctor) {
-        return addTag("DOCTOR", doctor);
-    }
-
 
     public Optional<String> get(String key) {
         return Optional.ofNullable(map.get(key));
@@ -59,5 +46,12 @@ public class SearchTags {
 
     public static SearchTags empty() {
         return EMPTY;
+    }
+
+    @Override
+    public String toString() {
+        return "SearchTags{" +
+                "map=" + map +
+                '}';
     }
 }

@@ -1,8 +1,10 @@
 package com.example.appointment;
 
-import com.example.appointment.domain.SearchTags;
+import com.example.appointment.domain.DoctorTag;
+import com.example.appointment.scheduling.domain.SearchTags;
 import com.example.appointment.domain.DoctorId;
 import com.example.appointment.domain.ServiceId;
+import com.example.appointment.domain.ServiceTag;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +12,7 @@ public class ReservationCriteria {
     private LocalDateTime startingFrom;
     private DoctorId doctor;
     private ServiceId service;
+    private SearchTags searchTags = SearchTags.empty();
 
     public ReservationCriteria() {
     }
@@ -18,6 +21,13 @@ public class ReservationCriteria {
         this.service = reservationCriteria.service;
         this.startingFrom = reservationCriteria.startingFrom;
         this.doctor = reservationCriteria.doctor;
+
+        if (service != null) {
+            searchTags = searchTags.withTagAdded(ServiceTag.of(service));
+        }
+        if (doctor != null) {
+            searchTags = searchTags.withTagAdded(DoctorTag.of(doctor));
+        }
     }
 
 
@@ -44,22 +54,13 @@ public class ReservationCriteria {
     }
 
     public SearchTags searchTags() {
-        SearchTags searchTags = SearchTags.empty();
-
-        if (service != null) {
-            searchTags = searchTags.forService(service.asString());
-        }
-        if (doctor != null) {
-            searchTags = searchTags.forDoctor(doctor.asString());
-        }
         return searchTags;
     }
 
     @Override
     public String toString() {
         return "ReservationCriteria{" +
-                "doctorName='" + doctor + '\'' +
-                ", serviceName='" + service + '\'' +
+                "searchTags='" + searchTags + '\'' +
                 ", startingFrom=" + startingFrom +
                 '}';
     }

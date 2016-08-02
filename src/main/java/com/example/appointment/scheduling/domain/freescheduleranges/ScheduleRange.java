@@ -1,6 +1,6 @@
-package com.example.appointment.domain.freescheduleranges;
+package com.example.appointment.scheduling.domain.freescheduleranges;
 
-import com.example.appointment.domain.schedule.ScheduleId;
+import com.example.appointment.scheduling.domain.schedule.ScheduleId;
 import com.google.common.collect.Range;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

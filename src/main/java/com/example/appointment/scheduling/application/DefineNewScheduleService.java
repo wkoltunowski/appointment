@@ -1,8 +1,8 @@
-package com.example.appointment.application;
+package com.example.appointment.scheduling.application;
 
 import com.example.appointment.domain.ApplicationEventing;
-import com.example.appointment.domain.SearchTags;
-import com.example.appointment.domain.schedule.*;
+import com.example.appointment.scheduling.domain.SearchTags;
+import com.example.appointment.scheduling.domain.schedule.*;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -41,4 +41,6 @@ public class DefineNewScheduleService {
     }
 
 
+    public static class AppointmentTakenException extends RuntimeException {
+    }
 }

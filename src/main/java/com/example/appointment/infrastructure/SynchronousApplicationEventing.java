@@ -1,8 +1,8 @@
 package com.example.appointment.infrastructure;
 
 import com.example.appointment.domain.ApplicationEventing;
-import com.example.appointment.application.GenerateFreeSlotsService;
-import com.example.appointment.domain.schedule.ScheduleAddedEvent;
+import com.example.appointment.scheduling.application.GenerateFreeSlotsService;
+import com.example.appointment.scheduling.domain.schedule.ScheduleAddedEvent;
 
 public class SynchronousApplicationEventing implements ApplicationEventing {
     private final GenerateFreeSlotsService generateFreeSlotsService;

@@ -1,8 +1,8 @@
-package com.example.appointment.application;
+package com.example.appointment.scheduling.application;
 
-import com.example.appointment.domain.freescheduleranges.*;
-import com.example.appointment.domain.freescheduleranges.ScheduleDurations;
-import com.example.appointment.domain.SearchTags;
+import com.example.appointment.scheduling.domain.freescheduleranges.*;
+import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleDurations;
+import com.example.appointment.scheduling.domain.SearchTags;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
