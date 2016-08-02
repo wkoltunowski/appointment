@@ -19,12 +19,11 @@ public class DefineNewScheduleService {
 
 
     public ScheduleId addDailySchedule(WorkingHours workingHours, Validity validity, Duration duration, SearchTags searchTags) {
-        Schedule schedule = new Schedule(workingHours, validity, Optional.of(duration), searchTags);
+        Schedule schedule = new DailySchedule(workingHours, validity, Optional.of(duration), searchTags);
         scheduleRepository.save(schedule);
         ScheduleId scheduleId = schedule.scheduleId();
         applicationEventing.publishEvent(new ScheduleAddedEvent(scheduleId));
         return scheduleId;
-
     }
 
     public ScheduleId addDailySchedule(WorkingHours workingHours, Duration duration, SearchTags searchTags) {
