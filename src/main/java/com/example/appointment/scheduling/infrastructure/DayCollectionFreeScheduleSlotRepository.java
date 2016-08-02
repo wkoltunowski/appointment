@@ -9,6 +9,7 @@ import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 
+@Component
 public class DayCollectionFreeScheduleSlotRepository implements FreeScheduleSlotRepository {
 
     private final Map<LocalDate, List<FreeScheduleSlot>> index = new HashMap<>();

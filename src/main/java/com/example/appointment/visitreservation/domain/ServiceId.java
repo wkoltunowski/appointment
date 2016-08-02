@@ -40,4 +40,8 @@ public class ServiceId {
     public static ServiceId newId() {
         return new ServiceId();
     }
+
+    public static ServiceId of(String id) {
+        return new ServiceId(id);
+    }
 }

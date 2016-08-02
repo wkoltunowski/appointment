@@ -7,6 +7,8 @@ import com.example.appointment.scheduling.domain.schedule.Schedule;
 import com.example.appointment.scheduling.domain.schedule.ScheduleId;
 import com.example.appointment.scheduling.domain.schedule.ScheduleRepository;
 import com.google.common.collect.Range;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,10 +19,12 @@ import java.util.List;
 import static java.time.LocalDate.now;
 import static java.util.stream.Collectors.toList;
 
+@Component
 public class GenerateFreeSlotsService {
     private final ScheduleRepository scheduleRepository;
     private final FreeScheduleSlotRepository freeScheduleSlotRepository;
 
+    @Autowired
     public GenerateFreeSlotsService(ScheduleRepository scheduleRepository, FreeScheduleSlotRepository freeScheduleSlotRepository) {
         this.scheduleRepository = scheduleRepository;
         this.freeScheduleSlotRepository = freeScheduleSlotRepository;

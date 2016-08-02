@@ -2,10 +2,7 @@ package com.example.appointment.scheduling.domain.freescheduleranges;
 
 import com.example.appointment.scheduling.domain.schedule.ScheduleId;
 import com.example.appointment.scheduling.domain.SearchTags;
-import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.Range;
-import com.google.common.collect.RangeSet;
-import com.google.common.collect.TreeRangeSet;
+import com.google.common.collect.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -29,7 +26,7 @@ public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
     }
 
     public Collection<FreeScheduleSlot> splitFor(Range<LocalDateTime> range) {
-
+//slow
         RangeSet<LocalDateTime> rangeSet = TreeRangeSet.create();
         rangeSet.add(this.range);
         rangeSet.remove(range);

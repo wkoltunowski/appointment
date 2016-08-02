@@ -13,6 +13,10 @@ public class ScheduleId {
         id = UUID.randomUUID();
     }
 
+    public ScheduleId(String id) {
+        this.id = UUID.fromString(id);
+    }
+
     @Override
     public boolean equals(Object o) {
         return EqualsBuilder.reflectionEquals(this, o);
@@ -32,5 +36,13 @@ public class ScheduleId {
 
     public static ScheduleId newId() {
         return new ScheduleId();
+    }
+
+    public UUID id() {
+        return id;
+    }
+
+    public static ScheduleId of(String id) {
+        return new ScheduleId(id);
     }
 }

@@ -3,11 +3,13 @@ package com.example.appointment.visitreservation.infrastructure;
 import com.example.appointment.visitreservation.domain.PatientId;
 import com.example.appointment.visitreservation.domain.PatientReservation;
 import com.example.appointment.visitreservation.domain.ReservationRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class InMemoryReservationRepository implements ReservationRepository {
     final List<PatientReservation> reservations = new ArrayList<>();
 

@@ -12,6 +12,10 @@ public class PatientId {
         id = UUID.randomUUID();
     }
 
+    public PatientId(UUID uuid) {
+        this.id = uuid;
+    }
+
     @Override
     public boolean equals(Object o) {
         return EqualsBuilder.reflectionEquals(this, o);
@@ -34,8 +38,11 @@ public class PatientId {
     }
 
 
-
     public static PatientId randomId() {
         return newId();
+    }
+
+    public static PatientId of(String id) {
+        return new PatientId(UUID.fromString(id));
     }
 }

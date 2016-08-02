@@ -3,15 +3,19 @@ package com.example.appointment.scheduling.application;
 import com.example.appointment.scheduling.domain.ApplicationEventing;
 import com.example.appointment.scheduling.domain.SearchTags;
 import com.example.appointment.scheduling.domain.schedule.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Optional;
 
+@Component
 public class DefineNewScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final ApplicationEventing applicationEventing;
 
+    @Autowired
     public DefineNewScheduleService(ScheduleRepository scheduleRepository, ApplicationEventing applicationEventing) {
         this.scheduleRepository = scheduleRepository;
         this.applicationEventing = applicationEventing;

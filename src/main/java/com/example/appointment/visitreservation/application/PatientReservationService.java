@@ -6,13 +6,17 @@ import com.example.appointment.visitreservation.domain.ReservationRepository;
 import com.example.appointment.scheduling.application.ReserveScheduleRangeService;
 import com.example.appointment.visitreservation.domain.ServiceId;
 import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Component
 public class PatientReservationService {
     private final ReserveScheduleRangeService reserveScheduleRangeService;
     private final ReservationRepository reservationRepository;
 
+    @Autowired
     public PatientReservationService(ReserveScheduleRangeService reserveScheduleRangeService,
                                      ReservationRepository reservationRepository) {
         this.reserveScheduleRangeService = reserveScheduleRangeService;
@@ -21,7 +25,7 @@ public class PatientReservationService {
 
     public void makeReservationFor(PatientId patient, ServiceId serviceId, ScheduleRange scheduleRange) {
         reserveScheduleRangeService.reserve(scheduleRange);
-        reservationRepository.save(PatientReservation.serviceReservation(patient, Optional.of(serviceId), ScheduleRange.scheduleRange(scheduleRange.range(), scheduleRange.scheduleId())));
+        reservationRepository.save(PatientReservation.serviceReservation(patient, Optional.of(serviceId), scheduleRange));
     }
 
 

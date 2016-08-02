@@ -3,6 +3,9 @@ package com.example.appointment.scheduling.application;
 import com.example.appointment.scheduling.domain.freescheduleranges.*;
 import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleDurations;
 import com.example.appointment.scheduling.domain.SearchTags;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -11,13 +14,18 @@ import java.util.stream.BaseStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+@Component
 public class FindFreeScheduleRangesService {
 
     private final int firstFreeCount;
     private final ScheduleDurations scheduleDurations;
     private final FreeScheduleSlotRepository storage;
 
-    public FindFreeScheduleRangesService(int firstFreeCount, ScheduleDurations scheduleDurations, FreeScheduleSlotRepository storage) {
+    @Autowired
+    public FindFreeScheduleRangesService(
+            @Value("${FindFreeScheduleRangesService.firstFreeCount}") int firstFreeCount,
+            ScheduleDurations scheduleDurations,
+            FreeScheduleSlotRepository storage) {
         this.firstFreeCount = firstFreeCount;
         this.scheduleDurations = scheduleDurations;
         this.storage = storage;
@@ -70,7 +78,7 @@ public class FindFreeScheduleRangesService {
 
 
         }
-        return Collections.emptyList();
+        return ranges;
     }
 
 
