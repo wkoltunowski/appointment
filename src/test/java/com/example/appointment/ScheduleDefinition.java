@@ -1,9 +1,9 @@
 package com.example.appointment;
 
-import com.example.appointment.visitreservation.domain.*;
 import com.example.appointment.scheduling.domain.SearchTags;
 import com.example.appointment.scheduling.domain.TagValue;
-import com.example.appointment.scheduling.domain.schedule.*;
+import com.example.appointment.scheduling.domain.schedule.Validity;
+import com.example.appointment.scheduling.domain.schedule.WorkingHours;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -25,14 +25,6 @@ public class ScheduleDefinition {
     public ScheduleDefinition() {
     }
 
-    public ScheduleDefinition forDoctor(DoctorId doctor) {
-        return withTag(DoctorTag.doctorIs(doctor));
-    }
-
-    public ScheduleDefinition atLocation(LocationId location) {
-        return withTag(LocationTag.locationIs(location));
-    }
-
     public ScheduleDefinition forWorkingHours(String workingHours) {
         ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
         scheduleDefinition.workingHours = workingHours;
@@ -46,9 +38,14 @@ public class ScheduleDefinition {
     }
 
     public ScheduleDefinition withDefaultDuration(String duration) {
-
         ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
         scheduleDefinition.duration = duration;
+        return scheduleDefinition;
+    }
+
+    public ScheduleDefinition withTags(TagValue ... tags) {
+        ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
+        scheduleDefinition.searchTags = searchTags.withTags(tags);
         return scheduleDefinition;
     }
 

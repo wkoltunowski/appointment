@@ -54,4 +54,12 @@ public class SearchTags {
                 "map=" + map +
                 '}';
     }
+
+    public SearchTags withTags(TagValue... tags) {
+        SearchTags result = this;
+        for (TagValue tag : tags) {
+            result = result.withTagAdded(tag);
+        }
+        return result;
+    }
 }

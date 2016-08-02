@@ -35,11 +35,7 @@ public class ReservationCriteria {
     }
 
     public ReservationCriteria withTags(TagValue... tags) {
-        SearchTags searchTags1 = SearchTags.empty();
-        for (TagValue tag : tags) {
-            searchTags1 = searchTags.withTagAdded(tag);
-        }
-        return withTags(searchTags1);
+        return withTags(searchTags.withTags(tags));
     }
 
     public ReservationCriteria startingFrom(LocalDateTime dateTime) {
