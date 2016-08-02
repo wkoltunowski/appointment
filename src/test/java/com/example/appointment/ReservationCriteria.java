@@ -1,33 +1,23 @@
 package com.example.appointment;
 
-import com.example.appointment.visitreservation.domain.DoctorTag;
 import com.example.appointment.scheduling.domain.SearchTags;
-import com.example.appointment.visitreservation.domain.DoctorId;
-import com.example.appointment.visitreservation.domain.ServiceId;
-import com.example.appointment.visitreservation.domain.ServiceTag;
+import com.example.appointment.scheduling.domain.TagValue;
 
 import java.time.LocalDateTime;
 
 public class ReservationCriteria {
-    private LocalDateTime startingFrom;
-    private DoctorId doctor;
-    private ServiceId service;
-    private SearchTags searchTags = SearchTags.empty();
+    private final LocalDateTime startingFrom;
+    private final SearchTags searchTags;
 
     public ReservationCriteria() {
+        this.startingFrom = null;
+        this.searchTags = SearchTags.empty();
     }
 
-    public ReservationCriteria(ReservationCriteria reservationCriteria) {
-        this.service = reservationCriteria.service;
-        this.startingFrom = reservationCriteria.startingFrom;
-        this.doctor = reservationCriteria.doctor;
 
-        if (service != null) {
-            searchTags = searchTags.withTagAdded(ServiceTag.of(service));
-        }
-        if (doctor != null) {
-            searchTags = searchTags.withTagAdded(DoctorTag.of(doctor));
-        }
+    public ReservationCriteria(LocalDateTime startingFrom, SearchTags searchTags) {
+        this.startingFrom = startingFrom;
+        this.searchTags = searchTags;
     }
 
 
@@ -35,22 +25,25 @@ public class ReservationCriteria {
         return startingFrom;
     }
 
-    public ReservationCriteria service(ServiceId serviceId) {
-        ReservationCriteria reservationCriteria = new ReservationCriteria(this);
-        reservationCriteria.service = serviceId;
-        return reservationCriteria;
+    public ReservationCriteria withTag(TagValue service) {
+        SearchTags searchTags = this.searchTags.withTagAdded(service);
+        return withTags(searchTags);
     }
 
-    public ReservationCriteria doctor(DoctorId doctorName) {
-        ReservationCriteria reservationCriteria = new ReservationCriteria(this);
-        reservationCriteria.doctor = doctorName;
-        return reservationCriteria;
+    public ReservationCriteria withTags(SearchTags searchTags) {
+        return new ReservationCriteria(startingFrom, searchTags);
+    }
+
+    public ReservationCriteria withTags(TagValue... tags) {
+        SearchTags searchTags1 = SearchTags.empty();
+        for (TagValue tag : tags) {
+            searchTags1 = searchTags.withTagAdded(tag);
+        }
+        return withTags(searchTags1);
     }
 
     public ReservationCriteria startingFrom(LocalDateTime dateTime) {
-        ReservationCriteria reservationCriteria = new ReservationCriteria(this);
-        reservationCriteria.startingFrom = dateTime;
-        return reservationCriteria;
+        return new ReservationCriteria(dateTime, searchTags);
     }
 
     public SearchTags searchTags() {
@@ -63,9 +56,5 @@ public class ReservationCriteria {
                 "searchTags='" + searchTags + '\'' +
                 ", startingFrom=" + startingFrom +
                 '}';
-    }
-
-    public ServiceId serviceId() {
-        return service;
     }
 }

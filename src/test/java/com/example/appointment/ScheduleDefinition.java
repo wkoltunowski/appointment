@@ -26,21 +26,17 @@ public class ScheduleDefinition {
     }
 
     public ScheduleDefinition forDoctor(DoctorId doctor) {
-        return forService(DoctorTag.of(doctor));
+        return withTag(DoctorTag.doctorIs(doctor));
     }
 
     public ScheduleDefinition atLocation(LocationId location) {
-        return withTag(LocationTag.of(location));
+        return withTag(LocationTag.locationIs(location));
     }
 
     public ScheduleDefinition forWorkingHours(String workingHours) {
         ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
         scheduleDefinition.workingHours = workingHours;
         return scheduleDefinition;
-    }
-
-    public ScheduleDefinition forService(TagValue tagValue) {
-        return withTag(tagValue);
     }
 
     public ScheduleDefinition withTag(TagValue tagValue) {

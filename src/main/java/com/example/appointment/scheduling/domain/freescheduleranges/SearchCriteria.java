@@ -1,7 +1,5 @@
 package com.example.appointment.scheduling.domain.freescheduleranges;
 
-import com.example.appointment.visitreservation.domain.LocationId;
-import com.example.appointment.visitreservation.domain.LocationTag;
 import com.example.appointment.scheduling.domain.SearchTags;
 import com.example.appointment.scheduling.domain.TagValue;
 
@@ -28,11 +26,6 @@ public class SearchCriteria {
 
     public LocalDateTime getStartingFrom() {
         return startingFrom;
-    }
-
-    public SearchCriteria forLocation(final LocationId location) {
-        TagValue tagValue = LocationTag.of(location);
-        return withTagValue(tagValue);
     }
 
     public SearchCriteria withTagValue(TagValue tagValue) {

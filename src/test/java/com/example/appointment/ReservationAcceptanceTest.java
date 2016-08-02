@@ -18,6 +18,8 @@ import java.util.function.Supplier;
 
 import static com.example.appointment.DateTestUtils.todayAt;
 import static com.example.appointment.DateTestUtils.todayBetween;
+import static com.example.appointment.visitreservation.domain.DoctorTag.doctorIs;
+import static com.example.appointment.visitreservation.domain.ServiceTag.serviceIs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -45,15 +47,13 @@ public class ReservationAcceptanceTest {
                 .forDoctor(DR_SMITH)
                 .atLocation(WARSAW)
                 .withDefaultDuration("PT15M")
-                .forWorkingHours("08:00-10:00")
-                .forService(ServiceTag.of(CONSULTATION))
+                .forWorkingHours("08:00-10:00").withTag(ServiceTag.serviceIs(CONSULTATION))
         );
         wilsonSchedule = givenSchedule(scheduleDefinition()
                 .forDoctor(DR_WILSON)
                 .atLocation(WARSAW)
                 .withDefaultDuration("PT20M")
-                .forWorkingHours("08:00-11:00")
-                .forService(ServiceTag.of(CONSULTATION))
+                .forWorkingHours("08:00-11:00").withTag(ServiceTag.serviceIs(CONSULTATION))
         );
         patientReservationService = factory.patientReservation();
         reservationRepository = factory.reservationRepository();
@@ -63,7 +63,7 @@ public class ReservationAcceptanceTest {
     public void shouldFindReservationCandidates() throws Exception {
         List<ScheduleRange> scheduleRanges = findScheduleRanges(
                 reservationCriteria()
-                        .service(CONSULTATION)
+                        .withTag(serviceIs(CONSULTATION))
                         .startingFrom(todayAt("08:00")),
                 maxVisitsCount(10));
         assertThat(scheduleRanges, is(ImmutableList.of(
@@ -84,8 +84,7 @@ public class ReservationAcceptanceTest {
     @Test
     public void shouldMakeReservation() throws Exception {
         ReservationCriteria reservationCriteria = reservationCriteria()
-                .service(CONSULTATION)
-                .doctor(DR_SMITH)
+                .withTags(serviceIs(CONSULTATION), doctorIs(DR_SMITH))
                 .startingFrom(todayAt("08:00"));
         List<ScheduleRange> freeRanges = findFreeRanges(reservationCriteria, maxVisitsCount(1));
         if (freeRanges.isEmpty()) {
@@ -113,12 +112,9 @@ public class ReservationAcceptanceTest {
                 .withDefaultDuration("PT1H")
                 .atLocation(WARSAW)
                 .forWorkingHours("08:00-09:00")
-                .validTill(LocalDate.now())
-                .forService(ServiceTag.of(CONSULTATION)));
+                .validTill(LocalDate.now()).withTag(ServiceTag.serviceIs(CONSULTATION)));
 
-        ReservationCriteria criteria = reservationCriteria()
-                .service(CONSULTATION)
-                .doctor(fullScheduleDoctor)
+        ReservationCriteria criteria = reservationCriteria().withTags(serviceIs(CONSULTATION), doctorIs(fullScheduleDoctor))
                 .startingFrom(todayAt("08:00"));
         reserveFirst(criteria, CONSULTATION);
 
@@ -131,8 +127,7 @@ public class ReservationAcceptanceTest {
 
         List<ScheduleRange> reservationsFor = findScheduleRanges(
                 reservationCriteria()
-                        .service(CONSULTATION)
-                        .doctor(noScheduleDoctor)
+                        .withTags(serviceIs(CONSULTATION), doctorIs(noScheduleDoctor))
                         .startingFrom(todayAt("08:00")),
                 1);
         assertThat(reservationsFor, hasSize(0));
@@ -140,9 +135,7 @@ public class ReservationAcceptanceTest {
 
     @Test(expectedExceptions = AppointmentTakenException.class)
     public void shouldNotReserveTwice() throws Exception {
-        List<ScheduleRange> firstFree = findFreeRanges(reservationCriteria()
-                .service(CONSULTATION)
-                .doctor(DR_SMITH)
+        List<ScheduleRange> firstFree = findFreeRanges(reservationCriteria().withTags(serviceIs(CONSULTATION), doctorIs(DR_SMITH))
                 .startingFrom(LocalDateTime.now()), 1);
         if (firstFree.isEmpty()) {
             throw new IllegalStateException();
