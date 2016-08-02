@@ -8,12 +8,12 @@ import com.example.appointment.scheduling.domain.ApplicationEventing;
 import com.example.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.example.appointment.visitreservation.application.PatientReservationService;
 import com.example.appointment.visitreservation.domain.ReservationRepository;
-import com.example.appointment.infrastructure.FromScheduleDuration;
+import com.example.appointment.scheduling.infrastructure.FromScheduleDuration;
 import com.example.appointment.scheduling.domain.schedule.ScheduleRepository;
-import com.example.appointment.infrastructure.DayCollectionFreeScheduleSlotRepository;
-import com.example.appointment.infrastructure.InMemoryReservationRepository;
-import com.example.appointment.infrastructure.InMemoryScheduleRepository;
-import com.example.appointment.infrastructure.SynchronousApplicationEventing;
+import com.example.appointment.scheduling.infrastructure.DayCollectionFreeScheduleSlotRepository;
+import com.example.appointment.visitreservation.infrastructure.InMemoryReservationRepository;
+import com.example.appointment.scheduling.infrastructure.InMemoryScheduleRepository;
+import com.example.appointment.scheduling.infrastructure.SynchronousApplicationEventing;
 
 public class Factory {
     private FreeScheduleSlotRepository freeScheduleSlotRepository;

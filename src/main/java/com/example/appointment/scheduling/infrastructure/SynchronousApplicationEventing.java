@@ -1,4 +1,4 @@
-package com.example.appointment.infrastructure;
+package com.example.appointment.scheduling.infrastructure;
 
 import com.example.appointment.scheduling.domain.ApplicationEventing;
 import com.example.appointment.scheduling.application.GenerateFreeSlotsService;

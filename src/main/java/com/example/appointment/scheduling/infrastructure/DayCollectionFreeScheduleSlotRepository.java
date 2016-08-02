@@ -1,4 +1,4 @@
-package com.example.appointment.infrastructure;
+package com.example.appointment.scheduling.infrastructure;
 
 import com.example.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlot;
 import com.example.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;

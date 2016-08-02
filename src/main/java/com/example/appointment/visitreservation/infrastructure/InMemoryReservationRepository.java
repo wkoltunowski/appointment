@@ -1,4 +1,4 @@
-package com.example.appointment.infrastructure;
+package com.example.appointment.visitreservation.infrastructure;
 
 import com.example.appointment.visitreservation.domain.PatientId;
 import com.example.appointment.visitreservation.domain.PatientReservation;
