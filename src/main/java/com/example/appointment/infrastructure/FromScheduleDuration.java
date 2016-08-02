@@ -8,8 +8,6 @@ import com.example.appointment.scheduling.domain.schedule.ScheduleRepository;
 import java.time.Duration;
 
 public class FromScheduleDuration implements ScheduleDurations {
-
-
     private final ScheduleRepository scheduleRepository;
 
     public FromScheduleDuration(ScheduleRepository scheduleRepository) {

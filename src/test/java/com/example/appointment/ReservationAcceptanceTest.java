@@ -1,8 +1,8 @@
 package com.example.appointment;
 
-import com.example.appointment.application.PatientReservationService;
-import com.example.appointment.domain.*;
-import com.example.appointment.scheduling.application.DefineNewScheduleService;
+import com.example.appointment.scheduling.application.AppointmentTakenException;
+import com.example.appointment.visitreservation.application.PatientReservationService;
+import com.example.appointment.visitreservation.domain.*;
 import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
 import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.scheduling.domain.schedule.ScheduleId;
@@ -92,7 +92,7 @@ public class ReservationAcceptanceTest {
             throw noReservationsException(reservationCriteria).get();
         }
         ScheduleRange firstCandidate = freeRanges.get(0);
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstCandidate, CONSULTATION);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, firstCandidate);
 
 
         assertThat(reservationRepository.findPatientReservations(PATIENT_DOUGLAS), contains(
@@ -138,7 +138,7 @@ public class ReservationAcceptanceTest {
         assertThat(reservationsFor, hasSize(0));
     }
 
-    @Test(expectedExceptions = DefineNewScheduleService.AppointmentTakenException.class)
+    @Test(expectedExceptions = AppointmentTakenException.class)
     public void shouldNotReserveTwice() throws Exception {
         List<ScheduleRange> firstFree = findFreeRanges(reservationCriteria()
                 .service(CONSULTATION)
@@ -149,8 +149,8 @@ public class ReservationAcceptanceTest {
         }
         ScheduleRange firstFreeRange = firstFree.get(0);
 
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFreeRange, CONSULTATION);
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFreeRange, CONSULTATION);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, firstFreeRange);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, firstFreeRange);
     }
 
     private int maxVisitsCount(int maxVisitsCount) {
@@ -161,7 +161,7 @@ public class ReservationAcceptanceTest {
     private void reserveFirst(ReservationCriteria reservationCriteria, ServiceId serviceId) {
         List<ScheduleRange> firstFree = findFreeRanges(reservationCriteria, 1);
         Preconditions.checkArgument(!firstFree.isEmpty(), "no reservations found for :" + reservationCriteria);
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, firstFree.get(0), serviceId);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, serviceId, firstFree.get(0));
     }
 
     private List<ScheduleRange> findScheduleRanges(ReservationCriteria reservationCriteria, int maxResultCount) {

@@ -1,6 +1,6 @@
 package com.example.appointment;
 
-import com.example.appointment.domain.*;
+import com.example.appointment.visitreservation.domain.*;
 import com.example.appointment.scheduling.application.DefineNewScheduleService;
 import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
 import com.example.appointment.scheduling.domain.SearchTags;

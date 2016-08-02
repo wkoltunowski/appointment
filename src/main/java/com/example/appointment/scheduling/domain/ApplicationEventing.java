@@ -1,4 +1,4 @@
-package com.example.appointment.domain;
+package com.example.appointment.scheduling.domain;
 
 import com.example.appointment.scheduling.domain.schedule.ScheduleAddedEvent;
 

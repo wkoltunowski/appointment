@@ -1,4 +1,4 @@
-package com.example.appointment.domain;
+package com.example.appointment.visitreservation.domain;
 
 import java.util.List;
 

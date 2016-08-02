@@ -1,5 +1,6 @@
 package com.example.appointment;
 
+import com.example.appointment.scheduling.application.AppointmentTakenException;
 import com.example.appointment.scheduling.application.DefineNewScheduleService;
 import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
 import com.example.appointment.scheduling.application.ReserveScheduleRangeService;
@@ -106,7 +107,7 @@ public class ReserveAppointmentTest {
         assertFoundAppointments(DateTestUtils.todayAt(8, 0));
     }
 
-    @Test(expectedExceptions = DefineNewScheduleService.AppointmentTakenException.class)
+    @Test(expectedExceptions = AppointmentTakenException.class)
     public void shouldNotReserveSameAppointmentTwice() throws Exception {
         ScheduleId scheduleId = defineNewScheduleService.addDailySchedule(ofHours("08:00-08:30"), ofMinutes(15));
         reserveScheduleRangeService.reserve(ScheduleRange.scheduleRange(todayBetween("08:00-08:15"), scheduleId));

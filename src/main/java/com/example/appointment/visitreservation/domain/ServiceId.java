@@ -1,4 +1,4 @@
-package com.example.appointment.domain;
+package com.example.appointment.visitreservation.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

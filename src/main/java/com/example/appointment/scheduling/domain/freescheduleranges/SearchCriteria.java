@@ -1,7 +1,7 @@
 package com.example.appointment.scheduling.domain.freescheduleranges;
 
-import com.example.appointment.domain.LocationId;
-import com.example.appointment.domain.LocationTag;
+import com.example.appointment.visitreservation.domain.LocationId;
+import com.example.appointment.visitreservation.domain.LocationTag;
 import com.example.appointment.scheduling.domain.SearchTags;
 import com.example.appointment.scheduling.domain.TagValue;
 

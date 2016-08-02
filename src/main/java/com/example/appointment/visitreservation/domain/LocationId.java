@@ -1,15 +1,15 @@
-package com.example.appointment.domain;
+package com.example.appointment.visitreservation.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.UUID;
 
-public class DoctorId {
+public class LocationId {
     private final UUID id;
 
-    private DoctorId(UUID id) {
-        this.id = id;
+    public LocationId() {
+        id = UUID.randomUUID();
     }
 
     @Override
@@ -24,13 +24,13 @@ public class DoctorId {
 
     @Override
     public String toString() {
-        return "DoctorId{" +
+        return "LocationId{" +
                 "id=" + id +
                 '}';
     }
 
-    public static DoctorId newId() {
-        return new DoctorId(UUID.randomUUID());
+    public static LocationId newId() {
+        return new LocationId();
     }
 
     public String asString() {

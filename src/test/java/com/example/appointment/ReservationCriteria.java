@@ -1,10 +1,10 @@
 package com.example.appointment;
 
-import com.example.appointment.domain.DoctorTag;
+import com.example.appointment.visitreservation.domain.DoctorTag;
 import com.example.appointment.scheduling.domain.SearchTags;
-import com.example.appointment.domain.DoctorId;
-import com.example.appointment.domain.ServiceId;
-import com.example.appointment.domain.ServiceTag;
+import com.example.appointment.visitreservation.domain.DoctorId;
+import com.example.appointment.visitreservation.domain.ServiceId;
+import com.example.appointment.visitreservation.domain.ServiceTag;
 
 import java.time.LocalDateTime;
 

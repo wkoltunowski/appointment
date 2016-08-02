@@ -1,6 +1,6 @@
 package com.example.appointment;
 
-import com.example.appointment.domain.*;
+import com.example.appointment.visitreservation.domain.*;
 import com.example.appointment.scheduling.domain.SearchTags;
 import com.example.appointment.scheduling.domain.TagValue;
 import com.example.appointment.scheduling.domain.schedule.*;
