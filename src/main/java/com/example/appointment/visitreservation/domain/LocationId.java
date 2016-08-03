@@ -12,6 +12,10 @@ public class LocationId {
         id = UUID.randomUUID();
     }
 
+    public LocationId(UUID uuid) {
+        this.id = uuid;
+    }
+
     @Override
     public boolean equals(Object o) {
         return EqualsBuilder.reflectionEquals(this, o);
@@ -35,5 +39,9 @@ public class LocationId {
 
     public String asString() {
         return id.toString();
+    }
+
+    public static LocationId of(String id) {
+        return new LocationId(UUID.fromString(id));
     }
 }

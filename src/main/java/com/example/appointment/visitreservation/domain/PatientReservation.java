@@ -19,6 +19,13 @@ public class PatientReservation {
         return patient;
     }
 
+    public ScheduleRange scheduleRange() {
+        return scheduleRange;
+    }
+
+    public Optional<ServiceId> serviceId() {
+        return serviceId;
+    }
 
     public static PatientReservation serviceReservation(PatientId patient, ServiceId serviceId, ScheduleRange scheduleRange) {
         return new PatientReservation(Optional.of(serviceId), patient, scheduleRange);

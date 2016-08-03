@@ -36,4 +36,8 @@ public class DoctorId {
     public String asString() {
         return id.toString();
     }
+
+    public static DoctorId of(String id) {
+        return new DoctorId(UUID.fromString(id));
+    }
 }

@@ -22,4 +22,9 @@ public class InMemoryReservationRepository implements ReservationRepository {
     public List<PatientReservation> findPatientReservations(PatientId patientId) {
         return reservations.stream().filter(r -> r.patient().equals(patientId)).collect(Collectors.toList());
     }
+
+    @Override
+    public List<PatientReservation> findAll(int maxSize) {
+        return reservations.stream().limit(maxSize).collect(Collectors.toList());
+    }
 }

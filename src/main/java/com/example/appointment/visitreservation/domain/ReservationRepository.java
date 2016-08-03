@@ -6,4 +6,6 @@ public interface ReservationRepository {
     void save(PatientReservation reservation);
 
     List<PatientReservation> findPatientReservations(PatientId patientId);
+
+    List<PatientReservation> findAll(int maxSize);
 }

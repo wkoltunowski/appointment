@@ -45,4 +45,8 @@ public class PatientId {
     public static PatientId of(String id) {
         return new PatientId(UUID.fromString(id));
     }
+
+    public String asString() {
+        return id.toString();
+    }
 }
