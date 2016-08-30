@@ -102,18 +102,17 @@ public class ReservationAcceptanceTest {
     @Test
     public void shouldNotFindReservationForFullSchedule() throws Exception {
         DoctorId fullScheduleDoctor = DoctorId.newId();
-        givenSchedule(schedule()
+        ScheduleId scheduleId = givenSchedule(schedule()
                 .withTags(doctorIs(fullScheduleDoctor), locationIs(WARSAW), serviceIs(CONSULTATION))
                 .withDefaultDuration("PT1H")
                 .forWorkingHours("08:00-09:00")
                 .validTill(LocalDate.now()));
 
-        ReservationCriteria criteria = reservation()
-                .withTags(serviceIs(CONSULTATION), doctorIs(fullScheduleDoctor))
-                .startingFrom(todayAt("08:00"));
-        reserveFirst(criteria, CONSULTATION);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, ScheduleRange.scheduleRange(todayBetween("08:00-09:00"), scheduleId));
 
-        assertThat(findScheduleRanges(criteria, maxVisitsCount(10)), hasSize(0));
+        assertThat(findScheduleRanges(reservation()
+                .withTags(serviceIs(CONSULTATION), doctorIs(fullScheduleDoctor))
+                .startingFrom(todayAt("08:00")), maxVisitsCount(10)), hasSize(0));
     }
 
     @Test
@@ -143,12 +142,6 @@ public class ReservationAcceptanceTest {
         return maxVisitsCount;
     }
 
-
-    private void reserveFirst(ReservationCriteria reservationCriteria, ServiceId serviceId) {
-        List<ScheduleRange> firstFree = findFreeRanges(reservationCriteria, 1);
-        checkArgument(!firstFree.isEmpty(), "no reservations found for :" + reservationCriteria);
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, serviceId, firstFree.get(0));
-    }
 
     private List<ScheduleRange> findScheduleRanges(ReservationCriteria reservationCriteria, int maxResultCount) {
         return findFreeRanges(reservationCriteria, maxResultCount);

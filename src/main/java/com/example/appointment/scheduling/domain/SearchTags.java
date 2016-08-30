@@ -48,6 +48,10 @@ public class SearchTags {
         return EMPTY;
     }
 
+    public static SearchTags ofTags(TagValue... tags) {
+        return EMPTY.withTags(tags);
+    }
+
     @Override
     public String toString() {
         return "SearchTags{" +

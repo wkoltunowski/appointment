@@ -31,19 +31,13 @@ public class ScheduleDefinition {
         return scheduleDefinition;
     }
 
-    public ScheduleDefinition withTag(TagValue tagValue) {
-        ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
-        scheduleDefinition.searchTags = searchTags.withTagAdded(tagValue);
-        return scheduleDefinition;
-    }
-
     public ScheduleDefinition withDefaultDuration(String duration) {
         ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
         scheduleDefinition.duration = duration;
         return scheduleDefinition;
     }
 
-    public ScheduleDefinition withTags(TagValue ... tags) {
+    public ScheduleDefinition withTags(TagValue... tags) {
         ScheduleDefinition scheduleDefinition = new ScheduleDefinition(this);
         scheduleDefinition.searchTags = searchTags.withTags(tags);
         return scheduleDefinition;
