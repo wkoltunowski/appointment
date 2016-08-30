@@ -22,8 +22,7 @@ public class DefineNewScheduleService {
     }
 
 
-    public ScheduleId addDailySchedule(WorkingHours workingHours, Validity validity, Duration duration, SearchTags searchTags) {
-        Schedule schedule = new DailySchedule(workingHours, validity, Optional.of(duration), searchTags);
+    public ScheduleId addDailySchedule(Schedule schedule) {
         scheduleRepository.save(schedule);
         ScheduleId scheduleId = schedule.scheduleId();
         applicationEventing.publishEvent(new ScheduleAddedEvent(scheduleId));
@@ -31,7 +30,7 @@ public class DefineNewScheduleService {
     }
 
     public ScheduleId addDailySchedule(WorkingHours workingHours, Duration duration, SearchTags searchTags) {
-        return this.addDailySchedule(workingHours, Validity.infinite(), duration, searchTags);
+        return this.addDailySchedule(new DailySchedule(workingHours, Validity.infinite(), Optional.of(duration), searchTags));
 
     }
 
@@ -40,7 +39,7 @@ public class DefineNewScheduleService {
     }
 
     public ScheduleId addDailySchedule(WorkingHours workingHours, Duration duration, Validity validity) {
-        return addDailySchedule(workingHours, validity, duration, SearchTags.empty());
+        return addDailySchedule(new DailySchedule(workingHours, validity, Optional.of(duration), SearchTags.empty()));
     }
 
 

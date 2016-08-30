@@ -6,14 +6,11 @@ import com.example.appointment.scheduling.application.GenerateFreeSlotsService;
 import com.example.appointment.scheduling.application.ReserveScheduleRangeService;
 import com.example.appointment.scheduling.domain.ApplicationEventing;
 import com.example.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
+import com.example.appointment.scheduling.infrastructure.*;
 import com.example.appointment.visitreservation.application.PatientReservationService;
 import com.example.appointment.visitreservation.domain.ReservationRepository;
-import com.example.appointment.scheduling.infrastructure.FromScheduleDuration;
 import com.example.appointment.scheduling.domain.schedule.ScheduleRepository;
-import com.example.appointment.scheduling.infrastructure.DayCollectionFreeScheduleSlotRepository;
 import com.example.appointment.visitreservation.infrastructure.InMemoryReservationRepository;
-import com.example.appointment.scheduling.infrastructure.InMemoryScheduleRepository;
-import com.example.appointment.scheduling.infrastructure.SynchronousApplicationEventing;
 
 public class Factory {
     private FreeScheduleSlotRepository freeScheduleSlotRepository;
@@ -35,7 +32,8 @@ public class Factory {
 
     public FreeScheduleSlotRepository freeSlotRepository() {
         if (freeScheduleSlotRepository == null) {
-            freeScheduleSlotRepository = new DayCollectionFreeScheduleSlotRepository();
+//            freeScheduleSlotRepository = new DayCollectionFreeScheduleSlotRepository();
+            freeScheduleSlotRepository = new SortedListFreeScheduleSlotRepository();
         }
         return freeScheduleSlotRepository;
     }

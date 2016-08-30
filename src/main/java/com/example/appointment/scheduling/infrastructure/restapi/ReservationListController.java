@@ -35,7 +35,9 @@ public class ReservationListController {
         return r -> new Reservation()
                 .withPatientId(r.patient().asString())
                 .withServiceId(r.serviceId().map(ServiceId::asString).orElse(null))
+                .withScheduleId(r.scheduleRange().scheduleId().asString())
                 .withDate(r.scheduleRange().range().lowerEndpoint().toString())
+                .withDuration(r.scheduleRange().duration().toString())
                 .withDoctorId(doctorFor(r.scheduleRange().scheduleId()).orElse(null));
     }
 

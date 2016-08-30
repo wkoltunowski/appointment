@@ -6,4 +6,8 @@ public class ServiceTag {
     public static TagValue serviceIs(ServiceId value) {
         return new TagValue("SERVICE", value.asString());
     }
+
+    public static String key() {
+        return "SERVICE";
+    }
 }

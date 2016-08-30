@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.BaseStream;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -37,48 +38,15 @@ public class FindFreeScheduleRangesService {
 
     public List<ScheduleRange> findFirstFree(LocalDateTime startingFrom, SearchTags searchTags) {
         Stream<FreeScheduleSlot> stream = StreamSupport.stream(this.storage.findAfter(startingFrom).spliterator(), false);
-        Iterator<Iterator<ScheduleRange>> iterators = stream
+        return stream
                 .filter(s -> s.matches(searchTags))
                 .map(slot -> freeSlotRanges(startingFrom, slot))
-                .map(BaseStream::iterator)
-                .iterator();
-        List<ScheduleRange> ranges = new ArrayList<>();
-        while (iterators.hasNext()) {
-            Iterator<ScheduleRange> slotIterator = iterators.hasNext() ? iterators.next() : Collections.emptyListIterator();
-            Iterator<ScheduleRange> nextIterator = iterators.hasNext() ? iterators.next() : Collections.emptyListIterator();
-            Optional<ScheduleRange> nextIteratorRange = Optional.empty();
-            if (nextIterator.hasNext()) {
-                nextIteratorRange = Optional.of(nextIterator.next());
-            }
-            while (slotIterator.hasNext()) {
-                ScheduleRange thisSlotRange = slotIterator.next();
-                while (nextIteratorRange.isPresent() && nextIteratorRange.get().start().isBefore(thisSlotRange.start())) {
-                    ranges.add(nextIteratorRange.get());
-                    if (nextIterator.hasNext()) {
-                        nextIteratorRange = Optional.of(nextIterator.next());
-                    } else {
-                        if (iterators.hasNext()) {
-                            nextIterator = iterators.next();
-                            if (nextIterator.hasNext()) {
-                                nextIteratorRange = Optional.of(nextIterator.next());
-                            }
-                        } else {
-                            nextIteratorRange = Optional.empty();
-                        }
-                    }
-                    if (ranges.size() >= firstFreeCount) {
-                        return ranges;
-                    }
-                }
-                ranges.add(thisSlotRange);
-                if (ranges.size() >= firstFreeCount) {
-                    return ranges;
-                }
-            }
+                .flatMap(scheduleRangeStream -> scheduleRangeStream)
+                .limit(2 * firstFreeCount)
+                .sorted(Comparator.comparing(ScheduleRange::start).thenComparing(ScheduleRange::end))
+                .limit(firstFreeCount)
+                .collect(Collectors.toList());
 
-
-        }
-        return ranges;
     }
 
 
@@ -91,4 +59,6 @@ public class FindFreeScheduleRangesService {
     public List<ScheduleRange> findFirstFree(SearchCriteria crit) {
         return findFirstFree(crit.getStartingFrom(), crit.searchTags());
     }
+
+
 }

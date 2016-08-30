@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<body>
+<div ng-app="myApp" ng-controller="myCtrl">
+    <table>
+        <tr>
+            <td>service</td>
+            <td><select ng-model="selectedService" ng-options="x.name for x in services"/></td>
+        </tr>
+        <tr>
+            <td>doctor</td>
+            <td><select ng-model="selectedDoctor" ng-options="x.lastName for x in doctors"/></td>
+        </tr>
+        <tr>
+            <td>location</td>
+            <td><select ng-model="selectedLocation" ng-options="x.name for x in locations"/></td>
+        </tr>
+        <tr>
+            <td>
+                <button ng-click="search()">search</button>
+            </td>
+        </tr>
+
+    </table>
+    <p>Total visits count : {{freeSlots.length}}</p>
+
+    <table border="1">
+        <tr>
+            <th>date</th>
+            <th>duration</th>
+            <th>service</th>
+            <th>doctor</th>
+            <th>action</th>
+
+        </tr>
+        <tr ng-repeat="x in freeSlots">
+            <td>{{ x.start }}</td>
+            <td>{{ x.duration }}</td>
+            <td>{{ serviceName(services,x.serviceId) }}</td>
+            <td>{{ doctorName(doctors,x.doctorId) }}</td>
+            <td>
+                <button ng-click="book(x.scheduleId,x.serviceId,x.start,x.duration)">book</button>
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('myCtrl', function ($scope, $http) {
+        $http.get("http://localhost:8080/services")
+                .then(function (response) {
+                    $scope.services = response.data;
+                });
+        $http.get("http://localhost:8080/doctors")
+                .then(function (response) {
+                    $scope.doctors = response.data;
+                });
+        $http.get("http://localhost:8080/locations")
+                .then(function (response) {
+                    $scope.locations = response.data;
+                });
+        $scope.search = function () {
+            $http.get("http://localhost:8080/searchFree")
+                    .then(function (response) {
+                        $scope.freeSlots = response.data;
+                    });
+        };
+        $scope.book = function (scheduleId, serviceId, date, duration) {
+            $http.get('/reserve', {
+                params: {
+                    scheduleId: scheduleId,
+                    patientId: '6ebae3e3-2e56-4fc6-af87-7ecd79227dac',
+                    serviceId: serviceId,
+                    start: date,
+                    duration: duration
+                }
+            }).then(function (response) {
+                $scope.search();
+            });
+        }
+        $scope.serviceName = function (services, serviceId) {
+            for (var service in services) {
+                if (services[service].serviceId == serviceId) {
+                    return services[service].name;
+                }
+                return "unknown service";
+            }
+        }
+        $scope.doctorName = function (doctors, doctorId) {
+            for (var doctor in doctors) {
+                if (doctors[doctor].doctorId == doctorId) {
+                    return doctors[doctor].lastName + ', ' + doctors[doctor].firstName;
+                }
+                return "unknown doctor";
+            }
+        }
+        $scope.search();
+    });
+</script>
+
+</body>
+</html>

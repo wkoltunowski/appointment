@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public class ScheduleId {
 
+    private static final ScheduleId EMPTY = new ScheduleId(new UUID(0, 0).toString());
     private final UUID id;
 
     public ScheduleId() {
@@ -17,14 +18,31 @@ public class ScheduleId {
         this.id = UUID.fromString(id);
     }
 
+//    @Override
+//    public boolean equals(Object o) {
+//        return EqualsBuilder.reflectionEquals(this, o);
+//    }
+
     @Override
     public boolean equals(Object o) {
-        return EqualsBuilder.reflectionEquals(this, o);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ScheduleId that = (ScheduleId) o;
+
+        return id.equals(that.id);
+
     }
+
+//    @Override
+//    public int hashCode() {
+//        return HashCodeBuilder.reflectionHashCode(this);
+//    }
+
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return id.hashCode();
     }
 
     @Override
@@ -44,5 +62,13 @@ public class ScheduleId {
 
     public static ScheduleId of(String id) {
         return new ScheduleId(id);
+    }
+
+    public String asString() {
+        return id.toString();
+    }
+
+    public static ScheduleId empty() {
+        return EMPTY;
     }
 }

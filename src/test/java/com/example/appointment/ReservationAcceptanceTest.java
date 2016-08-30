@@ -3,6 +3,7 @@ package com.example.appointment;
 import com.example.appointment.scheduling.application.AppointmentTakenException;
 import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
 import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
+import com.example.appointment.scheduling.domain.schedule.DailySchedule;
 import com.example.appointment.scheduling.domain.schedule.ScheduleId;
 import com.example.appointment.visitreservation.application.PatientReservationService;
 import com.example.appointment.visitreservation.domain.*;
@@ -13,6 +14,7 @@ import org.testng.annotations.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.appointment.DateTestUtils.todayAt;
 import static com.example.appointment.DateTestUtils.todayBetween;
@@ -161,10 +163,7 @@ public class ReservationAcceptanceTest {
     private ScheduleId givenSchedule(ScheduleDefinition scheduleDefinition) {
         return factory.scheduleDefinitionService()
                 .addDailySchedule(
-                        scheduleDefinition.workingHours(),
-                        scheduleDefinition.validity(),
-                        scheduleDefinition.duration(),
-                        scheduleDefinition.searchTags()
+                        new DailySchedule(scheduleDefinition.workingHours(), scheduleDefinition.validity(), Optional.of(scheduleDefinition.duration()), scheduleDefinition.searchTags())
 
                 );
     }

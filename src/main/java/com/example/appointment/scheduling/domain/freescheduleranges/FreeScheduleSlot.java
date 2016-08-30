@@ -106,7 +106,7 @@ public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
             }
             LocalDateTime oldDate = this.date;
             this.date = this.date.plus(duration);
-            return ScheduleRange.scheduleRange(oldDate, duration, fs.scheduleId());
+            return ScheduleRange.scheduleRange(oldDate, date, fs.scheduleId());
         }
 
         private LocalDateTime calcStartingDate(LocalDateTime appointmentDate) {

@@ -22,12 +22,21 @@ public class ScheduleRange {
 
     @Override
     public boolean equals(Object o) {
-        return EqualsBuilder.reflectionEquals(this, o);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ScheduleRange that = (ScheduleRange) o;
+
+        if (!scheduleId.equals(that.scheduleId)) return false;
+        return range.equals(that.range);
+
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        int result = scheduleId.hashCode();
+        result = 31 * result + range.hashCode();
+        return result;
     }
 
     @Override
@@ -39,20 +48,30 @@ public class ScheduleRange {
     }
 
 
-    public static ScheduleRange scheduleRange(Range<LocalDateTime> today, ScheduleId scheduleId) {
-        return scheduleRange(today.lowerEndpoint(), Duration.between(today.lowerEndpoint(), today.upperEndpoint()), scheduleId);
+    public static ScheduleRange scheduleRange(Range<LocalDateTime> range, ScheduleId scheduleId) {
+        ScheduleRange scheduleRange = new ScheduleRange();
+        scheduleRange.scheduleId = scheduleId;
+        scheduleRange.range = range;
+        return scheduleRange;
     }
 
-    public static ScheduleRange scheduleRange(LocalDateTime start, Duration duration, ScheduleId scheduleId) {
+    public static ScheduleRange scheduleRange(LocalDateTime start, LocalDateTime end, ScheduleId scheduleId) {
         ScheduleRange scheduleRange = new ScheduleRange();
-        scheduleRange.range = Range.closedOpen(start, start.plus(duration));
+        scheduleRange.range = Range.closedOpen(start, end);
         scheduleRange.scheduleId = scheduleId;
         return scheduleRange;
     }
 
     public LocalDateTime start() {
-        return range.lowerEndpoint();
+        return this.range.lowerEndpoint();
+    }
+
+    public LocalDateTime end() {
+        return this.range.upperEndpoint();
     }
 
 
+    public Duration duration() {
+        return Duration.between(range.lowerEndpoint(), range.upperEndpoint());
+    }
 }

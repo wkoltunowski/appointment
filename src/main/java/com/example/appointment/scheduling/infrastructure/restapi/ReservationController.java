@@ -34,7 +34,7 @@ public class ReservationController {
                 ServiceId.of(serviceId),
                 ScheduleRange.scheduleRange(
                         LocalDateTime.parse(start),
-                        Duration.parse(duration),
+                        LocalDateTime.parse(start).plus(Duration.parse(duration)),
                         ScheduleId.of(scheduleId)));
     }
 

@@ -2,6 +2,10 @@ package com.example.appointment.scheduling.infrastructure.restapi;
 
 import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
 import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
+import com.example.appointment.scheduling.domain.schedule.Schedule;
+import com.example.appointment.scheduling.domain.schedule.ScheduleRepository;
+import com.example.appointment.visitreservation.domain.DoctorTag;
+import com.example.appointment.visitreservation.domain.ServiceTag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,6 +20,8 @@ import static java.util.stream.Collectors.toList;
 public class SearchFreeController {
     @Autowired
     private FindFreeScheduleRangesService findFreeService;
+    @Autowired
+    private ScheduleRepository scheduleRepository;
 
     @RequestMapping(value = "/searchFree", method = RequestMethod.GET)
     public List<FreeRange> searchFree() {
@@ -25,6 +31,12 @@ public class SearchFreeController {
     }
 
     private FreeRange transform(ScheduleRange scheduleRange) {
-        return new FreeRange(scheduleRange.scheduleId(), scheduleRange.range());
+        Schedule schedule = scheduleRepository.findById(scheduleRange.scheduleId());
+        return new FreeRange()
+                .withDoctorId(schedule.searchTags().get(DoctorTag.key()).orElse(null))
+                .withDuration(scheduleRange.duration().toString())
+                .withScheduleId(schedule.scheduleId().asString())
+                .withServiceId(schedule.searchTags().get(ServiceTag.key()).orElse(null))
+                .withStart(scheduleRange.start().toString());
     }
 }

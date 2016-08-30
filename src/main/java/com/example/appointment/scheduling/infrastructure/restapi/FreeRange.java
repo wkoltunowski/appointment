@@ -1,20 +1,53 @@
 package com.example.appointment.scheduling.infrastructure.restapi;
 
-import com.example.appointment.scheduling.domain.schedule.ScheduleId;
-import com.google.common.collect.Range;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-
 public class FreeRange {
-    private final String scheduleId;
-    private final String start;
-    private final String duration;
+    private String scheduleId;
+    private String start;
+    private String duration;
+    private String serviceId;
+    private String doctorId;
 
-    public FreeRange(ScheduleId scheduleId, Range<LocalDateTime> range) {
-        this.scheduleId = scheduleId.id().toString();
-        this.start = range.lowerEndpoint().toString();
-        this.duration = Duration.between(range.lowerEndpoint(), range.upperEndpoint()).toString();
+
+    public FreeRange(FreeRange freeRange) {
+        this.scheduleId = freeRange.scheduleId;
+        this.start = freeRange.start;
+        this.duration = freeRange.duration;
+        this.serviceId = freeRange.serviceId;
+        this.doctorId = freeRange.doctorId;
+    }
+
+    public FreeRange() {
+
+    }
+
+    public FreeRange withScheduleId(String scheduleId) {
+        FreeRange freeRange = new FreeRange(this);
+        freeRange.scheduleId = scheduleId;
+        return freeRange;
+    }
+
+    public FreeRange withStart(String start) {
+        FreeRange freeRange = new FreeRange(this);
+        freeRange.start = start;
+        return freeRange;
+    }
+
+    public FreeRange withDuration(String duration) {
+        FreeRange freeRange = new FreeRange(this);
+        freeRange.duration = duration;
+        return freeRange;
+    }
+
+    public FreeRange withServiceId(String serviceId) {
+        FreeRange freeRange = new FreeRange(this);
+        freeRange.serviceId = serviceId;
+        return freeRange;
+    }
+
+    public FreeRange withDoctorId(String doctorId) {
+        FreeRange freeRange = new FreeRange(this);
+        freeRange.doctorId = doctorId;
+        return freeRange;
     }
 
     public String getDuration() {
@@ -27,5 +60,13 @@ public class FreeRange {
 
     public String getStart() {
         return start;
+    }
+
+    public String getServiceId() {
+        return serviceId;
+    }
+
+    public String getDoctorId() {
+        return doctorId;
     }
 }
