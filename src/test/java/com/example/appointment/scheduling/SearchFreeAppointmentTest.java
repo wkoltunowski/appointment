@@ -1,5 +1,6 @@
-package com.example.appointment;
+package com.example.appointment.scheduling;
 
+import com.example.appointment.Application;
 import com.example.appointment.scheduling.application.DefineNewScheduleService;
 import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
 import com.example.appointment.scheduling.domain.SearchTags;
@@ -8,9 +9,6 @@ import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRang
 import com.example.appointment.scheduling.domain.freescheduleranges.SearchCriteria;
 import com.example.appointment.scheduling.domain.schedule.ScheduleId;
 import com.example.appointment.scheduling.domain.schedule.WorkingHours;
-import com.example.appointment.visitreservation.domain.DoctorId;
-import com.example.appointment.visitreservation.domain.LocationId;
-import com.example.appointment.visitreservation.domain.ServiceId;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -24,16 +22,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.example.appointment.DateTestUtils.*;
-import static com.example.appointment.DateTestUtils.todayAt;
-import static com.example.appointment.DateTestUtils.todayBetween;
 import static com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange.scheduleRange;
 import static com.example.appointment.scheduling.domain.schedule.WorkingHours.ofHours;
-import static com.example.appointment.visitreservation.domain.DoctorTag.doctorIs;
-import static com.example.appointment.visitreservation.domain.LocationTag.locationIs;
-import static com.example.appointment.visitreservation.domain.ServiceTag.serviceIs;
 import static java.time.Duration.ofMinutes;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
 
 public class SearchFreeAppointmentTest {
 
@@ -41,8 +34,6 @@ public class SearchFreeAppointmentTest {
     private DefineNewScheduleService defineNewScheduleService;
     private TagValue drHoward;
     private TagValue drSmith;
-    private TagValue warsaw;
-    private TagValue lublin;
     private TagValue consultation;
     private TagValue surgery;
     private Duration fifteenMinutes;
@@ -52,14 +43,20 @@ public class SearchFreeAppointmentTest {
     public void setUp() throws Exception {
         Application app = new Application();
         defineNewScheduleService = app.defineDoctorSchedule();
-        drHoward = doctorIs(DoctorId.newId());
-        drSmith = doctorIs(DoctorId.newId());
-        warsaw = locationIs(LocationId.newId());
-        lublin = locationIs(LocationId.newId());
-        consultation = serviceIs(ServiceId.newId());
-        surgery = serviceIs(ServiceId.newId());
+        drHoward = docTag("HOWARD");
+        drSmith = docTag("SMITH");
+        consultation = serviceTag("CONSULTATION");
+        surgery = serviceTag("SURGERY");
         fifteenMinutes = Duration.ofMinutes(15);
         freeSlots = app.findFreeSlots(10);
+    }
+
+    private TagValue serviceTag(String service) {
+        return new TagValue("SERVICE", service);
+    }
+
+    private TagValue docTag(String howard) {
+        return new TagValue("DOC", howard);
     }
 
     @Test
@@ -127,16 +124,9 @@ public class SearchFreeAppointmentTest {
         ));
     }
 
-    @Test
-    public void shouldFindAnySlot() throws Exception {
-        ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), fifteenMinutes, drSmith);
-
-        assertThat(search(tommorrowAt(8, 0)), startsWith(scheduleRange(tommorrow("08:00-08:15"), smithSchedule)));
-    }
-
 
     @Test
-    public void shouldFindSlotByDoctor() throws Exception {
+    public void shouldFindSlotByTag() throws Exception {
         ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), fifteenMinutes, drHoward);
         ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), fifteenMinutes, drSmith);
 
@@ -144,27 +134,27 @@ public class SearchFreeAppointmentTest {
     }
 
     @Test
-    public void shouldFindSlotByService() throws Exception {
+    public void shouldNotFindSlotByTag() throws Exception {
+        ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), fifteenMinutes, drHoward);
 
-        givenSchedule(ofHours("08:00-15:00"), fifteenMinutes, surgery, drSmith);
-        ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), fifteenMinutes, consultation, drHoward);
-
-        assertThat(search(tommorrowAt(8, 0), consultation), startsWith(scheduleRange(tommorrow("08:00-08:15"), howardSchedule)));
+        assertThat(search(tommorrowAt(8, 0), drSmith), hasSize(0));
     }
 
     @Test
-    public void shouldFindSlotByLocation() throws Exception {
-        ScheduleId smithSchedule = givenSchedule(ofHours("08:00-15:00"), fifteenMinutes, warsaw, drSmith);
-        ScheduleId howardSchedule = givenSchedule(ofHours("08:00-15:00"), fifteenMinutes, lublin, drHoward);
+    public void shouldFindSlotBy2Tags() throws Exception {
+        ScheduleId howardInLublin = givenSchedule(ofHours("08:00-15:00"), fifteenMinutes, drHoward, consultation);
+        givenSchedule(ofHours("08:00-15:00"), fifteenMinutes, drHoward, surgery);
+        givenSchedule(ofHours("08:00-15:00"), fifteenMinutes, drSmith, consultation);
 
-        assertThat(search(tommorrowAt(8, 0), warsaw), startsWith(scheduleRange(tommorrow("08:00-08:15"), smithSchedule)));
+        assertThat(search(tommorrowAt(8, 0), drHoward, consultation), startsWith(scheduleRange(tommorrow("08:00-08:15"), howardInLublin)));
     }
+
 
     @Test
     public void shouldNotFindTooBigAppointment() throws Exception {
-        givenSchedule(ofHours("08:00-08:10"), fifteenMinutes, warsaw, drSmith);
+        givenSchedule(ofHours("08:00-08:10"), fifteenMinutes, drSmith);
 
-        assertThat(search(tommorrowAt(8, 0), warsaw), hasSize(0));
+        assertThat(search(tommorrowAt(8, 0), drSmith), hasSize(0));
     }
 
     private List<ScheduleRange> search(LocalDateTime startingAt, TagValue... tags) {
