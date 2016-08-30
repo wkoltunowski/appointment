@@ -32,45 +32,7 @@ public class ReserveAppointmentTest {
     private DefineNewScheduleService defineNewScheduleService;
     private Factory factory;
 
-    @Test
-    public void shouldFindFirst10Appointments() throws Exception {
-        Duration fifteenMinutes = ofMinutes(15);
-        ScheduleId scheduleId = defineNewScheduleService.addDailySchedule(ofHours("08:00-16:00"), fifteenMinutes);
-        assertThat(findFreeSlots.findFirstFree(todayAt(8, 0)), contains(scheduleRange(todayBetween("08:00-08:15"), scheduleId), scheduleRange(todayBetween("08:15-08:30"), scheduleId), scheduleRange(todayBetween("08:30-08:45"), scheduleId), scheduleRange(todayBetween("08:45-09:00"), scheduleId), scheduleRange(todayBetween("09:00-09:15"), scheduleId), scheduleRange(todayBetween("09:15-09:30"), scheduleId), scheduleRange(todayBetween("09:30-09:45"), scheduleId), scheduleRange(todayBetween("09:45-10:00"), scheduleId), scheduleRange(todayBetween("10:00-10:15"), scheduleId), scheduleRange(todayBetween("10:15-10:30"), scheduleId)));
-    }
 
-    @Test
-    public void shouldFindAppointmentForSecondSlot() throws Exception {
-        buildSearchServiceForMaxResults(1);
-        ScheduleId scheduleId = defineNewScheduleService.addDailySchedule(ofHours("08:00-08:30"), ofMinutes(15));
-
-        assertThat(findFreeSlots.findFirstFree(todayAt(8, 1)), contains(scheduleRange(todayBetween("08:15-08:30"), scheduleId)));
-        assertThat(findFreeSlots.findFirstFree(todayAt(8, 10)), contains(scheduleRange(todayBetween("08:15-08:30"), scheduleId)));
-        assertThat(findFreeSlots.findFirstFree(todayAt(8, 15)), contains(scheduleRange(todayBetween("08:15-08:30"), scheduleId)));
-    }
-
-    @Test
-    public void shouldFindAppointmentWhenInMiddleRequested() throws Exception {
-        buildSearchServiceForMaxResults(1);
-        ScheduleId scheduleId = defineNewScheduleService.addDailySchedule(ofHours("08:00-08:30"), ofMinutes(15));
-        assertThat(findFreeSlots.findFirstFree(todayAt(8, 10)), contains(scheduleRange(todayBetween("08:15-08:30"), scheduleId)));
-    }
-
-    @Test
-    public void shouldFindAppointmentOverNight() throws Exception {
-        buildSearchServiceForMaxResults(2);
-        ScheduleId scheduleId = defineNewScheduleService.addDailySchedule(ofHours("23:30-00:30"), ofMinutes(30));
-
-        assertThat(findFreeSlots.findFirstFree(todayAt(23, 0)), contains(scheduleRange(todayBetween("23:30-00:00"), scheduleId), scheduleRange(tommorrow("00:00-00:30"), scheduleId)));
-    }
-
-    @Test
-    public void shouldFindNextDay() throws Exception {
-        buildSearchServiceForMaxResults(1);
-        ScheduleId scheduleId = defineNewScheduleService.addDailySchedule(ofHours("08:00-08:20"), ofMinutes(15));
-
-        assertThat(findFreeSlots.findFirstFree(todayAt(8, 20)), contains(scheduleRange(tommorrow("08:00-08:15"), scheduleId)));
-    }
 
     @Test
     public void shouldFindAppointmentWhenFirstReserved() throws Exception {
@@ -93,28 +55,11 @@ public class ReserveAppointmentTest {
         assertThat(findFreeSlots.findFirstFree(todayAt(8, 0)), hasSize(0));
     }
 
-    @Test
-    public void shouldFindEmptyForNoSchedules() throws Exception {
-        assertThat(findFreeSlots.findFirstFree(todayAt(8, 0)), hasSize(0));
-    }
-
     @Test(expectedExceptions = AppointmentTakenException.class)
     public void shouldNotReserveSameAppointmentTwice() throws Exception {
         ScheduleId scheduleId = defineNewScheduleService.addDailySchedule(ofHours("08:00-08:30"), ofMinutes(15));
         reserveScheduleRangeService.reserve(scheduleRange(todayBetween("08:00-08:15"), scheduleId));
         reserveScheduleRangeService.reserve(scheduleRange(todayBetween("08:00-08:15"), scheduleId));
-    }
-
-    @Test
-    public void shouldFindOrderedAppointmentsForTwoSchedules() throws Exception {
-        buildSearchServiceForMaxResults(3);
-        ScheduleId schedule1 = defineNewScheduleService.addDailySchedule(ofHours("15:00-16:00"), ofMinutes(10));
-        ScheduleId schedule2 = defineNewScheduleService.addDailySchedule(ofHours("15:05-16:00"), ofMinutes(10));
-
-        assertThat(findFreeSlots.findFirstFree(todayAt(15, 40)), contains(
-                scheduleRange(todayBetween("15:40-15:50"), schedule1),
-                scheduleRange(todayBetween("15:45-15:55"), schedule2),
-                scheduleRange(todayBetween("15:50-16:00"), schedule1)));
     }
 
     @BeforeMethod

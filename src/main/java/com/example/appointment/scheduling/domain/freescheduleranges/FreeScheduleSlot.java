@@ -103,7 +103,7 @@ public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
         protected ScheduleRange computeNext() {
             LocalDateTime appointmentStart = this.date;
             this.date = this.date.plus(duration);
-            if (!date.isBefore(fs.end())) {
+            if (date.isAfter(fs.end())) {
                 return endOfData();
             }
             return ScheduleRange.scheduleRange(appointmentStart, date, fs.scheduleId());

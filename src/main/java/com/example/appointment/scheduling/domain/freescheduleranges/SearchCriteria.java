@@ -28,9 +28,14 @@ public class SearchCriteria {
         return startingFrom;
     }
 
-    public SearchCriteria withTagValue(TagValue tagValue) {
-        return withTags(searchTags.withTagAdded(tagValue));
+    public SearchCriteria withTagValue(TagValue... tagValues) {
+        SearchTags tags = searchTags;
+        for (TagValue tagValue : tagValues) {
+            tags = searchTags.withTagAdded(tagValue);
+        }
+        return withTags(tags);
     }
+
 
     public SearchCriteria withTags(SearchTags searchTags) {
         return new SearchCriteria(startingFrom, searchTags);

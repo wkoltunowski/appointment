@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+import static com.example.appointment.visitreservation.domain.PatientReservation.serviceReservation;
+
 @Component
 public class PatientReservationService {
     private final ReserveScheduleRangeService reserveScheduleRangeService;
@@ -25,7 +27,7 @@ public class PatientReservationService {
 
     public void makeReservationFor(PatientId patient, ServiceId serviceId, ScheduleRange scheduleRange) {
         reserveScheduleRangeService.reserve(scheduleRange);
-        reservationRepository.save(PatientReservation.serviceReservation(patient, Optional.of(serviceId), scheduleRange));
+        reservationRepository.save(serviceReservation(patient, Optional.of(serviceId), scheduleRange));
     }
 
 
