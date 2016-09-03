@@ -1,4 +1,4 @@
-package com.example.appointment.scheduling.infrastructure.restapi;
+package com.example.appointment.visitreservation.infrastructure;
 
 public class Reservation {
     private String serviceId;

@@ -1,4 +1,4 @@
-package com.example.appointment.scheduling.infrastructure.restapi;
+package com.example.appointment.visitreservation.infrastructure;
 
 import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
 import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;

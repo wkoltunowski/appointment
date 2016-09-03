@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html>
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<!--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>-->
+<script src="angular.min.js"></script>
 <body>
 <div ng-app="myApp" ng-controller="myCtrl">
     <table>
         <tr>
             <td>service</td>
-            <td><select ng-model="selectedService" ng-options="x.name for x in services"/></td>
+            <td><select ng-model="selectedService" ng-options="x.name for x in services" required="false"/></td>
         </tr>
         <tr>
             <td>doctor</td>
-            <td><select ng-model="selectedDoctor" ng-options="x.lastName for x in doctors"/></td>
+            <td><select ng-model="selectedDoctor" ng-options="x.lastName for x in doctors" required="false"/></td>
         </tr>
         <tr>
             <td>location</td>
-            <td><select ng-model="selectedLocation" ng-options="x.name for x in locations"/></td>
+            <td><select ng-model="selectedLocation" ng-options="x.name for x in locations" required="false"/></td>
+        </tr>
+        <tr>
+            <td>date</td>
+            <select ng-model="selectedDate" ng-options="x for x in dates"/>
         </tr>
         <tr>
             <td>
@@ -50,6 +55,11 @@
 <script>
     var app = angular.module('myApp', []);
     app.controller('myCtrl', function ($scope, $http) {
+        $scope.dates = [
+            new Date().toJSON()
+        ];
+        $scope.selectedDate = $scope.dates[0];
+
         $http.get("http://localhost:8080/services")
                 .then(function (response) {
                     $scope.services = response.data;
@@ -63,7 +73,14 @@
                     $scope.locations = response.data;
                 });
         $scope.search = function () {
-            $http.get("http://localhost:8080/searchFree")
+            $http.get("http://localhost:8080/searchFree", {
+                        params: {
+                            startingFrom: $scope.selectedDate,
+                            serviceId: $scope.selectedService ? $scope.selectedService.serviceId : "",
+                            doctorId: $scope.selectedDoctor ? $scope.selectedDoctor.doctorId : "",
+                            locationId: $scope.selectedLocation ? $scope.selectedLocation.locationId : ""
+                        }
+                    })
                     .then(function (response) {
                         $scope.freeSlots = response.data;
                     });
@@ -80,7 +97,7 @@
             }).then(function (response) {
                 $scope.search();
             });
-        }
+        };
         $scope.serviceName = function (services, serviceId) {
             for (var service in services) {
                 if (services[service].serviceId == serviceId) {
@@ -88,7 +105,7 @@
                 }
                 return "unknown service";
             }
-        }
+        };
         $scope.doctorName = function (doctors, doctorId) {
             for (var doctor in doctors) {
                 if (doctors[doctor].doctorId == doctorId) {
@@ -96,7 +113,7 @@
                 }
                 return "unknown doctor";
             }
-        }
+        };
         $scope.search();
     });
 </script>
