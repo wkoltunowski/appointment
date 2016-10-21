@@ -1,5 +1,7 @@
-package com.falco.appointment;
+package com.falco.appointment.scheduling;
 
+import com.falco.appointment.DateTestUtils;
+import com.falco.appointment.Factory;
 import com.falco.appointment.scheduling.application.DefineNewScheduleService;
 import com.falco.appointment.scheduling.application.FindFreeRangesService;
 import com.falco.appointment.scheduling.application.ReserveScheduleRangeService;
@@ -20,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 
-public class AppointmentReservationPerformanceTest {
+public class ReservationPerformanceTest {
     private FindFreeRangesService findFreeSlots;
     private DefineNewScheduleService defineNewScheduleService;
     private ReserveScheduleRangeService reserveScheduleRangeService;
