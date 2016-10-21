@@ -1,6 +1,6 @@
 package com.falco.appointment.scheduling;
 
-import com.falco.appointment.DateTestUtils;
+import com.falco.testsupport.DateTestUtils;
 import com.falco.appointment.Factory;
 import com.falco.appointment.scheduling.application.DefineNewScheduleService;
 import com.falco.appointment.scheduling.application.FindFreeRangesService;

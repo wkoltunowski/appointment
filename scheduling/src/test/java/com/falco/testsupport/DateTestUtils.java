@@ -1,4 +1,4 @@
-package com.falco.appointment;
+package com.falco.testsupport;
 
 import com.google.common.collect.Range;
 

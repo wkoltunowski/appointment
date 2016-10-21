@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.falco.appointment.DateTestUtils.*;
+import static com.falco.testsupport.DateTestUtils.*;
 import static com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange.scheduleRange;
 import static com.falco.appointment.scheduling.domain.schedule.WorkingHours.ofHours;
 import static java.time.Duration.ofMinutes;
