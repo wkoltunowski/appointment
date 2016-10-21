@@ -1,7 +1,7 @@
 package com.example.appointment;
 
 import com.example.appointment.scheduling.application.AppointmentTakenException;
-import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
+import com.example.appointment.scheduling.application.FindFreeRangesService;
 import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.scheduling.domain.schedule.DailySchedule;
 import com.example.appointment.scheduling.domain.schedule.ScheduleId;
@@ -18,8 +18,10 @@ import java.util.Optional;
 
 import static com.example.appointment.DateTestUtils.todayAt;
 import static com.example.appointment.DateTestUtils.todayBetween;
+import static com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange.*;
 import static com.example.appointment.visitreservation.domain.DoctorTag.doctorIs;
 import static com.example.appointment.visitreservation.domain.LocationTag.locationIs;
+import static com.example.appointment.visitreservation.domain.PatientReservation.serviceReservation;
 import static com.example.appointment.visitreservation.domain.ServiceTag.serviceIs;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -67,36 +69,32 @@ public class ReservationAcceptanceTest {
                         .startingFrom(todayAt("08:00")),
                 maxVisitsCount(10));
         assertThat(scheduleRanges, is(ImmutableList.of(
-                ScheduleRange.scheduleRange(todayBetween("08:00-08:15"), smithSchedule),
-                ScheduleRange.scheduleRange(todayBetween("08:00-08:20"), wilsonSchedule),
-                ScheduleRange.scheduleRange(todayBetween("08:15-08:30"), smithSchedule),
-                ScheduleRange.scheduleRange(todayBetween("08:20-08:40"), wilsonSchedule),
-                ScheduleRange.scheduleRange(todayBetween("08:30-08:45"), smithSchedule),
-                ScheduleRange.scheduleRange(todayBetween("08:40-09:00"), wilsonSchedule),
-                ScheduleRange.scheduleRange(todayBetween("08:45-09:00"), smithSchedule),
-                ScheduleRange.scheduleRange(todayBetween("09:00-09:15"), smithSchedule),
-                ScheduleRange.scheduleRange(todayBetween("09:00-09:20"), wilsonSchedule),
-                ScheduleRange.scheduleRange(todayBetween("09:15-09:30"), smithSchedule))
+                scheduleRange(todayBetween("08:00-08:15"), smithSchedule),
+                scheduleRange(todayBetween("08:00-08:20"), wilsonSchedule),
+                scheduleRange(todayBetween("08:15-08:30"), smithSchedule),
+                scheduleRange(todayBetween("08:20-08:40"), wilsonSchedule),
+                scheduleRange(todayBetween("08:30-08:45"), smithSchedule),
+                scheduleRange(todayBetween("08:40-09:00"), wilsonSchedule),
+                scheduleRange(todayBetween("08:45-09:00"), smithSchedule),
+                scheduleRange(todayBetween("09:00-09:15"), smithSchedule),
+                scheduleRange(todayBetween("09:00-09:20"), wilsonSchedule),
+                scheduleRange(todayBetween("09:15-09:30"), smithSchedule))
 
         ));
     }
 
     @Test
     public void shouldMakeReservation() throws Exception {
-        ReservationCriteria reservationCriteria = reservation()
-                .withTags(serviceIs(CONSULTATION), doctorIs(DR_SMITH))
-                .startingFrom(todayAt("08:00"));
-        List<ScheduleRange> freeRanges = findFreeRanges(reservationCriteria, maxVisitsCount(1));
-        checkArgument(!freeRanges.isEmpty(), "No reservations found for :" + reservationCriteria);
+        ScheduleRange drSmithAppointment = scheduleRange(todayBetween("08:00-08:15"), smithSchedule);
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, drSmithAppointment);
 
-        ScheduleRange firstCandidate = freeRanges.get(0);
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, firstCandidate);
+        assertThat(patientReservations(PATIENT_DOUGLAS), contains(serviceReservation(PATIENT_DOUGLAS, CONSULTATION, drSmithAppointment)));
 
+        List<ScheduleRange> scheduleRanges = findScheduleRanges(
+                reservation().withTag(serviceIs(CONSULTATION)).startingFrom(todayAt("08:00")),
+                maxVisitsCount(10));
 
-        assertThat(reservationRepository.findPatientReservations(PATIENT_DOUGLAS), contains(
-                PatientReservation.serviceReservation(PATIENT_DOUGLAS, CONSULTATION,
-                        ScheduleRange.scheduleRange(todayBetween("08:00-08:15"), smithSchedule))
-        ));
+        assertThat(scheduleRanges, not(contains(drSmithAppointment)));
     }
 
     @Test
@@ -108,7 +106,7 @@ public class ReservationAcceptanceTest {
                 .forWorkingHours("08:00-09:00")
                 .validTill(LocalDate.now()));
 
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, ScheduleRange.scheduleRange(todayBetween("08:00-09:00"), scheduleId));
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, scheduleRange(todayBetween("08:00-09:00"), scheduleId));
 
         assertThat(findScheduleRanges(reservation()
                 .withTags(serviceIs(CONSULTATION), doctorIs(fullScheduleDoctor))
@@ -138,6 +136,10 @@ public class ReservationAcceptanceTest {
         patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, firstFreeRange);
     }
 
+    private List<PatientReservation> patientReservations(PatientId patientId) {
+        return reservationRepository.findPatientReservations(patientId);
+    }
+
     private int maxVisitsCount(int maxVisitsCount) {
         return maxVisitsCount;
     }
@@ -148,7 +150,7 @@ public class ReservationAcceptanceTest {
     }
 
     private List<ScheduleRange> findFreeRanges(ReservationCriteria reservationCriteria, int maxResultCount) {
-        FindFreeScheduleRangesService freeService = factory.findFreeService(maxResultCount);
+        FindFreeRangesService freeService = factory.findFreeService(maxResultCount);
         return freeService.findFirstFree(reservationCriteria.getStartingFrom(), reservationCriteria.searchTags());
     }
 
@@ -157,7 +159,6 @@ public class ReservationAcceptanceTest {
         return factory.scheduleDefinitionService()
                 .addDailySchedule(
                         new DailySchedule(scheduleDefinition.workingHours(), scheduleDefinition.validity(), Optional.of(scheduleDefinition.duration()), scheduleDefinition.searchTags())
-
                 );
     }
 

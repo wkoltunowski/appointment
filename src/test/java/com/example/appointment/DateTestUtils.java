@@ -6,13 +6,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import static java.time.LocalDate.now;
+
 public class DateTestUtils {
     public static Range<LocalDateTime> todayBetween(String timeRangeStr) {
-        return toRange(LocalDate.now(), timeRangeStr);
+        return toRange(now(), timeRangeStr);
     }
 
     public static Range<LocalDateTime> tommorrow(String rangeStr) {
-        return toRange(LocalDate.now().plusDays(1), rangeStr);
+        return toRange(now().plusDays(1), rangeStr);
     }
 
     public static Range<LocalDateTime> toRange(LocalDate date, String rangeStr) {
@@ -32,10 +34,10 @@ public class DateTestUtils {
     }
 
     public static LocalDateTime todayAt(int hour, int minute) {
-        return LocalDate.now().atTime(LocalTime.of(hour, minute));
+        return now().atTime(LocalTime.of(hour, minute));
     }
 
     public static LocalDateTime todayAt(String hour) {
-        return LocalDate.now().atTime(LocalTime.parse(hour));
+        return now().atTime(LocalTime.parse(hour));
     }
 }

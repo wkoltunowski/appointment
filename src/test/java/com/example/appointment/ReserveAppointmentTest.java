@@ -2,19 +2,14 @@ package com.example.appointment;
 
 import com.example.appointment.scheduling.application.AppointmentTakenException;
 import com.example.appointment.scheduling.application.DefineNewScheduleService;
-import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
+import com.example.appointment.scheduling.application.FindFreeRangesService;
 import com.example.appointment.scheduling.application.ReserveScheduleRangeService;
-import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.scheduling.domain.schedule.ScheduleId;
-import org.hamcrest.MatcherAssert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.time.Duration;
-
 import static com.example.appointment.DateTestUtils.todayAt;
 import static com.example.appointment.DateTestUtils.todayBetween;
-import static com.example.appointment.DateTestUtils.tommorrow;
 import static com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange.scheduleRange;
 import static com.example.appointment.scheduling.domain.schedule.Validity.validFromTo;
 import static com.example.appointment.scheduling.domain.schedule.WorkingHours.ofHours;
@@ -27,7 +22,7 @@ import static org.testng.AssertJUnit.assertEquals;
 
 public class ReserveAppointmentTest {
 
-    private FindFreeScheduleRangesService findFreeSlots;
+    private FindFreeRangesService findFreeSlots;
     private ReserveScheduleRangeService reserveScheduleRangeService;
     private DefineNewScheduleService defineNewScheduleService;
     private Factory factory;

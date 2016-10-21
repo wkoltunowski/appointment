@@ -1,7 +1,7 @@
 package com.example.appointment;
 
 import com.example.appointment.scheduling.application.DefineNewScheduleService;
-import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
+import com.example.appointment.scheduling.application.FindFreeRangesService;
 import com.example.appointment.scheduling.application.ReserveScheduleRangeService;
 import com.example.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 
 
 public class AppointmentReservationPerformanceTest {
-    private FindFreeScheduleRangesService findFreeSlots;
+    private FindFreeRangesService findFreeSlots;
     private DefineNewScheduleService defineNewScheduleService;
     private ReserveScheduleRangeService reserveScheduleRangeService;
     private FreeScheduleSlotRepository storage;

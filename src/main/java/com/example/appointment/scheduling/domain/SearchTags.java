@@ -40,7 +40,7 @@ public class SearchTags {
             String thisValue = getOrEmpty(otherKey);
             result = result && otherValue.equals(thisValue);
         }
-
+        System.out.println(this + (result ? "" : "not ") + "matches " + other);
         return result;
     }
 

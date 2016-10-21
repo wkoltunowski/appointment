@@ -5,6 +5,8 @@ import com.example.appointment.scheduling.domain.TagValue;
 
 import java.time.LocalDateTime;
 
+import static java.util.Arrays.asList;
+
 public class SearchCriteria {
 
     private final LocalDateTime startingFrom;
@@ -31,7 +33,7 @@ public class SearchCriteria {
     public SearchCriteria withTagValue(TagValue... tagValues) {
         SearchTags tags = searchTags;
         for (TagValue tagValue : tagValues) {
-            tags = searchTags.withTagAdded(tagValue);
+            tags = tags.withTagAdded(tagValue);
         }
         return withTags(tags);
     }

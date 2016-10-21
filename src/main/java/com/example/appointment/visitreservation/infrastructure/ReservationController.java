@@ -1,6 +1,6 @@
 package com.example.appointment.visitreservation.infrastructure;
 
-import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
+import com.example.appointment.scheduling.application.FindFreeRangesService;
 import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.scheduling.domain.schedule.ScheduleId;
 import com.example.appointment.visitreservation.application.PatientReservationService;
@@ -20,7 +20,7 @@ public class ReservationController {
     @Autowired
     private PatientReservationService patientReservationService;
     @Autowired
-    private FindFreeScheduleRangesService find;
+    private FindFreeRangesService find;
 
     @RequestMapping("/reserve")
     public void reserve(@RequestParam(value = "scheduleId", required = true) String scheduleId,

@@ -1,6 +1,6 @@
 package com.example.appointment.scheduling.infrastructure.restapi;
 
-import com.example.appointment.scheduling.application.FindFreeScheduleRangesService;
+import com.example.appointment.scheduling.application.FindFreeRangesService;
 import com.example.appointment.scheduling.domain.SearchTags;
 import com.example.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
 import com.example.appointment.scheduling.domain.freescheduleranges.SearchCriteria;
@@ -24,7 +24,7 @@ import static java.util.stream.Collectors.toList;
 @RestController
 public class SearchFreeController {
     @Autowired
-    private FindFreeScheduleRangesService findFreeService;
+    private FindFreeRangesService findFreeService;
     @Autowired
     private ScheduleRepository scheduleRepository;
 

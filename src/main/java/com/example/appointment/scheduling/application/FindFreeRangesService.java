@@ -16,14 +16,14 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Component
-public class FindFreeScheduleRangesService {
+public class FindFreeRangesService {
 
     private final int firstFreeCount;
     private final ScheduleDurations scheduleDurations;
     private final FreeScheduleSlotRepository storage;
 
     @Autowired
-    public FindFreeScheduleRangesService(
+    public FindFreeRangesService(
             @Value("${FindFreeScheduleRangesService.firstFreeCount}") int firstFreeCount,
             ScheduleDurations scheduleDurations,
             FreeScheduleSlotRepository storage) {
