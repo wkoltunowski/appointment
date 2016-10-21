@@ -18,7 +18,6 @@ import org.testng.annotations.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.example.appointment.DateTestUtils.*;
@@ -38,7 +37,7 @@ public class FindFreeRangesTest {
     @BeforeMethod
     public void setUp() throws Exception {
         Application app = new Application();
-        defineNewScheduleService = app.defineDoctorSchedule();
+        defineNewScheduleService = app.defineNewScheduleService();
         freeSlots = app.findFreeSlots(10);
     }
 

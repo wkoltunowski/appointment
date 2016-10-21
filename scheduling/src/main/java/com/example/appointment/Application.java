@@ -7,7 +7,7 @@ public class Application {
     private final Factory factory = new Factory();
 
 
-    public DefineNewScheduleService defineDoctorSchedule() {
+    public DefineNewScheduleService defineNewScheduleService() {
         return factory.scheduleDefinitionService();
 
     }
