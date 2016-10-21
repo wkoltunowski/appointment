@@ -1,3 +1,6 @@
+group 'com.falco.appointment'
+version 'unspecified'
+
 buildscript {
     repositories {
         mavenLocal()

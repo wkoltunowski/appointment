@@ -1,0 +1,23 @@
+group 'com.falco.appointment'
+version '1.0-SNAPSHOT'
+
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url "http://repo.spring.io/milestone"
+        }
+    }
+
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "http://repo.spring.io/milestone"
+    }
+}
+

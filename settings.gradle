@@ -1,0 +1,3 @@
+include 'acceptance-tests'
+include 'scheduling'
+
