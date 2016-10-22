@@ -1,5 +1,6 @@
 package com.falco.appointment.scheduling.domain.freescheduleranges;
 
+import com.falco.appointment.scheduling.domain.SearchTags;
 import com.falco.appointment.scheduling.domain.schedule.ScheduleId;
 
 import java.time.LocalDateTime;
@@ -20,4 +21,6 @@ public interface FreeScheduleSlotRepository {
     List<FreeScheduleSlot> findByScheduleId(ScheduleId scheduleId);
 
     Iterable<FreeScheduleSlot> findAfter(LocalDateTime startingFrom);
+
+    SearchTags findTags(ScheduleId scheduleId);
 }

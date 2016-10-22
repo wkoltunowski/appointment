@@ -17,12 +17,14 @@ import static java.util.stream.Collectors.toList;
 public class SortedListFreeScheduleSlotRepository implements FreeScheduleSlotRepository {
 
     private final List<FreeScheduleSlot> slots = new ArrayList<>();
+    private Map<ScheduleId, SearchTags> tags = new HashMap<>();
 
     @Override
     public void addAll(Collection<FreeScheduleSlot> freeScheduleSlots) {
         for (FreeScheduleSlot newSlot : freeScheduleSlots) {
             int index = Collections.binarySearch(slots, newSlot);
             slots.add(index >= 0 ? index : (-index - 1), newSlot);
+            tags.put(newSlot.scheduleId(), newSlot.searchTags());
         }
     }
 
@@ -68,6 +70,11 @@ public class SortedListFreeScheduleSlotRepository implements FreeScheduleSlotRep
         return Collections.emptyList();
     }
 
+    @Override
+    public SearchTags findTags(ScheduleId scheduleId) {
+        return tags.get(scheduleId);
+    }
+
     private int firstIndexOf(LocalDateTime dateTime) {
         FreeScheduleSlot comparableSlot = comparableSlot(dateTime, ScheduleId.empty());
         int fromIndex = Collections.binarySearch(slots, comparableSlot);
@@ -86,6 +93,6 @@ public class SortedListFreeScheduleSlotRepository implements FreeScheduleSlotRep
     }
 
     private FreeScheduleSlot comparableSlot(LocalDateTime startingFrom, ScheduleId scheduleId) {
-        return FreeScheduleSlot.of(scheduleId, Range.closed(startingFrom,startingFrom), SearchTags.empty());
+        return FreeScheduleSlot.of(scheduleId, Range.closed(startingFrom, startingFrom), SearchTags.empty());
     }
 }

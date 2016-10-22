@@ -7,6 +7,8 @@ public class Reservation {
     private String doctorId;
     private String scheduleId;
     private String duration;
+    private String state;
+    private String reservationId;
 
     public Reservation(Reservation reservation) {
         this.serviceId = reservation.serviceId;
@@ -15,6 +17,8 @@ public class Reservation {
         this.doctorId = reservation.doctorId;
         this.scheduleId = reservation.scheduleId;
         this.duration = reservation.duration;
+        this.state = reservation.state;
+        this.reservationId = reservation.reservationId;
     }
 
     public Reservation() {
@@ -58,6 +62,18 @@ public class Reservation {
         return reservation;
     }
 
+    public Reservation withState(String state) {
+        Reservation reservation = new Reservation(this);
+        reservation.state = state;
+        return reservation;
+    }
+
+    public Reservation withId(String id) {
+        Reservation reservation = new Reservation(this);
+        reservation.reservationId = id;
+        return reservation;
+    }
+
     public String getDate() {
         return date;
     }
@@ -80,5 +96,13 @@ public class Reservation {
 
     public String getScheduleId() {
         return scheduleId;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getReservationId() {
+        return reservationId;
     }
 }

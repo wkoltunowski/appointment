@@ -8,11 +8,15 @@ public class PatientReservation {
     private final PatientId patient;
     private final ScheduleRange scheduleRange;
     private final Optional<ServiceId> serviceId;
+    private String state;
+    private ReservationId id;
 
     public PatientReservation(Optional<ServiceId> serviceId, PatientId patient, ScheduleRange scheduleRange) {
+        this.id = ReservationId.newId();
         this.serviceId = serviceId;
         this.patient = patient;
         this.scheduleRange = scheduleRange;
+        this.state = "Scheduled";
     }
 
     public PatientId patient() {
@@ -33,6 +37,14 @@ public class PatientReservation {
 
     public static PatientReservation serviceReservation(PatientId patient, Optional<ServiceId> serviceId, ScheduleRange scheduleRange) {
         return new PatientReservation(serviceId, patient, scheduleRange);
+    }
+
+    public void cancel() {
+        this.state = "Cancelled";
+    }
+
+    public String state() {
+        return state;
     }
 
     @Override
@@ -56,7 +68,7 @@ public class PatientReservation {
         return result;
     }
 
-    public void cancel() {
-
+    public ReservationId id() {
+        return id;
     }
 }

@@ -8,4 +8,8 @@ public interface ReservationRepository {
     List<PatientReservation> findPatientReservations(PatientId patientId);
 
     List<PatientReservation> findAll(int maxSize);
+
+    void update(PatientReservation reservation);
+
+    PatientReservation findById(ReservationId reservationId);
 }

@@ -2,6 +2,7 @@ package com.falco.appointment.visitreservation.infrastructure;
 
 import com.falco.appointment.visitreservation.domain.PatientId;
 import com.falco.appointment.visitreservation.domain.PatientReservation;
+import com.falco.appointment.visitreservation.domain.ReservationId;
 import com.falco.appointment.visitreservation.domain.ReservationRepository;
 import org.springframework.stereotype.Component;
 
@@ -26,5 +27,16 @@ public class InMemoryReservationRepository implements ReservationRepository {
     @Override
     public List<PatientReservation> findAll(int maxSize) {
         return reservations.stream().limit(maxSize).collect(Collectors.toList());
+    }
+
+    @Override
+    public void update(PatientReservation reservation) {
+        reservations.remove(reservation);
+        reservations.add(reservation);
+    }
+
+    @Override
+    public PatientReservation findById(ReservationId reservationId) {
+        return reservations.stream().filter(r -> r.id().equals(reservationId)).findFirst().orElseThrow(IllegalArgumentException::new);
     }
 }

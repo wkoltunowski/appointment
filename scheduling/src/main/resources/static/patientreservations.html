@@ -13,6 +13,7 @@
             <th>service</th>
             <th>doctor</th>
             <th>scheduleId</th>
+            <th>state</th>
             <th>action</th>
 
         </tr>
@@ -22,8 +23,9 @@
             <td>{{ x.serviceId }}</td>
             <td>{{ x.doctorId }}</td>
             <td>{{ x.scheduleId }}</td>
+            <td>{{ x.state}}</td>
             <td>
-                <button ng-click="cancel(x.scheduleId,x.patientId,x.serviceId,x.date,x.duration)">cancel</button>
+                <button ng-click="cancel(x.reservationId)">cancel</button>
             </td>
         </tr>
     </table>
@@ -37,14 +39,10 @@
                 .then(function (response) {
                     $scope.reservations = response.data;
                 });
-        $scope.cancel = function (scheduleId, patientId, serviceId, date, duration) {
+        $scope.cancel = function (reservationId) {
             $http.get('/cancel', {
                         params: {
-                            scheduleId: scheduleId,
-                            patientId: patientId,
-                            serviceId: serviceId,
-                            start: date,
-                            duration: duration
+                            reservationId: reservationId
                         }
                     },
                     function (response) {

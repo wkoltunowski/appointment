@@ -81,8 +81,8 @@ public class ReservationAcceptanceTest {
     public void shouldCancel() throws Exception {
         ScheduleRange visitAt8am = findFirstFree(todayAt("08:00"), serviceIs(CONSULTATION), doctorIs(DR_SMITH));
 
-        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, visitAt8am);
-        patientReservationService.cancelReservation(visitAt8am);
+        ReservationId reservationId = patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, visitAt8am);
+        patientReservationService.cancelReservation(reservationId);
         assertThat(findFree(todayAt("08:00"), serviceIs(CONSULTATION), doctorIs(DR_SMITH)), hasItem(visitAt8am));
     }
 

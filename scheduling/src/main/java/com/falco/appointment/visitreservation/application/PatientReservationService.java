@@ -1,10 +1,7 @@
 package com.falco.appointment.visitreservation.application;
 
-import com.falco.appointment.visitreservation.domain.PatientId;
-import com.falco.appointment.visitreservation.domain.PatientReservation;
-import com.falco.appointment.visitreservation.domain.ReservationRepository;
+import com.falco.appointment.visitreservation.domain.*;
 import com.falco.appointment.scheduling.application.ReserveScheduleRangeService;
-import com.falco.appointment.visitreservation.domain.ServiceId;
 import com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,19 +22,28 @@ public class PatientReservationService {
         this.reservationRepository = reservationRepository;
     }
 
-    public void makeReservationFor(PatientId patient, ServiceId serviceId, ScheduleRange scheduleRange) {
+    public ReservationId makeReservationFor(PatientId patient, ServiceId serviceId, ScheduleRange scheduleRange) {
         reserveScheduleRangeService.reserve(scheduleRange);
-        reservationRepository.save(serviceReservation(patient, Optional.of(serviceId), scheduleRange));
+        PatientReservation reservation = serviceReservation(patient, Optional.of(serviceId), scheduleRange);
+        reservationRepository.save(reservation);
+        return reservation.id();
     }
 
 
     public void cancelReservation(ScheduleRange scheduleRange) {
         reserveScheduleRangeService.cancel(scheduleRange);
+        reservationRepository.findAll(100).stream()
+                .filter(r -> r.scheduleRange().equals(scheduleRange))
+                .forEach(reservation -> {
+                    reservation.cancel();
+                    reservationRepository.update(reservation);
+                });
+    }
 
-//        PatientReservation reservation = reservationRepository.findAll(100).stream().filter(
-//                r -> r.scheduleRange().equals(scheduleRange)
-//        ).findFirst().get();
-//        reservation.cancel();
-//        reservationRepository.save(reservation);
+    public void cancelReservation(ReservationId reservationId) {
+        PatientReservation reservation = reservationRepository.findById(reservationId);
+        reserveScheduleRangeService.cancel(reservation.scheduleRange());
+        reservation.cancel();
+        reservationRepository.update(reservation);
     }
 }

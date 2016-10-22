@@ -33,12 +33,14 @@ public class ReservationListController {
 
     private Function<PatientReservation, Reservation> toPatientReservation() {
         return r -> new Reservation()
+                .withId(r.id().asString())
                 .withPatientId(r.patient().asString())
                 .withServiceId(r.serviceId().map(ServiceId::asString).orElse(null))
                 .withScheduleId(r.scheduleRange().scheduleId().asString())
                 .withDate(r.scheduleRange().range().lowerEndpoint().toString())
                 .withDuration(r.scheduleRange().duration().toString())
-                .withDoctorId(doctorFor(r.scheduleRange().scheduleId()).orElse(null));
+                .withDoctorId(doctorFor(r.scheduleRange().scheduleId()).orElse(null))
+                .withState(r.state());
     }
 
     private Optional<String> doctorFor(ScheduleId scheduleId) {

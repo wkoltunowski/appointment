@@ -1,5 +1,6 @@
 package com.falco.appointment.scheduling.infrastructure;
 
+import com.falco.appointment.scheduling.domain.SearchTags;
 import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlot;
 import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
@@ -25,6 +26,7 @@ public class DayCollectionFreeScheduleSlotRepository implements FreeScheduleSlot
     private final Map<LocalDate, List<FreeScheduleSlot>> index = new HashMap<>();
     private LocalDate maxDay = LocalDate.MIN;
     private final Map<ScheduleId, List<FreeScheduleSlot>> slotByScheduleId = new HashMap<>();
+    private Map<ScheduleId, SearchTags> tags = new HashMap<>();
 
     @Override
     public void remove(FreeScheduleSlot freeScheduleSlot) {
@@ -73,6 +75,7 @@ public class DayCollectionFreeScheduleSlotRepository implements FreeScheduleSlot
             return newList;
         });
         scheduleSlots.add(of);
+        tags.put(of.scheduleId(), of.searchTags());
     }
 
     @Override
@@ -112,6 +115,11 @@ public class DayCollectionFreeScheduleSlotRepository implements FreeScheduleSlot
     public Iterable<FreeScheduleSlot> findAfter(LocalDateTime startingFrom) {
         return findAfterWhile(startingFrom);
 //        return findAfterStream(startingFrom);
+    }
+
+    @Override
+    public SearchTags findTags(ScheduleId scheduleId) {
+        return tags.get(scheduleId);
     }
 
     private Iterable<FreeScheduleSlot> findAfterWhile(final LocalDateTime startingFrom) {
