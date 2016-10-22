@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+
+import static java.util.Arrays.asList;
 
 @Component
 public class ReserveScheduleRangeService {
@@ -25,5 +28,11 @@ public class ReserveScheduleRangeService {
 
         this.freeScheduleSlotRepository.remove(freeScheduleSlot);
         this.freeScheduleSlotRepository.addAll(freeScheduleSlots);
+    }
+
+    public void cancel(ScheduleRange scheduleRange) {
+        List<FreeScheduleSlot> scheduleSlots = this.freeScheduleSlotRepository.findByScheduleId(scheduleRange.scheduleId());
+        scheduleSlots.get(0).searchTags();
+        this.freeScheduleSlotRepository.addAll(asList(new FreeScheduleSlot(scheduleRange.scheduleId(), scheduleRange.range(), scheduleSlots.get(0).searchTags())));
     }
 }

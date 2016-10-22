@@ -55,4 +55,8 @@ public class PatientReservation {
         result = 31 * result + scheduleRange.hashCode();
         return result;
     }
+
+    public void cancel() {
+
+    }
 }

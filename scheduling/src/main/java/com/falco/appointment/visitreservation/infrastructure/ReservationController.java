@@ -38,6 +38,21 @@ public class ReservationController {
                         ScheduleId.of(scheduleId)));
     }
 
+    @RequestMapping("/cancel")
+    public void cancel(@RequestParam(value = "scheduleId", required = true) String scheduleId,
+                       @RequestParam(value = "patientId", required = true) String patientId,
+                       @RequestParam(value = "serviceId", required = true) String serviceId,
+                       @RequestParam(value = "start", required = true) String start,
+                       @RequestParam(value = "duration", required = true) String duration
+
+    ) {
+
+        patientReservationService.cancelReservation(ScheduleRange.scheduleRange(
+                LocalDateTime.parse(start),
+                LocalDateTime.parse(start).plus(Duration.parse(duration)),
+                ScheduleId.of(scheduleId)));
+    }
+
     @RequestMapping("/reserveFirst")
     public void reserveFirst(@RequestParam(value = "number", defaultValue = "1") Integer number) {
         List<ScheduleRange> firstFree = find.findFirstFree(LocalDateTime.now());

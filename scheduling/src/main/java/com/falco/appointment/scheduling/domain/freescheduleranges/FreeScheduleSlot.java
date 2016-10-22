@@ -86,6 +86,10 @@ public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
         return of(scheduleId, range, searchTags);
     }
 
+    public SearchTags searchTags() {
+        return searchTags;
+    }
+
     private class AppointmentsIterator extends AbstractIterator<ScheduleRange> {
 
         private final FreeScheduleSlot fs;

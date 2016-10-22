@@ -1,6 +1,7 @@
 package com.falco.appointment.visitreservation.application;
 
 import com.falco.appointment.visitreservation.domain.PatientId;
+import com.falco.appointment.visitreservation.domain.PatientReservation;
 import com.falco.appointment.visitreservation.domain.ReservationRepository;
 import com.falco.appointment.scheduling.application.ReserveScheduleRangeService;
 import com.falco.appointment.visitreservation.domain.ServiceId;
@@ -30,4 +31,13 @@ public class PatientReservationService {
     }
 
 
+    public void cancelReservation(ScheduleRange scheduleRange) {
+        reserveScheduleRangeService.cancel(scheduleRange);
+
+//        PatientReservation reservation = reservationRepository.findAll(100).stream().filter(
+//                r -> r.scheduleRange().equals(scheduleRange)
+//        ).findFirst().get();
+//        reservation.cancel();
+//        reservationRepository.save(reservation);
+    }
 }

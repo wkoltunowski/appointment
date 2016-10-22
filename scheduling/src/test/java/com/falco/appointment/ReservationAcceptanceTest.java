@@ -15,19 +15,19 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.falco.testsupport.DateTestUtils.todayAt;
-import static com.falco.appointment.scheduling.domain.schedule.Validity.infinite;
 import static com.falco.appointment.visitreservation.domain.DoctorTag.doctorIs;
 import static com.falco.appointment.visitreservation.domain.LocationTag.locationIs;
 import static com.falco.appointment.visitreservation.domain.PatientReservation.serviceReservation;
 import static com.falco.appointment.visitreservation.domain.ServiceTag.serviceIs;
+import static com.falco.testsupport.DateTestUtils.todayAt;
 import static java.time.LocalDateTime.now;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 
 public class ReservationAcceptanceTest {
@@ -36,8 +36,6 @@ public class ReservationAcceptanceTest {
     private static final LocationId WARSAW = LocationId.newId();
     private static final ServiceId CONSULTATION = ServiceId.newId();
     private static final DoctorId DR_SMITH = DoctorId.newId();
-    private static final DoctorId DR_WILSON = DoctorId.newId();
-
 
     private Factory factory;
     private PatientReservationService patientReservationService;
@@ -48,15 +46,9 @@ public class ReservationAcceptanceTest {
         factory = new Factory();
         givenSchedule(
                 WorkingHours.ofHours("08:00-10:00"),
-                infinite(),
+                Validity.validFromTo(LocalDate.now(), LocalDate.now()),
                 Optional.of(Duration.parse("PT15M")),
                 SearchTags.ofTags(doctorIs(DR_SMITH), locationIs(WARSAW), serviceIs(CONSULTATION))
-        );
-        givenSchedule(
-                WorkingHours.ofHours("08:00-11:00"),
-                infinite(),
-                Optional.of(Duration.parse("PT20M")),
-                SearchTags.ofTags(doctorIs(DR_WILSON), locationIs(WARSAW), serviceIs(CONSULTATION))
         );
 
         patientReservationService = factory.patientReservation();
@@ -67,23 +59,31 @@ public class ReservationAcceptanceTest {
     public void shouldReserveVisit() throws Exception {
         ScheduleRange drSmithAppointment = findFirstFree(todayAt("08:00"), serviceIs(CONSULTATION));
         patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, drSmithAppointment);
-        assertThat(findPatientReservations(PATIENT_DOUGLAS), contains(serviceReservation(PATIENT_DOUGLAS, CONSULTATION, drSmithAppointment)));
+        assertThat(findPatientReservations(PATIENT_DOUGLAS), hasItem(serviceReservation(PATIENT_DOUGLAS, CONSULTATION, drSmithAppointment)));
     }
 
     @Test
     public void shouldNotFindReserved() throws Exception {
-        ScheduleRange drSmithConsultation = findFirstFree(now(), serviceIs(CONSULTATION), doctorIs(DR_SMITH));
+        ScheduleRange drSmithConsultation = findFirstFree(todayAt("08:00"), serviceIs(CONSULTATION), doctorIs(DR_SMITH));
         patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, drSmithConsultation);
-
-        assertThat(findFree(now(), serviceIs(CONSULTATION), doctorIs(DR_SMITH)), not(contains(drSmithConsultation)));
+        assertThat(findFree(now(), serviceIs(CONSULTATION), doctorIs(DR_SMITH)), not(hasItem(drSmithConsultation)));
     }
 
     @Test(expectedExceptions = AppointmentTakenException.class)
     public void shouldNotReserveTwice() throws Exception {
-        ScheduleRange drSmithConsultation = findFirstFree(now(), serviceIs(CONSULTATION), doctorIs(DR_SMITH));
+        ScheduleRange drSmithConsultation = findFirstFree(todayAt("08:00"), serviceIs(CONSULTATION), doctorIs(DR_SMITH));
 
         patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, drSmithConsultation);
         patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, drSmithConsultation);
+    }
+
+    @Test
+    public void shouldCancel() throws Exception {
+        ScheduleRange visitAt8am = findFirstFree(todayAt("08:00"), serviceIs(CONSULTATION), doctorIs(DR_SMITH));
+
+        patientReservationService.makeReservationFor(PATIENT_DOUGLAS, CONSULTATION, visitAt8am);
+        patientReservationService.cancelReservation(visitAt8am);
+        assertThat(findFree(todayAt("08:00"), serviceIs(CONSULTATION), doctorIs(DR_SMITH)), hasItem(visitAt8am));
     }
 
     private ScheduleRange findFirstFree(LocalDateTime now, TagValue... tags) {

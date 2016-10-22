@@ -37,7 +37,7 @@
                 .then(function (response) {
                     $scope.reservations = response.data;
                 });
-        $scope.book = function (scheduleId, patientId, serviceId, date, duration) {
+        $scope.cancel = function (scheduleId, patientId, serviceId, date, duration) {
             $http.get('/cancel', {
                         params: {
                             scheduleId: scheduleId,

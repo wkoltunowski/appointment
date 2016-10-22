@@ -23,6 +23,7 @@ import java.util.List;
 import static com.falco.testsupport.DateTestUtils.*;
 import static com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange.scheduleRange;
 import static com.falco.appointment.scheduling.domain.schedule.WorkingHours.ofHours;
+import static com.falco.testsupport.RangeMatchers.startsWith;
 import static java.time.Duration.ofMinutes;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -172,22 +173,7 @@ public class FindFreeRangesTest {
         return defineNewScheduleService.addDailySchedule(workingHours, duration, SearchTags.ofTags(tags));
     }
 
-    private <T> Matcher<? super List<T>> startsWith(T element, T... elements) {
-        List<Object> elementsList = new ArrayList<>();
-        elementsList.add(element);
-        elementsList.addAll(asList(elements));
-        return new BaseMatcher<List<T>>() {
-            @Override
-            public boolean matches(Object item) {
-                return ((List<T>) item).subList(0, elements.length + 1).equals(elementsList);
-            }
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendValue(elementsList);
-            }
-        };
-    }
 
 
 }
