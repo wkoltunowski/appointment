@@ -40,13 +40,13 @@ public class ReservationPerformanceTest {
 
     @Test
     public void shouldReserveAppointmentsStartingFromToday() throws Exception {
-        generateNSchedules(100);
+        generateNSchedules(200);
         reserveFirstFreeFor(() -> DateTestUtils.todayAt(8, 0));
     }
 
     @Test
     public void shouldReserveAppointmentsStartingFromRandom() throws Exception {
-        generateNSchedules(100);
+        generateNSchedules(200);
         reserveFirstFreeFor(() -> randomDate(DateTestUtils.todayAt(8, 0), DateTestUtils.todayAt(8, 0).plusDays(30)));
     }
 
@@ -60,7 +60,8 @@ public class ReservationPerformanceTest {
             randomDates.add(randomDate(DateTestUtils.todayAt(8, 0), DateTestUtils.todayAt(8, 0).plusDays(90)));
             count++;
         }
-        System.out.println("Random dates generated. Dates count is " + numberFormat.format(randomDates.size()));
+        System.out.println("Random dates generated.");
+        System.out.println("Dates count is " + numberFormat.format(randomDates.size()));
         long maxTime = 5000;
         long start = System.currentTimeMillis();
         int searchCount = 0;
@@ -72,11 +73,11 @@ public class ReservationPerformanceTest {
             searchCount++;
         }
         long elapsedMs = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        System.out.println("free slots count : " + numberFormat.format(storage.size()));
-        System.out.println("searches count : " + numberFormat.format(searchCount) + " in " + elapsedMs + " ms.");
+        System.out.println("free slots count \t\t: " + numberFormat.format(storage.size()));
+        System.out.println("searches count \t\t: " + numberFormat.format(searchCount) + " in " + elapsedMs + " ms.");
         float searchesPerMs = (float) searchCount / elapsedMs;
-        System.out.println("free res/s : " + numberFormat.format(1000 * searchesPerMs));
-        System.out.println("free res/ms : " + numberFormat.format(searchesPerMs));
+        System.out.println("free res/s \t\t: " + numberFormat.format(1000 * searchesPerMs));
+        System.out.println("free res/ms \t\t: " + numberFormat.format(searchesPerMs));
 
     }
 
@@ -97,9 +98,9 @@ public class ReservationPerformanceTest {
         }
         stopwatch.stop();
         long elapsedMs = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        System.out.println("free slots count \t\t: " + storage.size());
-        System.out.println("reservations count \t\t: " + count + " in " + elapsedMs + " ms.");
-        System.out.println("res/s \t\t\t\t\t: " + (1000 * count / elapsedMs));
+        System.out.println("free slots count \t\t\t\t: " + numberFormat.format(storage.size()));
+        System.out.println("reservations count \t\t\t\t: " + numberFormat.format(count) + " in " + numberFormat.format(elapsedMs) + " ms.");
+        System.out.println("res/s \t\t\t\t\t\t\t: " + numberFormat.format(1000 * count / elapsedMs));
     }
 
     private void generateNSchedules(int n) {

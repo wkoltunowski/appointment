@@ -32,8 +32,8 @@ public class Factory {
 
     public FreeScheduleSlotRepository freeSlotRepository() {
         if (freeScheduleSlotRepository == null) {
-//            freeScheduleSlotRepository = new DayCollectionFreeScheduleSlotRepository();
-            freeScheduleSlotRepository = new SortedListFreeScheduleSlotRepository();
+            freeScheduleSlotRepository = new DayCollectionFreeScheduleSlotRepository();
+//            freeScheduleSlotRepository = new SortedListFreeScheduleSlotRepository();
         }
         return freeScheduleSlotRepository;
     }

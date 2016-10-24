@@ -129,14 +129,36 @@ public class FreeScheduleSlot {
 
     }
 
+//    @Override
+//    public boolean equals(Object o) {
+//        return EqualsBuilder.reflectionEquals(this, o);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return HashCodeBuilder.reflectionHashCode(this);
+//    }
+
+
     @Override
     public boolean equals(Object o) {
-        return EqualsBuilder.reflectionEquals(this, o);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FreeScheduleSlot that = (FreeScheduleSlot) o;
+
+        if (!scheduleId.equals(that.scheduleId)) return false;
+        if (!range.equals(that.range)) return false;
+        return searchTags.equals(that.searchTags);
+
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        int result = scheduleId.hashCode();
+        result = 31 * result + range.hashCode();
+        result = 31 * result + searchTags.hashCode();
+        return result;
     }
 
     @Override

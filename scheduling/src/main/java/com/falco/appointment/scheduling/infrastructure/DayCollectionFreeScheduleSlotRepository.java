@@ -97,11 +97,17 @@ public class DayCollectionFreeScheduleSlotRepository implements FreeScheduleSlot
     }
 
 
-    public Iterable<FreeScheduleSlot> findAfterStream(LocalDateTime startingFrom) {
-        LocalDate localDate = startingFrom.toLocalDate();
-        if (!localDate.isAfter(maxDay)) {
+    @Override
+    public Iterable<FreeScheduleSlot> findAfter(LocalDateTime startingFrom) {
+        return findAfterWhile(startingFrom);
+//        return findAfterStream(startingFrom);
+    }
+
+    private Iterable<FreeScheduleSlot> findAfterStream(LocalDateTime startingFrom) {
+        LocalDate startingDay = startingFrom.toLocalDate();
+        if (!startingDay.isAfter(maxDay)) {
             Stream<FreeScheduleSlot> collectionStream = ContiguousSet
-                    .create(Range.closed(localDate, maxDay), DaysDomain.daysDomain())
+                    .create(Range.closed(startingDay, maxDay), DaysDomain.daysDomain())
                     .stream()
                     .map(this::dayFreeSlots)
                     .flatMap(Collection::stream)
@@ -111,43 +117,35 @@ public class DayCollectionFreeScheduleSlotRepository implements FreeScheduleSlot
         return () -> Collections.<FreeScheduleSlot>emptyList().iterator();
     }
 
-    @Override
-    public Iterable<FreeScheduleSlot> findAfter(LocalDateTime startingFrom) {
-        return findAfterWhile(startingFrom);
-//        return findAfterStream(startingFrom);
-    }
-
-    @Override
-    public SearchTags findTags(ScheduleId scheduleId) {
-        return tags.get(scheduleId);
-    }
-
     private Iterable<FreeScheduleSlot> findAfterWhile(final LocalDateTime startingFrom) {
-        return () -> {
-            final LocalDate[] date = {startingFrom.toLocalDate()};
-            final int[] slotIndex = {0};
-            return new AbstractIterator<FreeScheduleSlot>() {
-                @Override
-                protected FreeScheduleSlot computeNext() {
-                    while (!date[0].isAfter(maxDay)) {
-                        List<FreeScheduleSlot> dayFreeSlots = dayFreeSlots(date[0]);
-                        if (!dayFreeSlots.isEmpty() && slotIndex[0] < dayFreeSlots.size()) {
-                            FreeScheduleSlot freeScheduleSlot = dayFreeSlots.get(slotIndex[0]++);
-                            if (freeScheduleSlot.end().isAfter(startingFrom)) {
-                                return freeScheduleSlot;
-                            }
+        final LocalDate day = startingFrom.toLocalDate();
+        return () -> new AbstractIterator<FreeScheduleSlot>() {
+            private Iterator<FreeScheduleSlot> iterator = dayFreeSlots(day).iterator();
+            private LocalDate date = day;
+            @Override
+            protected FreeScheduleSlot computeNext() {
+                while (!date.isAfter(maxDay)) {
+                    if (iterator.hasNext()) {
+                        FreeScheduleSlot slot = iterator.next();
+                        if (slot.end().isAfter(startingFrom)) {
+                            return slot;
                         }
-                        slotIndex[0] = 0;
-                        date[0] = date[0].plusDays(1);
                     }
-                    return endOfData();
+                    date = date.plusDays(1);
+                    iterator = dayFreeSlots(date).iterator();
                 }
-            };
+                return endOfData();
+            }
         };
     }
 
     private List<FreeScheduleSlot> dayFreeSlots(LocalDate day) {
         return Optional.ofNullable(index.get(day)).orElse(emptyList());
+    }
+
+    @Override
+    public SearchTags findTags(ScheduleId scheduleId) {
+        return tags.get(scheduleId);
     }
 
 
