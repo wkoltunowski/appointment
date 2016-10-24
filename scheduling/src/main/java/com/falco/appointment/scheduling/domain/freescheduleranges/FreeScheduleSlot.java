@@ -1,8 +1,11 @@
 package com.falco.appointment.scheduling.domain.freescheduleranges;
 
-import com.falco.appointment.scheduling.domain.schedule.ScheduleId;
 import com.falco.appointment.scheduling.domain.SearchTags;
-import com.google.common.collect.*;
+import com.falco.appointment.scheduling.domain.schedule.ScheduleId;
+import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeSet;
+import com.google.common.collect.TreeRangeSet;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -10,10 +13,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.stream.Collectors;
 
-public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
+public class FreeScheduleSlot {
 
     private final ScheduleId scheduleId;
     private final Range<LocalDateTime> range;
@@ -39,14 +41,6 @@ public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
 
     }
 
-    @Override
-    public int compareTo(FreeScheduleSlot o) {
-        Comparator<FreeScheduleSlot> freeSlotComparator = Comparator
-                .comparing(FreeScheduleSlot::start)
-                .thenComparing(FreeScheduleSlot::end)
-                .thenComparing(fs -> fs.scheduleId().toString());
-        return freeSlotComparator.compare(this, o);
-    }
 
     public boolean contains(Range<LocalDateTime> range) {
         return this.range.encloses(range);
@@ -63,6 +57,10 @@ public class FreeScheduleSlot implements Comparable<FreeScheduleSlot> {
 
     public LocalDateTime end() {
         return range.upperEndpoint();
+    }
+
+    public Range<LocalDateTime> range() {
+        return range;
     }
 
     public ScheduleId scheduleId() {

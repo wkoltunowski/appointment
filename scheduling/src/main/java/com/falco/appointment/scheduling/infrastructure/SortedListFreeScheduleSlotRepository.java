@@ -16,14 +16,15 @@ import static java.util.stream.Collectors.toList;
 //@Component
 public class SortedListFreeScheduleSlotRepository implements FreeScheduleSlotRepository {
 
-    private final List<FreeScheduleSlot> slots = new ArrayList<>();
+    private final List<ComparableSlot> slots = new ArrayList<>();
     private Map<ScheduleId, SearchTags> tags = new HashMap<>();
 
     @Override
     public void addAll(Collection<FreeScheduleSlot> freeScheduleSlots) {
         for (FreeScheduleSlot newSlot : freeScheduleSlots) {
-            int index = Collections.binarySearch(slots, newSlot);
-            slots.add(index >= 0 ? index : (-index - 1), newSlot);
+            ComparableSlot comparable = comparable(newSlot);
+            int index = Collections.binarySearch(slots, comparable);
+            slots.add(index >= 0 ? index : (-index - 1), comparable);
             tags.put(newSlot.scheduleId(), newSlot.searchTags());
         }
     }
@@ -63,9 +64,7 @@ public class SortedListFreeScheduleSlotRepository implements FreeScheduleSlotRep
     public Iterable<FreeScheduleSlot> findAfter(LocalDateTime startingFrom) {
         int index = firstIndexOf(startingFrom);
         if (index < slots.size()) {
-            return slots.subList(
-                    index,
-                    slots.size());
+            return (List) slots.subList(index, slots.size());
         }
         return Collections.emptyList();
     }
@@ -76,7 +75,7 @@ public class SortedListFreeScheduleSlotRepository implements FreeScheduleSlotRep
     }
 
     private int firstIndexOf(LocalDateTime dateTime) {
-        FreeScheduleSlot comparableSlot = comparableSlot(dateTime, ScheduleId.empty());
+        ComparableSlot comparableSlot = comparableSlot(dateTime, ScheduleId.empty());
         int fromIndex = Collections.binarySearch(slots, comparableSlot);
 
         int index = 0;
@@ -92,7 +91,26 @@ public class SortedListFreeScheduleSlotRepository implements FreeScheduleSlotRep
         return index;
     }
 
-    private FreeScheduleSlot comparableSlot(LocalDateTime startingFrom, ScheduleId scheduleId) {
-        return FreeScheduleSlot.of(scheduleId, Range.closed(startingFrom, startingFrom), SearchTags.empty());
+    private ComparableSlot comparable(FreeScheduleSlot newSlot) {
+        return new ComparableSlot(newSlot.scheduleId(), newSlot.range(), newSlot.searchTags());
+    }
+
+    private ComparableSlot comparableSlot(LocalDateTime startingFrom, ScheduleId scheduleId) {
+        return new ComparableSlot(scheduleId, Range.closed(startingFrom, startingFrom), SearchTags.empty());
+    }
+
+    private static class ComparableSlot extends FreeScheduleSlot implements Comparable<ComparableSlot> {
+        public ComparableSlot(ScheduleId scheduleId, Range<LocalDateTime> range, SearchTags searchTags) {
+            super(scheduleId, range, searchTags);
+        }
+
+        @Override
+        public int compareTo(ComparableSlot o) {
+            Comparator<FreeScheduleSlot> freeSlotComparator = Comparator
+                    .comparing(FreeScheduleSlot::start)
+                    .thenComparing(FreeScheduleSlot::end)
+                    .thenComparing(fs -> fs.scheduleId().toString());
+            return this.contains(o.range()) ? 0 : freeSlotComparator.compare(this, o);
+        }
     }
 }

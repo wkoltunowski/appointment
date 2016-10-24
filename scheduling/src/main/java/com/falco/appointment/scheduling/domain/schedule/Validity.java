@@ -16,6 +16,10 @@ public class Validity {
         return new Validity(Range.all());
     }
 
+    public static Validity validOn(LocalDate date) {
+        return validFromTo(date, date);
+    }
+
     public static Validity validFromTo(LocalDate from, LocalDate to) {
         return new Validity(Range.closed(from, to));
     }
