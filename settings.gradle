@@ -1,3 +1,4 @@
 include 'acceptance-tests'
 include 'scheduling'
+include 'testsupport'
 

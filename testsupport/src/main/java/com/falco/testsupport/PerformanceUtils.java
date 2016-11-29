@@ -1,18 +1,13 @@
 package com.falco.testsupport;
 
-import com.falco.appointment.scheduling.ReservationPerformanceTest;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractFuture;
 
 import java.io.PrintStream;
 import java.text.NumberFormat;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.function.Supplier;
 
 import static java.util.Arrays.asList;
 
