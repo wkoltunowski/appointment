@@ -27,7 +27,7 @@ import static com.falco.testsupport.RangeMatchers.startsWith;
 import static java.time.Duration.ofMinutes;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 public class FindFreeRangesTest {
 
@@ -45,7 +45,7 @@ public class FindFreeRangesTest {
     @Test
     public void shouldFindFirst10Appointments() throws Exception {
         ScheduleId scheduleId = defineNewScheduleService.addDailySchedule(ofHours("08:00-16:00"), ofMinutes(15));
-        assertThat(search(todayAt(8, 0)), startsWith(
+        assertThat(search(todayAt(8, 0)), contains(
                 scheduleRange(todayBetween("08:00-08:15"), scheduleId),
                 scheduleRange(todayBetween("08:15-08:30"), scheduleId),
                 scheduleRange(todayBetween("08:30-08:45"), scheduleId),
@@ -78,7 +78,7 @@ public class FindFreeRangesTest {
         ScheduleId scheduleId = defineNewScheduleService.addDailySchedule(ofHours("23:30-00:30"), ofMinutes(30));
 
         assertThat(search(todayAt(23, 0)),
-                startsWith(
+                hasItems(
                         scheduleRange(todayBetween("23:30-00:00"), scheduleId),
                         scheduleRange(tommorrow("00:00-00:30"), scheduleId)));
     }

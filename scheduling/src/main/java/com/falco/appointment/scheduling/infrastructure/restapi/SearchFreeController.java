@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +33,7 @@ public class SearchFreeController {
             @RequestParam(value = "serviceId", required = false) String serviceId,
             @RequestParam(value = "doctorId", required = false) String doctorId,
             @RequestParam(value = "locationId", required = false) String locationId) {
-        Optional<LocalDateTime> startingFrom = ofEmpty(startingFromStr).map(ZonedDateTime::parse).map(ZonedDateTime::toLocalDateTime);
+        Optional<LocalDateTime> startingFrom = ofEmpty(startingFromStr).map(LocalDateTime::parse);
         LocalDateTime date = startingFrom.orElse(LocalDateTime.now());
         SearchTags searchTags = SearchTags.empty();
         if (ofEmpty(serviceId).isPresent()){

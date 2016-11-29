@@ -75,7 +75,7 @@
         $scope.search = function () {
             $http.get("http://localhost:8080/searchFree", {
                         params: {
-                            startingFrom: $scope.selectedDate,
+                            startingFrom: "",//$scope.selectedDate,
                             serviceId: $scope.selectedService ? $scope.selectedService.serviceId : "",
                             doctorId: $scope.selectedDoctor ? $scope.selectedDoctor.doctorId : "",
                             locationId: $scope.selectedLocation ? $scope.selectedLocation.locationId : ""

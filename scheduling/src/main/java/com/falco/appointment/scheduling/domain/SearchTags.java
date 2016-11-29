@@ -34,6 +34,9 @@ public class SearchTags {
     }
 
     public boolean matches(SearchTags other) {
+        return matches1(other);
+    }
+    public boolean matches1(SearchTags other) {
         boolean result = true;
         for (String otherKey : other.map.keySet()) {
             String otherValue = other.getOrEmpty(otherKey);
@@ -41,6 +44,17 @@ public class SearchTags {
             result = result && otherValue.equals(thisValue);
         }
         return result;
+    }
+
+    private boolean matches2(SearchTags other) {
+        for (String otherKey : other.map.keySet()) {
+            String otherValue = other.getOrEmpty(otherKey);
+            String thisValue = getOrEmpty(otherKey);
+            if (!otherValue.equals(thisValue)){
+                return false;
+            }
+        }
+        return true;
     }
 
     public static SearchTags empty() {
