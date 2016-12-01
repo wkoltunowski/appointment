@@ -1,7 +1,7 @@
 package com.falco.appointment.visitreservation.infrastructure;
 
 import com.falco.appointment.scheduling.domain.schedule.Schedule;
-import com.falco.appointment.scheduling.domain.schedule.ScheduleId;
+import com.falco.appointment.scheduling.api.ScheduleId;
 import com.falco.appointment.scheduling.domain.schedule.ScheduleRepository;
 import com.falco.appointment.visitreservation.domain.DoctorTag;
 import com.falco.appointment.visitreservation.domain.PatientReservation;

@@ -1,4 +1,4 @@
-package com.falco.appointment.scheduling;
+package com.falco.appointment.performance;
 
 import com.falco.testsupport.DateRandomizer;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;

@@ -1,8 +1,8 @@
 package com.falco.appointment.visitreservation.infrastructure;
 
-import com.falco.appointment.scheduling.application.FindFreeRangesService;
-import com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
-import com.falco.appointment.scheduling.domain.schedule.ScheduleId;
+import com.falco.appointment.scheduling.api.FindFreeRangesService;
+import com.falco.appointment.scheduling.api.ScheduleRange;
+import com.falco.appointment.scheduling.api.ScheduleId;
 import com.falco.appointment.visitreservation.application.PatientReservationService;
 import com.falco.appointment.visitreservation.domain.PatientId;
 import com.falco.appointment.visitreservation.domain.ReservationId;

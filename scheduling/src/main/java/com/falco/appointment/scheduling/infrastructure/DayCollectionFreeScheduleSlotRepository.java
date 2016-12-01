@@ -1,11 +1,11 @@
 package com.falco.appointment.scheduling.infrastructure;
 
-import com.falco.appointment.scheduling.domain.SearchTags;
+import com.falco.appointment.scheduling.api.SearchTags;
 import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlot;
 import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
-import com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
+import com.falco.appointment.scheduling.api.ScheduleRange;
 import com.falco.appointment.scheduling.domain.schedule.DaysDomain;
-import com.falco.appointment.scheduling.domain.schedule.ScheduleId;
+import com.falco.appointment.scheduling.api.ScheduleId;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.ImmutableList;

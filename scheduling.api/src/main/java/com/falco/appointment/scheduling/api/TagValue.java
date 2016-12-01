@@ -1,4 +1,4 @@
-package com.falco.appointment.scheduling.domain;
+package com.falco.appointment.scheduling.api;
 
 public class TagValue {
     private final String key;

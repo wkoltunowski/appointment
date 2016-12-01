@@ -1,8 +1,9 @@
 package com.falco.appointment.visitreservation.application;
 
+import com.falco.appointment.scheduling.api.CancellationService;
+import com.falco.appointment.scheduling.api.ReservationService;
+import com.falco.appointment.scheduling.api.ScheduleRange;
 import com.falco.appointment.visitreservation.domain.*;
-import com.falco.appointment.scheduling.application.ReserveScheduleRangeService;
-import com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,18 +13,21 @@ import static com.falco.appointment.visitreservation.domain.PatientReservation.s
 
 @Component
 public class PatientReservationService {
-    private final ReserveScheduleRangeService reserveScheduleRangeService;
+    private final ReservationService reservationService;
+    private final CancellationService cancellationService;
     private final ReservationRepository reservationRepository;
 
     @Autowired
-    public PatientReservationService(ReserveScheduleRangeService reserveScheduleRangeService,
+    public PatientReservationService(ReservationService reservationService,
+                                     CancellationService cancellationService,
                                      ReservationRepository reservationRepository) {
-        this.reserveScheduleRangeService = reserveScheduleRangeService;
+        this.reservationService = reservationService;
+        this.cancellationService = cancellationService;
         this.reservationRepository = reservationRepository;
     }
 
     public ReservationId makeReservationFor(PatientId patient, ServiceId serviceId, ScheduleRange scheduleRange) {
-        reserveScheduleRangeService.reserve(scheduleRange);
+        reservationService.reserve(scheduleRange);
         PatientReservation reservation = serviceReservation(patient, Optional.of(serviceId), scheduleRange);
         reservationRepository.save(reservation);
         return reservation.id();
@@ -31,7 +35,7 @@ public class PatientReservationService {
 
 
     public void cancelReservation(ScheduleRange scheduleRange) {
-        reserveScheduleRangeService.cancel(scheduleRange);
+        cancellationService.cancel(scheduleRange);
         reservationRepository.findAll(100).stream()
                 .filter(r -> r.scheduleRange().equals(scheduleRange))
                 .forEach(reservation -> {
@@ -42,7 +46,7 @@ public class PatientReservationService {
 
     public void cancelReservation(ReservationId reservationId) {
         PatientReservation reservation = reservationRepository.findById(reservationId);
-        reserveScheduleRangeService.cancel(reservation.scheduleRange());
+        cancellationService.cancel(reservation.scheduleRange());
         reservation.cancel();
         reservationRepository.update(reservation);
     }

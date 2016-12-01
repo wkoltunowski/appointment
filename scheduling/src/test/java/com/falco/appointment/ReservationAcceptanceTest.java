@@ -1,12 +1,9 @@
 package com.falco.appointment;
 
+import com.falco.appointment.scheduling.api.*;
 import com.falco.appointment.scheduling.application.AppointmentTakenException;
-import com.falco.appointment.scheduling.application.FindFreeRangesService;
-import com.falco.appointment.scheduling.domain.SearchTags;
-import com.falco.appointment.scheduling.domain.TagValue;
-import com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
+import com.falco.appointment.scheduling.api.SearchTags;
 import com.falco.appointment.scheduling.domain.schedule.DailySchedule;
-import com.falco.appointment.scheduling.domain.schedule.ScheduleId;
 import com.falco.appointment.scheduling.domain.schedule.Validity;
 import com.falco.appointment.scheduling.domain.schedule.WorkingHours;
 import com.falco.appointment.visitreservation.application.PatientReservationService;

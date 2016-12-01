@@ -1,7 +1,7 @@
 package com.falco.appointment;
 
+import com.falco.appointment.scheduling.api.FindFreeRangesService;
 import com.falco.appointment.scheduling.application.DefineNewScheduleService;
-import com.falco.appointment.scheduling.application.FindFreeRangesService;
 
 public class Application {
     private final Factory factory = new Factory();

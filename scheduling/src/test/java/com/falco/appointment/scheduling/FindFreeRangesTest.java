@@ -1,31 +1,21 @@
 package com.falco.appointment.scheduling;
 
 import com.falco.appointment.Application;
+import com.falco.appointment.scheduling.api.*;
 import com.falco.appointment.scheduling.application.DefineNewScheduleService;
-import com.falco.appointment.scheduling.application.FindFreeRangesService;
-import com.falco.appointment.scheduling.domain.SearchTags;
-import com.falco.appointment.scheduling.domain.TagValue;
-import com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
-import com.falco.appointment.scheduling.domain.freescheduleranges.SearchCriteria;
-import com.falco.appointment.scheduling.domain.schedule.ScheduleId;
 import com.falco.appointment.scheduling.domain.schedule.WorkingHours;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.falco.testsupport.DateTestUtils.*;
-import static com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange.scheduleRange;
+import static com.falco.appointment.scheduling.api.ScheduleRange.scheduleRange;
 import static com.falco.appointment.scheduling.domain.schedule.WorkingHours.ofHours;
+import static com.falco.testsupport.DateTestUtils.*;
 import static com.falco.testsupport.RangeMatchers.startsWith;
 import static java.time.Duration.ofMinutes;
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -164,16 +154,12 @@ public class FindFreeRangesTest {
     }
 
     private List<ScheduleRange> search(LocalDateTime startingAt, TagValue... tags) {
-        SearchCriteria crit = new SearchCriteria(startingAt).withTagValue(tags);
-
-        return freeSlots.findFirstFree(crit);
+        return freeSlots.findFirstFree(startingAt, new SearchTags().withTags(tags));
     }
 
     private ScheduleId givenSchedule(WorkingHours workingHours, Duration duration, TagValue... tags) {
         return defineNewScheduleService.addDailySchedule(workingHours, duration, SearchTags.ofTags(tags));
     }
-
-
 
 
 }

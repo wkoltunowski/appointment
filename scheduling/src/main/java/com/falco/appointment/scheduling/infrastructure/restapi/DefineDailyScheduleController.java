@@ -1,8 +1,8 @@
 package com.falco.appointment.scheduling.infrastructure.restapi;
 
 import com.falco.appointment.scheduling.application.DefineNewScheduleService;
-import com.falco.appointment.scheduling.domain.SearchTags;
-import com.falco.appointment.scheduling.domain.schedule.ScheduleId;
+import com.falco.appointment.scheduling.api.SearchTags;
+import com.falco.appointment.scheduling.api.ScheduleId;
 import com.falco.appointment.scheduling.domain.schedule.WorkingHours;
 import com.falco.appointment.visitreservation.domain.DoctorId;
 import com.falco.appointment.visitreservation.domain.ServiceId;

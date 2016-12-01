@@ -1,4 +1,4 @@
-package com.falco.appointment.scheduling.domain.schedule;
+package com.falco.appointment.scheduling.api;
 
 import java.util.UUID;
 

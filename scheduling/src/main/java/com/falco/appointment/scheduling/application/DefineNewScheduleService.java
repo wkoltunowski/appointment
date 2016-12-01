@@ -1,7 +1,8 @@
 package com.falco.appointment.scheduling.application;
 
+import com.falco.appointment.scheduling.api.ScheduleId;
 import com.falco.appointment.scheduling.domain.ApplicationEventing;
-import com.falco.appointment.scheduling.domain.SearchTags;
+import com.falco.appointment.scheduling.api.SearchTags;
 import com.falco.appointment.scheduling.domain.schedule.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

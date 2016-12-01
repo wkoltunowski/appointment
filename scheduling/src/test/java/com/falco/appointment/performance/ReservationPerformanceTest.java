@@ -1,13 +1,13 @@
-package com.falco.appointment.scheduling;
+package com.falco.appointment.performance;
 
+import com.falco.appointment.Factory;
+import com.falco.appointment.scheduling.api.FindFreeRangesService;
+import com.falco.appointment.scheduling.api.ReservationService;
+import com.falco.appointment.scheduling.api.ScheduleRange;
+import com.falco.appointment.scheduling.application.DefineNewScheduleService;
+import com.falco.appointment.scheduling.domain.schedule.WorkingHours;
 import com.falco.testsupport.DateRandomizer;
 import com.falco.testsupport.DateTestUtils;
-import com.falco.appointment.Factory;
-import com.falco.appointment.scheduling.application.DefineNewScheduleService;
-import com.falco.appointment.scheduling.application.FindFreeRangesService;
-import com.falco.appointment.scheduling.application.ReserveScheduleRangeService;
-import com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
-import com.falco.appointment.scheduling.domain.schedule.WorkingHours;
 import com.google.common.base.Stopwatch;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -25,7 +25,7 @@ import static com.falco.testsupport.PerformanceUtils.runSpeedCheck;
 public class ReservationPerformanceTest {
     private FindFreeRangesService findFreeSlots;
     private DefineNewScheduleService defineNewScheduleService;
-    private ReserveScheduleRangeService reserveScheduleRangeService;
+    private ReservationService reservationService;
     private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private DateRandomizer dateRandomizer = new DateRandomizer(700000);
     private int runningTimeSecs;
@@ -38,7 +38,7 @@ public class ReservationPerformanceTest {
         Factory factory = new Factory();
         findFreeSlots = factory.findFreeService(1);
         defineNewScheduleService = factory.scheduleDefinitionService();
-        reserveScheduleRangeService = factory.reservationService();
+        reservationService = factory.reservationService();
         runningTimeSecs = 22;
         threadsCount = 4;
         maxTime = 10;
@@ -55,7 +55,7 @@ public class ReservationPerformanceTest {
         generateNSchedules(900);
         runSpeedCheck(() -> {
             for (ScheduleRange scheduleRange : findFreeSlots.findFirstFree(dateRandomizer.randomDate())) {
-                reserveScheduleRangeService.reserve(scheduleRange);
+                reservationService.reserve(scheduleRange);
             }
         }, "search & reserve All reservation ", runningTimeSecs, threadsCount);
 
@@ -64,7 +64,7 @@ public class ReservationPerformanceTest {
     @Test
     public void shouldWorkFast2ReserveFirst() throws Exception {
         generateNSchedules(900);
-        runSpeedCheck(() -> reserveScheduleRangeService.reserve(findFreeSlots.findFirstFree(dateRandomizer.randomDate()).get(0)),
+        runSpeedCheck(() -> reservationService.reserve(findFreeSlots.findFirstFree(dateRandomizer.randomDate()).get(0)),
                 "search & reserve reservation ", runningTimeSecs, threadsCount);
 
     }
@@ -115,7 +115,7 @@ public class ReservationPerformanceTest {
         Stopwatch stopwatch = Stopwatch.createStarted();
 
         while (stopwatch.elapsed(TimeUnit.SECONDS) < maxTime && !freeScheduleRanges.isEmpty()) {
-            reserveScheduleRangeService.reserve(freeScheduleRanges.get(0));
+            reservationService.reserve(freeScheduleRanges.get(0));
             freeScheduleRanges = findFreeSlots.findFirstFree(date.get());
             count++;
         }

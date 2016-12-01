@@ -1,4 +1,4 @@
-package com.falco.appointment.scheduling.domain;
+package com.falco.appointment.scheduling.api;
 
 import java.util.Collections;
 import java.util.Map;
@@ -34,9 +34,6 @@ public class SearchTags {
     }
 
     public boolean matches(SearchTags other) {
-        return matches1(other);
-    }
-    public boolean matches1(SearchTags other) {
         boolean result = true;
         for (String otherKey : other.map.keySet()) {
             String otherValue = other.getOrEmpty(otherKey);
@@ -50,7 +47,7 @@ public class SearchTags {
         for (String otherKey : other.map.keySet()) {
             String otherValue = other.getOrEmpty(otherKey);
             String thisValue = getOrEmpty(otherKey);
-            if (!otherValue.equals(thisValue)){
+            if (!otherValue.equals(thisValue)) {
                 return false;
             }
         }

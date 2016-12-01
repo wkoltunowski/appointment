@@ -1,9 +1,11 @@
 package com.falco.appointment.scheduling.application;
 
-import com.falco.appointment.scheduling.domain.freescheduleranges.*;
+import com.falco.appointment.scheduling.api.FindFreeRangesService;
+import com.falco.appointment.scheduling.api.ScheduleRange;
+import com.falco.appointment.scheduling.api.SearchTags;
+import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlot;
+import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleDurations;
-import com.falco.appointment.scheduling.domain.SearchTags;
-import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,14 +18,14 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Component
-public class FindFreeRangesService {
+public class FindFreeRangesServiceImpl implements FindFreeRangesService {
 
     private final int firstFreeCount;
     private final ScheduleDurations scheduleDurations;
     private final FreeScheduleSlotRepository storage;
 
     @Autowired
-    public FindFreeRangesService(
+    public FindFreeRangesServiceImpl(
             @Value("${FindFreeScheduleRangesService.firstFreeCount}") int firstFreeCount,
             ScheduleDurations scheduleDurations,
             FreeScheduleSlotRepository storage) {
@@ -32,10 +34,12 @@ public class FindFreeRangesService {
         this.storage = storage;
     }
 
+    @Override
     public List<ScheduleRange> findFirstFree(LocalDateTime startingFrom) {
         return findFirstFree(startingFrom, SearchTags.empty());
     }
 
+    @Override
     public List<ScheduleRange> findFirstFree(LocalDateTime startingFrom, SearchTags searchTags) {
 //        return iterator(startingFrom, searchTags);
         return stream(startingFrom, searchTags);
@@ -93,11 +97,4 @@ public class FindFreeRangesService {
         Duration duration = this.scheduleDurations.durationFor(freeSlot.scheduleId());
         return StreamSupport.stream(freeSlot.scheduleRanges(startingFrom, duration).spliterator(), false);
     }
-
-
-    public List<ScheduleRange> findFirstFree(SearchCriteria crit) {
-        return findFirstFree(crit.getStartingFrom(), crit.searchTags());
-    }
-
-
 }

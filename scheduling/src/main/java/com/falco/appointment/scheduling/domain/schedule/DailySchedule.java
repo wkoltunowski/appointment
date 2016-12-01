@@ -1,6 +1,7 @@
 package com.falco.appointment.scheduling.domain.schedule;
 
-import com.falco.appointment.scheduling.domain.SearchTags;
+import com.falco.appointment.scheduling.api.ScheduleId;
+import com.falco.appointment.scheduling.api.SearchTags;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;

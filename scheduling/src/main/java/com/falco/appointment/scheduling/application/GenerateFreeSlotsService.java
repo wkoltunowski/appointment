@@ -2,9 +2,9 @@ package com.falco.appointment.scheduling.application;
 
 import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlot;
 import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
-import com.falco.appointment.scheduling.domain.SearchTags;
+import com.falco.appointment.scheduling.api.SearchTags;
 import com.falco.appointment.scheduling.domain.schedule.Schedule;
-import com.falco.appointment.scheduling.domain.schedule.ScheduleId;
+import com.falco.appointment.scheduling.api.ScheduleId;
 import com.falco.appointment.scheduling.domain.schedule.ScheduleRepository;
 import com.google.common.collect.Range;
 import org.springframework.beans.factory.annotation.Autowired;

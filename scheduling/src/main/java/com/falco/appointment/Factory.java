@@ -1,9 +1,12 @@
 package com.falco.appointment;
 
+import com.falco.appointment.scheduling.api.CancellationService;
+import com.falco.appointment.scheduling.api.FindFreeRangesService;
+import com.falco.appointment.scheduling.api.ReservationService;
 import com.falco.appointment.scheduling.application.DefineNewScheduleService;
-import com.falco.appointment.scheduling.application.FindFreeRangesService;
+import com.falco.appointment.scheduling.application.FindFreeRangesServiceImpl;
 import com.falco.appointment.scheduling.application.GenerateFreeSlotsService;
-import com.falco.appointment.scheduling.application.ReserveScheduleRangeService;
+import com.falco.appointment.scheduling.application.ReserveScheduleRangeServiceImpl;
 import com.falco.appointment.scheduling.domain.ApplicationEventing;
 import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.falco.appointment.scheduling.infrastructure.*;
@@ -20,7 +23,7 @@ public class Factory {
     private GenerateFreeSlotsService generateFreeSlotsService;
 
     public FindFreeRangesService findFreeService(int maxResultCount) {
-        return new FindFreeRangesService(maxResultCount, scheduleDurations(), freeSlotRepository());
+        return new FindFreeRangesServiceImpl(maxResultCount, scheduleDurations(), freeSlotRepository());
     }
 
     public FromScheduleDuration scheduleDurations() {
@@ -53,8 +56,12 @@ public class Factory {
         return generateFreeSlotsService;
     }
 
-    public ReserveScheduleRangeService reservationService() {
-        return new ReserveScheduleRangeService(freeSlotRepository());
+    public ReservationService reservationService() {
+        return new ReserveScheduleRangeServiceImpl(freeSlotRepository());
+    }
+
+    public CancellationService cancellationService() {
+        return new ReserveScheduleRangeServiceImpl(freeSlotRepository());
     }
 
     public ScheduleRepository scheduleRepository() {
@@ -65,7 +72,7 @@ public class Factory {
     }
 
     public PatientReservationService patientReservation() {
-        return new PatientReservationService(reservationService(), reservationRepository());
+        return new PatientReservationService(reservationService(), cancellationService(), reservationRepository());
     }
 
     public ReservationRepository reservationRepository() {

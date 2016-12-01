@@ -1,5 +1,7 @@
 package com.falco.appointment.scheduling.domain.schedule;
 
+import com.falco.appointment.scheduling.api.ScheduleId;
+
 public class ScheduleAddedEvent {
     private final ScheduleId scheduleId;
 

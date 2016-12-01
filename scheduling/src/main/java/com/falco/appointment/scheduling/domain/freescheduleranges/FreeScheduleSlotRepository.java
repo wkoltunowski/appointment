@@ -1,7 +1,8 @@
 package com.falco.appointment.scheduling.domain.freescheduleranges;
 
-import com.falco.appointment.scheduling.domain.SearchTags;
-import com.falco.appointment.scheduling.domain.schedule.ScheduleId;
+import com.falco.appointment.scheduling.api.ScheduleRange;
+import com.falco.appointment.scheduling.api.SearchTags;
+import com.falco.appointment.scheduling.api.ScheduleId;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

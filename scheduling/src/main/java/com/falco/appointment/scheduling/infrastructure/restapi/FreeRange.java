@@ -4,6 +4,7 @@ public class FreeRange {
     private String scheduleId;
     private String start;
     private String duration;
+
     private String serviceId;
     private String doctorId;
 

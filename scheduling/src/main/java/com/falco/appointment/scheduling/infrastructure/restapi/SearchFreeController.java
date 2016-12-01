@@ -1,11 +1,8 @@
 package com.falco.appointment.scheduling.infrastructure.restapi;
 
-import com.falco.appointment.scheduling.application.FindFreeRangesService;
-import com.falco.appointment.scheduling.domain.SearchTags;
-import com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
-import com.falco.appointment.scheduling.domain.freescheduleranges.SearchCriteria;
-import com.falco.appointment.scheduling.domain.schedule.Schedule;
-import com.falco.appointment.scheduling.domain.schedule.ScheduleRepository;
+import com.falco.appointment.scheduling.api.FindFreeRangesService;
+import com.falco.appointment.scheduling.api.ScheduleRange;
+import com.falco.appointment.scheduling.api.SearchTags;
 import com.falco.appointment.visitreservation.domain.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +21,6 @@ import static java.util.stream.Collectors.toList;
 public class SearchFreeController {
     @Autowired
     private FindFreeRangesService findFreeService;
-    @Autowired
-    private ScheduleRepository scheduleRepository;
 
     @RequestMapping(value = "/searchFree", method = RequestMethod.GET)
     public List<FreeRange> searchFree(
@@ -36,18 +31,18 @@ public class SearchFreeController {
         Optional<LocalDateTime> startingFrom = ofEmpty(startingFromStr).map(LocalDateTime::parse);
         LocalDateTime date = startingFrom.orElse(LocalDateTime.now());
         SearchTags searchTags = SearchTags.empty();
-        if (ofEmpty(serviceId).isPresent()){
+        if (ofEmpty(serviceId).isPresent()) {
             searchTags = searchTags.withTagAdded(ServiceTag.serviceIs(ServiceId.of(ofEmpty(serviceId).get())));
         }
-        if (ofEmpty(doctorId).isPresent()){
+        if (ofEmpty(doctorId).isPresent()) {
             searchTags = searchTags.withTagAdded(DoctorTag.doctorIs(DoctorId.of(ofEmpty(doctorId).get())));
         }
-        if (ofEmpty(locationId).isPresent()){
+        if (ofEmpty(locationId).isPresent()) {
             searchTags = searchTags.withTagAdded(LocationTag.locationIs(LocationId.of(ofEmpty(locationId).get())));
         }
 
 
-        List<ScheduleRange> firstFree = findFreeService.findFirstFree(new SearchCriteria(date, searchTags));
+        List<ScheduleRange> firstFree = findFreeService.findFirstFree(date, searchTags);
         return firstFree.stream().map(this::transform).collect(toList());
 
     }
@@ -57,21 +52,14 @@ public class SearchFreeController {
     }
 
     private FreeRange transform(ScheduleRange scheduleRange) {
-        Schedule schedule = scheduleRepository.findById(scheduleRange.scheduleId());
         return new FreeRange()
                 .withStart(scheduleRange.start().toString())
                 .withDuration(scheduleRange.duration().toString())
-                .withDoctorId(doctorId(schedule).orElse(null))
-                .withServiceId(serviceId(schedule).orElse(null))
-                .withScheduleId(schedule.scheduleId().asString())
+                .withDoctorId("docId")
+                .withServiceId("serviceId")
+                .withScheduleId(scheduleRange.scheduleId().asString())
                 ;
     }
 
-    private Optional<String> serviceId(Schedule schedule) {
-        return schedule.searchTags().get(ServiceTag.key());
-    }
 
-    private Optional<String> doctorId(Schedule schedule) {
-        return schedule.searchTags().get(DoctorTag.key());
-    }
 }

@@ -1,30 +1,27 @@
 package com.falco.appointment.scheduling.application;
 
-import com.falco.appointment.scheduling.domain.SearchTags;
+import com.falco.appointment.scheduling.api.*;
 import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlot;
 import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
-import com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
-import com.falco.appointment.scheduling.domain.schedule.ScheduleId;
 import com.google.common.collect.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
 @Component
-public class ReserveScheduleRangeService {
+public class ReserveScheduleRangeServiceImpl implements CancellationService, ReservationService {
     private final FreeScheduleSlotRepository freeScheduleSlotRepository;
 
     @Autowired
-    public ReserveScheduleRangeService(FreeScheduleSlotRepository freeScheduleSlotRepository) {
+    public ReserveScheduleRangeServiceImpl(FreeScheduleSlotRepository freeScheduleSlotRepository) {
         this.freeScheduleSlotRepository = freeScheduleSlotRepository;
     }
 
+    @Override
     public void reserve(ScheduleRange scheduleRange) {
         Optional<FreeScheduleSlot> scheduleSlots = this.freeScheduleSlotRepository.findByScheduleRange(scheduleRange);
         FreeScheduleSlot freeScheduleSlot = scheduleSlots.orElseThrow(() -> new AppointmentTakenException());
@@ -34,6 +31,7 @@ public class ReserveScheduleRangeService {
         this.freeScheduleSlotRepository.addAll(freeScheduleSlots);
     }
 
+    @Override
     public void cancel(ScheduleRange scheduleRange) {
         SearchTags searchTags = freeScheduleSlotRepository.findTags(scheduleRange.scheduleId());
         FreeScheduleSlot freeScheduleSlot = new FreeScheduleSlot(scheduleRange.scheduleId(), scheduleRange.range(), searchTags);

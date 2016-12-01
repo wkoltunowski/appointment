@@ -1,6 +1,6 @@
 package com.falco.appointment.visitreservation.domain;
 
-import com.falco.appointment.scheduling.domain.freescheduleranges.ScheduleRange;
+import com.falco.appointment.scheduling.api.ScheduleRange;
 
 import java.util.Optional;
 

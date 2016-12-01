@@ -1,6 +1,6 @@
 package com.falco.appointment.visitreservation.domain;
 
-import com.falco.appointment.scheduling.domain.TagValue;
+import com.falco.appointment.scheduling.api.TagValue;
 
 public class ServiceTag {
     public static TagValue serviceIs(ServiceId value) {
