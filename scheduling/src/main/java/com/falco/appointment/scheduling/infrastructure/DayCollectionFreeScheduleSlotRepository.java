@@ -18,28 +18,37 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static java.util.Collections.emptyList;
+import static java.util.Collections.synchronizedList;
 
 @Component
 public class DayCollectionFreeScheduleSlotRepository implements FreeScheduleSlotRepository {
 
-    private final Map<LocalDate, List<FreeScheduleSlot>> index = new HashMap<>();
+    private final Map<LocalDate, ImmutableList<FreeScheduleSlot>> index = new HashMap<>();
     private LocalDate maxDay = LocalDate.MIN;
-    private final Map<ScheduleId, List<FreeScheduleSlot>> slotByScheduleId = new HashMap<>();
+    private final Map<ScheduleId, ImmutableList<FreeScheduleSlot>> slotByScheduleId = new HashMap<>();
     private Map<ScheduleId, SearchTags> tags = new HashMap<>();
 
     @Override
     public void remove(FreeScheduleSlot freeScheduleSlot) {
         LocalDate day = freeScheduleSlot.start().toLocalDate();
-        Collection<FreeScheduleSlot> freeScheduleSlots = index.get(day);
-        freeScheduleSlots.remove(freeScheduleSlot);
-        if (freeScheduleSlots.isEmpty()) {
+        ImmutableList<FreeScheduleSlot> freeScheduleSlots = index.getOrDefault(day, ImmutableList.of());
+        if (freeScheduleSlots.size() > 1) {
+            ArrayList<FreeScheduleSlot> newSlots = new ArrayList<>(freeScheduleSlots);
+            newSlots.remove(freeScheduleSlot);
+            index.put(day, ImmutableList.copyOf(newSlots));
+        } else {
             index.remove(day);
         }
+
+
         ScheduleId scheduleId = freeScheduleSlot.scheduleId();
-        List<FreeScheduleSlot> scheduleSlots = slotByScheduleId.get(scheduleId);
-        scheduleSlots.remove(freeScheduleSlot);
-        if (scheduleSlots.isEmpty()) {
+        ImmutableList<FreeScheduleSlot> scheduleSlots = slotByScheduleId.getOrDefault(scheduleId, ImmutableList.of());
+
+        if (scheduleSlots.size() > 1) {
+            ArrayList<FreeScheduleSlot> newSlots = new ArrayList<>(scheduleSlots);
+            newSlots.remove(freeScheduleSlot);
+            slotByScheduleId.put(scheduleId, ImmutableList.copyOf(newSlots));
+        } else {
             slotByScheduleId.remove(scheduleId);
         }
     }
@@ -56,26 +65,21 @@ public class DayCollectionFreeScheduleSlotRepository implements FreeScheduleSlot
         }
     }
 
-    private void add(FreeScheduleSlot of) {
-        LocalDate slotStartDay = of.start().toLocalDate();
-        Collection<FreeScheduleSlot> freeScheduleSlots = index.get(slotStartDay);
-        Collection<FreeScheduleSlot> slots = Optional.ofNullable(freeScheduleSlots).orElseGet(() -> {
-            List<FreeScheduleSlot> list = new ArrayList<FreeScheduleSlot>();
-            index.put(slotStartDay, list);
-            return list;
-        });
-        slots.add(of);
+    private void add(FreeScheduleSlot freeScheduleSlot) {
+        LocalDate slotStartDay = freeScheduleSlot.start().toLocalDate();
+        ArrayList<FreeScheduleSlot> freeScheduleSlots = newArrayList(index.getOrDefault(slotStartDay, ImmutableList.of()));
+        freeScheduleSlots.add(freeScheduleSlot);
+        index.put(slotStartDay, ImmutableList.copyOf(freeScheduleSlots));
+
         if (slotStartDay.isAfter(maxDay)) {
             maxDay = slotStartDay;
         }
 
-        List<FreeScheduleSlot> scheduleSlots = Optional.ofNullable(slotByScheduleId.get(of.scheduleId())).orElseGet(() -> {
-            List<FreeScheduleSlot> newList = newArrayList();
-            slotByScheduleId.put(of.scheduleId(), newList);
-            return newList;
-        });
-        scheduleSlots.add(of);
-        tags.put(of.scheduleId(), of.searchTags());
+        List<FreeScheduleSlot> scheduleSlots = newArrayList(slotByScheduleId.getOrDefault(freeScheduleSlot.scheduleId(), ImmutableList.of()));
+        scheduleSlots.add(freeScheduleSlot);
+        slotByScheduleId.put(freeScheduleSlot.scheduleId(), ImmutableList.copyOf(scheduleSlots));
+
+        tags.put(freeScheduleSlot.scheduleId(), freeScheduleSlot.searchTags());
     }
 
     @Override
@@ -88,7 +92,7 @@ public class DayCollectionFreeScheduleSlotRepository implements FreeScheduleSlot
 
 
     private List<FreeScheduleSlot> slotsByScheduleId(ScheduleId scheduleId) {
-        return ImmutableList.copyOf(Optional.ofNullable(slotByScheduleId.get(scheduleId)).orElse(emptyList()));
+        return slotByScheduleId.getOrDefault(scheduleId, ImmutableList.of());
     }
 
     @Override
@@ -120,8 +124,9 @@ public class DayCollectionFreeScheduleSlotRepository implements FreeScheduleSlot
     private Iterable<FreeScheduleSlot> findAfterWhile(final LocalDateTime startingFrom) {
         final LocalDate day = startingFrom.toLocalDate();
         return () -> new AbstractIterator<FreeScheduleSlot>() {
-            private Iterator<FreeScheduleSlot> iterator = dayFreeSlots(day).iterator();
+            private Iterator<FreeScheduleSlot> iterator = synchronizedList(dayFreeSlots(day)).iterator();
             private LocalDate date = day;
+
             @Override
             protected FreeScheduleSlot computeNext() {
                 while (!date.isAfter(maxDay)) {
@@ -140,7 +145,7 @@ public class DayCollectionFreeScheduleSlotRepository implements FreeScheduleSlot
     }
 
     private List<FreeScheduleSlot> dayFreeSlots(LocalDate day) {
-        return Optional.ofNullable(index.get(day)).orElse(emptyList());
+        return index.getOrDefault(day, ImmutableList.of());
     }
 
     @Override

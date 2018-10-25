@@ -1,6 +1,7 @@
 package com.falco.appointment.performance;
 
 import com.falco.testsupport.DateRandomizer;
+import org.junit.Ignore;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import static com.falco.testsupport.PerformanceUtils.logTime;
 import static com.falco.testsupport.PerformanceUtils.runSpeedCheck;
@@ -26,21 +28,17 @@ public class ReservationPerformanceRestTest {
         restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
     }
 
-    @Test
+    @Test(enabled = false)
     public void shouldReserve() throws Exception {
-        int threadsCount = 8;
-        int runningTimeSecs = 10;
-        for (int i = 1; i <= threadsCount; ) {
-            run(i, runningTimeSecs);
-            i = i + 2;
-        }
+        IntStream.range(1, 1500).forEach(i -> initTestData());
+        run(4, 22);
     }
 
     private void run(int threadsCount, int runningTimeSecs) {
         logTime("threads", threadsCount);
-        runSpeedCheck(this::initTestData, "initTestData", runningTimeSecs, threadsCount);
-        runSpeedCheck(this::searchFree, "searchFree", runningTimeSecs, threadsCount);
-        runSpeedCheck(this::reserveFirstFree, "reserve first", runningTimeSecs, threadsCount);
+//        runSpeedCheck("initTestData", this::initTestData, runningTimeSecs, threadsCount);
+        runSpeedCheck("searchFree", this::searchFree, runningTimeSecs, threadsCount);
+        runSpeedCheck("reserve first", this::reserveFirstFree, runningTimeSecs, threadsCount);
     }
 
     private String initTestData() {

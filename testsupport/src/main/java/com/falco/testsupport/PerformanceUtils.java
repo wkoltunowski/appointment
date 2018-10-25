@@ -1,46 +1,31 @@
 package com.falco.testsupport;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.util.concurrent.AbstractFuture;
 
 import java.io.PrintStream;
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
-import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 public class PerformanceUtils {
 
     private static final NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
 
-    public static void runSpeedCheck(Runnable r, String s, int runningTimeSecs, int threadsCount) {
+    public static void runSpeedCheck(String msg, Runnable r, int runningTimeSecsLimit, int threadsCount) {
         try {
-
-            Callable<Result>[] callables = new Callable[threadsCount];
-            Arrays.fill(callables, aaa(r, runningTimeSecs));
-            List<Callable<Result>> callablesList = asList(callables);
-            List<Future<Result>> futures = null;
-            if (threadsCount > 1) {
-                futures = Executors
-                        .newFixedThreadPool(threadsCount)
-                        .invokeAll(callablesList);
-            } else {
-                futures = asList(
-                        new AbstractFuture<Result>() {
-                            @Override
-                            public Result get() throws InterruptedException, ExecutionException {
-                                try {
-                                    return aaa(r, runningTimeSecs).call();
-                                } catch (Exception e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                        }
-                );
-            }
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            List<Callable<Result>> callablesList = IntStream
+                    .rangeClosed(1, threadsCount)
+                    .mapToObj(i -> runForNSec(r, runningTimeSecsLimit))
+                    .collect(toList());
+            List<Future<Result>> futures = Executors.newFixedThreadPool(threadsCount).invokeAll(callablesList);
             int success = 0;
             int errors = 0;
             for (Future<Result> resultFuture : futures) {
@@ -49,17 +34,12 @@ public class PerformanceUtils {
                 errors += result.errors;
             }
 
-//            l(s + " speed", numberFormat.format(success / runningTimeSecs), 60);
-            System.out.printf("%-" + 60 + "s %s", s + " speed", numberFormat.format(success / runningTimeSecs));
+            long runningTimeSecs = stopwatch.elapsed(TimeUnit.SECONDS);
+            System.out.printf("%-" + 60 + "s %s", msg + " speed", numberFormat.format(success / runningTimeSecs));
             System.out.printf("%s %s%n", " tps, errors percentage:", success + errors != 0 ? numberFormat.format(100 * errors / (success + errors)) : "n/a");
-//            logTime(s + " speed", success / runningTimeSecs);
-//            logTime(s + " successes/ errors ", numberFormat.format(success) + "/" + numberFormat.format(errors));
         } catch (Exception e) {
-
             throw new RuntimeException(e);
         }
-
-
     }
 
     public static void logTime(String msg, String value) {
@@ -78,7 +58,7 @@ public class PerformanceUtils {
         return System.out.printf("%-" + padding + "s %s%n", msg, val);
     }
 
-    private static Callable<Result> aaa(final Runnable r, int runningTimeSecs) {
+    private static Callable<Result> runForNSec(final Runnable r, int runningTimeSecs) {
         return () -> {
             Stopwatch stopwatch = Stopwatch.createStarted();
             Result result = new Result();

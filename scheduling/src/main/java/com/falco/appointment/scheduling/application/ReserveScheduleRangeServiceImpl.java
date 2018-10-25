@@ -1,6 +1,9 @@
 package com.falco.appointment.scheduling.application;
 
-import com.falco.appointment.scheduling.api.*;
+import com.falco.appointment.scheduling.api.CancellationService;
+import com.falco.appointment.scheduling.api.ReservationService;
+import com.falco.appointment.scheduling.api.ScheduleRange;
+import com.falco.appointment.scheduling.api.SearchTags;
 import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlot;
 import com.falco.appointment.scheduling.domain.freescheduleranges.FreeScheduleSlotRepository;
 import com.google.common.collect.Range;

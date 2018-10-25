@@ -7,128 +7,90 @@ import com.falco.appointment.scheduling.api.ScheduleRange;
 import com.falco.appointment.scheduling.application.DefineNewScheduleService;
 import com.falco.appointment.scheduling.domain.schedule.WorkingHours;
 import com.falco.testsupport.DateRandomizer;
-import com.falco.testsupport.DateTestUtils;
-import com.google.common.base.Stopwatch;
+import com.falco.testsupport.PerformanceUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
-import static com.falco.testsupport.PerformanceUtils.runSpeedCheck;
+import static com.falco.testsupport.DateTestUtils.todayAt;
 
 
 public class ReservationPerformanceTest {
     private FindFreeRangesService findFreeSlots;
     private DefineNewScheduleService defineNewScheduleService;
     private ReservationService reservationService;
-    private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private DateRandomizer dateRandomizer = new DateRandomizer(700000);
     private int runningTimeSecs;
     private int threadsCount;
-    private long maxTime;
 
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp() {
         Factory factory = new Factory();
         findFreeSlots = factory.findFreeService(1);
         defineNewScheduleService = factory.scheduleDefinitionService();
         reservationService = factory.reservationService();
         runningTimeSecs = 22;
         threadsCount = 4;
-        maxTime = 10;
+        runningTimeSecs = 10;
+        threadsCount = 8;
+
+        generateNSchedules(1500);
     }
 
     @Test
-    public void shouldWorkFast2FirstFree() throws Exception {
-        generateNSchedules(900);
-        runSpeedCheck(() -> findFreeSlots.findFirstFree(dateRandomizer.randomDate()), "findFirstFree", runningTimeSecs, threadsCount);
+    public void shouldFindFirstFreeOnly() {
+        runSpeedCheckMultiThread("FindFirstFree", () -> findFreeSlots.findFirstFree(randomDate()));
     }
 
     @Test
-    public void shouldWorkFast2ReserveAll() throws Exception {
-        generateNSchedules(900);
-        runSpeedCheck(() -> {
-            for (ScheduleRange scheduleRange : findFreeSlots.findFirstFree(dateRandomizer.randomDate())) {
+    public void shouldWorkFast2ReserveAll() {
+        runSpeedCheckMultiThread("Search & Reserve All ", () -> {
+            for (ScheduleRange scheduleRange : findFreeSlots.findFirstFree(randomDate())) {
                 reservationService.reserve(scheduleRange);
             }
-        }, "search & reserve All reservation ", runningTimeSecs, threadsCount);
-
+        });
     }
 
     @Test
-    public void shouldWorkFast2ReserveFirst() throws Exception {
-        generateNSchedules(900);
-        runSpeedCheck(() -> reservationService.reserve(findFreeSlots.findFirstFree(dateRandomizer.randomDate()).get(0)),
-                "search & reserve reservation ", runningTimeSecs, threadsCount);
-
-    }
-
-
-    @Test
-    public void shouldReserveAppointmentsStartingFromToday() throws Exception {
-        generateNSchedules(900);
-        LocalDateTime localDateTime = DateTestUtils.todayAt(8, 0);
-        reserveFirstFreeFor(() -> localDateTime, "for same date", maxTime);
+    public void shouldWorkFast2ReserveFirst() {
+        runSpeedCheckMultiThread("Search & Reserve", () -> reservationService.reserve(findFreeSlots.findFirstFree(randomDate()).get(0)));
     }
 
     @Test
-    public void shouldReserveAppointmentsStartingFromRandom() throws Exception {
-        generateNSchedules(900);
-        reserveFirstFreeFor(() -> dateRandomizer.randomDate(), "for random dates", maxTime);
+    public void shouldWorkFast2ReserveFirstSingleThread() {
+        runSpeedCheckSingleThread("Search & Reserve ST", () -> reservationService.reserve(findFreeSlots.findFirstFree(randomDate()).get(0)));
     }
 
     @Test
-    public void shouldFindAppointmentsForManySchedules() throws Exception {
-        generateNSchedules(900);
-        int searchCount = 0;
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        while (stopwatch.elapsed(TimeUnit.SECONDS) < maxTime) {
-            findFreeSlots.findFirstFree(dateRandomizer.randomDate());
-            searchCount++;
-        }
-        long elapsedMs = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        float searchesPerMs = (float) searchCount / elapsedMs;
-        logTime("searching speed res/s ", numberFormat.format(1000 * searchesPerMs));
+    public void shouldReserveAppointmentsStartingFromToday() {
+        LocalDateTime today8am = todayAt(8, 0);
+        runSpeedCheckSingleThread("Search & Reserve today8am", () -> reservationService.reserve(findFreeSlots.findFirstFree(today8am).get(0)));
     }
 
-    public static void logTime(String msg, String val) {
-        logTime(msg, val, 50);
+    @Test
+    public void shouldReserveAppointmentsStartingFromRandom() {
+        runSpeedCheckSingleThread("Search & Reserve random date", () -> reservationService.reserve(findFreeSlots.findFirstFree(randomDate()).get(0)));
     }
 
-    public static void logTime(String msg, String val, int padding) {
-        System.out.printf("%-" +
-                padding +
-                "s %s%n", msg, val);
+    private LocalDateTime randomDate() {
+        return dateRandomizer.randomDate();
     }
 
-    private void reserveFirstFreeFor(Supplier<LocalDateTime> date, String title, long maxTime) {
-        List<ScheduleRange> freeScheduleRanges = findFreeSlots.findFirstFree(date.get());
-        int count = 0;
+    private void runSpeedCheckSingleThread(String msg, Runnable runnable) {
+        PerformanceUtils.runSpeedCheck(msg, runnable, runningTimeSecs, 1);
+    }
 
-
-        Stopwatch stopwatch = Stopwatch.createStarted();
-
-        while (stopwatch.elapsed(TimeUnit.SECONDS) < maxTime && !freeScheduleRanges.isEmpty()) {
-            reservationService.reserve(freeScheduleRanges.get(0));
-            freeScheduleRanges = findFreeSlots.findFirstFree(date.get());
-            count++;
-        }
-        stopwatch.stop();
-        long elapsedMs = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        logTime("reservation speed " + title + " res/s ", numberFormat.format(1000 * count / elapsedMs));
+    private void runSpeedCheckMultiThread(String msg, Runnable runnable) {
+        PerformanceUtils.runSpeedCheck(msg, runnable, runningTimeSecs, threadsCount);
     }
 
     private void generateNSchedules(int n) {
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n / 2; i++) {
             defineNewScheduleService.addDailySchedule(WorkingHours.ofHours("08:00-16:00"), Duration.ofMinutes(15));
+            defineNewScheduleService.addDailySchedule(WorkingHours.ofHours("14:00-22:00"), Duration.ofMinutes(15));
         }
     }
-
-
 }
